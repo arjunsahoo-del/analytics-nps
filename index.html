@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPS Feedback — Analytics Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c18;--bg2:#0d1225;--bg3:#121930;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e4a8;
+  --gold-glow:rgba(201,168,76,0.2);
+  --blue:#4f8ef7;--blue-glow:rgba(79,142,247,0.15);
+  --text:#eef0f8;--text2:#7a8099;--text3:#3d4460;
+  --green:#34d399;--red:#f87171;--amber:#fbbf24;
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* Ambient background */
+.bg-ambient{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 15%,rgba(79,142,247,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 75%,rgba(201,168,76,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 100%,rgba(13,18,37,0.9) 0%,transparent 70%);
+}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.z1{position:relative;z-index:1;}
+
+/* HEADER */
+.header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(8,12,24,0.8);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-wrap{}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;letter-spacing:0.02em;
+  background:linear-gradient(135deg,#eef0f8 0%,var(--gold2) 60%,var(--gold3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.logo-tag{font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.admin-pill{
+  font-size:12px;color:var(--text2);text-decoration:none;
+  border:1px solid var(--border);border-radius:20px;
+  padding:7px 16px;letter-spacing:0.04em;
+  transition:all .25s;background:var(--glass);
+}
+.admin-pill:hover{color:var(--gold);border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.06);box-shadow:0 0 20px var(--gold-glow);}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:4.5rem 1.5rem 3.5rem;text-align:center;}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(201,168,76,0.22);background:rgba(201,168,76,0.07);
+  padding:7px 18px;border-radius:20px;margin-bottom:1.5rem;
+  animation:fadeUp .5s ease both;
+}
+.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,5.5vw,58px);font-weight:600;line-height:1.08;
+  margin-bottom:1rem;animation:fadeUp .5s .08s ease both;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(120deg,var(--gold) 0%,var(--gold2) 50%,var(--gold3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.75;max-width:440px;margin:0 auto;animation:fadeUp .5s .16s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* PROGRESS */
+.prog-bar{position:relative;z-index:1;background:rgba(8,12,24,0.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.prog-inner{max-width:680px;margin:0 auto;display:flex;padding:0 1rem;}
+.step-item{flex:1;display:flex;align-items:center;gap:9px;padding:15px 0;border-bottom:2px solid transparent;transition:all .3s;}
+.step-item.active{border-bottom-color:var(--gold);}
+.step-item.done{border-bottom-color:var(--green);}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--glass);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.step-item.active .step-num{background:var(--gold);border-color:var(--gold);color:#080c18;box-shadow:0 0 18px var(--gold-glow);}
+.step-item.done .step-num{background:var(--green);border-color:var(--green);color:#080c18;}
+.step-label{font-size:11.5px;font-weight:500;color:var(--text3);transition:color .3s;}
+.step-item.active .step-label,.step-item.done .step-label{color:var(--text);}
+.step-sep{padding:0 4px;color:var(--text3);font-size:12px;display:flex;align-items:center;}
+
+/* MAIN */
+.wrap{max-width:680px;margin:0 auto;padding:2rem 1rem 5rem;position:relative;z-index:1;}
+.page{display:none;}.page.active{display:block;}
+
+/* GLASS CARD */
+.card{
+  background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:1.75rem 2rem;margin-bottom:1.25rem;
+  transition:border-color .3s,box-shadow .3s;
+  animation:fadeUp .45s ease both;
+}
+.card:hover{border-color:var(--border2);}
+.card-title{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;
+}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,0.3),transparent);}
+
+/* FORM INPUTS */
+.fg{margin-bottom:1.2rem;}
+.flabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:0.03em;}
+.req{color:var(--gold);}
+.sel-wrap{position:relative;}
+.sel-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:10px;}
+select,input[type="text"]{
+  width:100%;padding:11px 40px 11px 14px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:10px;
+  font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);
+  transition:all .2s;-webkit-appearance:none;appearance:none;
+}
+select option{background:#141c30;color:var(--text);}
+select:disabled{opacity:.35;cursor:not-allowed;}
+select:focus,input[type="text"]:focus{
+  outline:none;border-color:rgba(201,168,76,0.35);
+  background:rgba(201,168,76,0.03);box-shadow:0 0 0 3px rgba(201,168,76,0.07);
+}
+input[type="text"]{padding-right:14px;}
+input[type="text"]::placeholder{color:var(--text3);}
+
+/* NPS */
+.nps-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:6px;margin-top:10px;}
+.nps-btn{
+  aspect-ratio:1;border:1px solid var(--border);border-radius:10px;
+  background:var(--glass);font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .18s;color:var(--text2);font-family:'Outfit',sans-serif;
+}
+.nps-btn:hover{transform:translateY(-3px);border-color:var(--border2);color:var(--text);box-shadow:0 8px 20px rgba(0,0,0,0.35);}
+.nps-btn.sd{background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.35);color:var(--red);box-shadow:0 0 14px rgba(248,113,113,0.12);}
+.nps-btn.sp{background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.35);color:var(--amber);box-shadow:0 0 14px rgba(251,191,36,0.12);}
+.nps-btn.sg{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.35);color:var(--green);box-shadow:0 0 14px rgba(52,211,153,0.12);}
+.nps-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);}
+.nps-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;margin-top:10px;letter-spacing:0.03em;}
+.bd{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.22);color:var(--red);}
+.bp{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);color:var(--amber);}
+.bg{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.22);color:var(--green);}
+
+/* STARS */
+.rrow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:1rem;transition:all .18s;border-radius:0;}
+.rrow:last-child{border-bottom:none;padding-bottom:0;}
+.rrow:hover{background:rgba(255,255,255,0.02);margin:0 -12px;padding:13px 12px;border-radius:10px;border-bottom-color:transparent;}
+.rl-t{font-size:13px;font-weight:500;color:var(--text);}
+.rl-s{font-size:11px;color:var(--text3);margin-top:2px;}
+.stars{display:flex;gap:4px;flex-shrink:0;}
+.star{font-size:21px;cursor:pointer;color:var(--text3);transition:all .14s;user-select:none;line-height:1;filter:drop-shadow(0 0 0 transparent);}
+.star:hover,.star.lit{color:var(--gold);filter:drop-shadow(0 0 5px rgba(201,168,76,0.55));}
+.star:hover{transform:scale(1.2);}
+
+/* STABS */
+.stabs{display:flex;gap:3px;background:rgba(255,255,255,0.025);padding:4px;border-radius:12px;margin-bottom:1.5rem;border:1px solid var(--border);}
+.stab{flex:1;padding:9px 6px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-radius:9px;transition:all .2s;text-align:center;letter-spacing:0.02em;}
+.stab.active{background:linear-gradient(135deg,rgba(201,168,76,0.14),rgba(201,168,76,0.06));color:var(--gold);border:1px solid rgba(201,168,76,0.18);box-shadow:0 2px 12px rgba(201,168,76,0.08);}
+.sp{display:none;}.sp.active{display:block;}
+
+textarea{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;
+  font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;resize:vertical;min-height:90px;
+  color:var(--text);transition:all .2s;
+}
+textarea:focus{outline:none;border-color:rgba(201,168,76,0.35);box-shadow:0 0 0 3px rgba(201,168,76,0.07);}
+textarea::placeholder{color:var(--text3);}
+
+/* ANON */
+.anon-card{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.14);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
+.anon-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.anon-label{font-size:14px;font-weight:600;}
+.anon-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.tgroup{display:flex;gap:8px;}
+.tbtn{padding:7px 22px;border-radius:8px;border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--glass);color:var(--text2);transition:all .2s;}
+.tbtn.ay{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.3);color:var(--green);}
+.tbtn.an{background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.3);color:var(--red);}
+.id-fields{margin-top:1rem;display:none;}
+.id-fields.show{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* BUTTONS */
+.nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem;}
+.btn{padding:12px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;border:none;display:inline-flex;align-items:center;gap:7px;letter-spacing:0.02em;}
+.btn-ol{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-ol:hover{border-color:var(--border2);color:var(--text);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#a8792e);color:#080c18;font-weight:600;box-shadow:0 4px 24px rgba(201,168,76,0.28);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(201,168,76,0.38);}
+.btn-blue{background:linear-gradient(135deg,#1e3f80,#2d5fcc);color:#fff;font-weight:600;border:1px solid rgba(79,142,247,0.25);box-shadow:0 4px 24px rgba(79,142,247,0.2);}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(79,142,247,0.32);}
+
+.err{color:var(--red);font-size:12px;margin-top:6px;display:none;opacity:.9;}
+.err.show{display:block;}
+
+/* THANK YOU */
+.ty{text-align:center;padding:3.5rem 1.5rem;}
+.ty-ring{
+  width:100px;height:100px;border-radius:50%;margin:0 auto 2rem;
+  background:radial-gradient(circle,rgba(52,211,153,0.18),rgba(52,211,153,0.04));
+  border:1px solid rgba(52,211,153,0.25);
+  display:flex;align-items:center;justify-content:center;font-size:40px;
+  animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow:0 0 50px rgba(52,211,153,0.12),0 0 100px rgba(52,211,153,0.06);
+}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.ty-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;
+  background:linear-gradient(135deg,var(--text),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.ty-sub{font-size:14px;color:var(--text2);line-height:1.75;max-width:380px;margin:0 auto 1.75rem;}
+.ty-ref{background:var(--glass);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:12px;color:var(--text3);display:inline-block;margin-bottom:2rem;font-family:monospace;letter-spacing:0.05em;}
+.ty-ref strong{color:var(--gold);}
+
+@media(max-width:560px){
+  .nps-grid{gap:3px;}.nps-btn{font-size:11px;border-radius:7px;}
+  .id-fields.show{grid-template-columns:1fr;}
+  .hero{padding:3rem 1rem 2.5rem;}
+  .card{padding:1.25rem 1.25rem;}
+  .stab{font-size:11px;padding:8px 3px;}
+  .rrow:hover{margin:0;padding:13px 0;}
+}
+</style>
+</head>
+<body>
+<div class="bg-ambient"></div>
+<div class="bg-grid"></div>
+
+<header class="header">
+  <div class="logo-wrap">
+    <div class="logo">Analytics NPS</div>
+    <div class="logo-tag">PW Education · Feedback Portal</div>
+  </div>
+  <div class="header-right">
+    <a href="admin.html" class="admin-pill">Admin Portal →</a>
+  </div>
+</header>
+
+<div class="hero z1">
+  <div class="hero-chip"><span class="hero-dot"></span>Share Your Experience</div>
+  <h1>Your Voice <em>Shapes<br>Our Team</em></h1>
+  <p class="hero-desc">Help us build a stronger Analytics department. Your honest feedback drives real change — takes less than 3 minutes.</p>
+</div>
+
+<div class="prog-bar z1">
+  <div class="prog-inner">
+    <div class="step-item active" id="step1"><div class="step-num">1</div><div class="step-label">Your Details</div></div>
+    <div class="step-sep">›</div>
+    <div class="step-item" id="step2"><div class="step-num">2</div><div class="step-label">Rating &amp; Feedback</div></div>
+    <div class="step-sep">›</div>
+    <div class="step-item" id="step3"><div class="step-num">3</div><div class="step-label">Done</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- PAGE 1 -->
+  <div class="page active" id="page1">
+    <div class="card">
+      <div class="card-title">Basic Information</div>
+      <div class="fg">
+        <label class="flabel">Vertical <span class="req">*</span></label>
+        <div class="sel-wrap"><select id="vertical" onchange="onVert()">
+          <option value="">— Select Vertical —</option>
+          <option>Vidyapeeth</option><option>Pathshala</option>
+        </select></div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Team <span class="req">*</span></label>
+        <div class="sel-wrap"><select id="team" onchange="onTeam()">
+          <option value="">— Select Team —</option>
+          <option value="City">City</option>
+          <option value="Head Office (Noida)">Head Office (Noida)</option>
+        </select></div>
+      </div>
+      <div id="cf" style="display:none">
+        <div class="fg">
+          <label class="flabel">Region <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="region" onchange="onRegion()">
+            <option value="">— Select Region —</option>
+            <option>Bihar+JH</option><option>Delhi + HR</option><option>East</option>
+            <option>Gujarat</option><option>Maharashtra</option><option>MP+CG</option>
+            <option>NCR +UK</option><option>PB + J&amp;K</option><option>Rajasthan</option>
+            <option>UP</option><option>South</option>
+          </select></div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Analyst Name &amp; PW ID <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="ac" disabled><option value="">— Select Region first —</option></select></div>
+        </div>
+      </div>
+      <div id="hf" style="display:none">
+        <div class="fg">
+          <label class="flabel">Department <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="dept" onchange="onDept()">
+            <option value="">— Select Department —</option>
+            <option>Ops</option><option>Acad</option><option>Marketing</option><option>Business</option>
+          </select></div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Analyst Name &amp; PW ID <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="ah" disabled><option value="">— Select Department first —</option></select></div>
+        </div>
+      </div>
+      <p id="e1" class="err">⚠ Please fill all required fields to continue.</p>
+    </div>
+    <div class="nav-row"><div></div><button class="btn btn-gold" onclick="g2()">Continue &rarr;</button></div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page2">
+    <div class="card">
+      <div class="card-title">NPS Score</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.65;">On a scale of 0–10, how likely are you to recommend our Analytics department to a colleague?</p>
+      <div class="nps-grid" id="nps-grid"></div>
+      <div class="nps-labels"><span>0 — Not likely at all</span><span>10 — Extremely likely</span></div>
+      <div id="nbw" style="min-height:34px;margin-top:6px;"></div>
+      <p id="ne" class="err">⚠ Please select your NPS score.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Feedback</div>
+      <div class="stabs">
+        <button class="stab active" onclick="tab(0,this)">📋 General</button>
+        <button class="stab" onclick="tab(1,this)">🌟 Appreciation</button>
+        <button class="stab" onclick="tab(2,this)">⚠️ Complaint</button>
+      </div>
+      <div class="sp active" id="sp0">
+        <div class="rrow"><div><div class="rl-t">Overall Experience</div><div class="rl-s">How was your overall interaction?</div></div><div class="stars" data-key="oe"></div></div>
+        <div class="rrow"><div><div class="rl-t">Staff Behavior</div><div class="rl-s">Friendliness &amp; professionalism</div></div><div class="stars" data-key="sb"></div></div>
+        <div class="rrow"><div><div class="rl-t">Process Smoothness</div><div class="rl-s">Admission / enquiry process ease</div></div><div class="stars" data-key="ps"></div></div>
+        <div class="rrow"><div><div class="rl-t">Communication Clarity</div><div class="rl-s">Information explained clearly or not</div></div><div class="stars" data-key="cc"></div></div>
+      </div>
+      <div class="sp" id="sp1">
+        <div class="rrow"><div><div class="rl-t">Understanding Your Needs</div><div class="rl-s">Did they listen &amp; suggest the right solution?</div></div><div class="stars" data-key="un"></div></div>
+        <div class="rrow"><div><div class="rl-t">Professionalism</div><div class="rl-s">Behavior, politeness, and attitude</div></div><div class="stars" data-key="pr"></div></div>
+        <div class="rrow"><div><div class="rl-t">Responsiveness</div><div class="rl-s">How quickly they handled your queries</div></div><div class="stars" data-key="re"></div></div>
+        <div class="rrow"><div><div class="rl-t">Problem-Solving Ability</div><div class="rl-s">Ability to resolve doubts / issues</div></div><div class="stars" data-key="psa"></div></div>
+        <div style="margin-top:1.1rem"><label class="flabel">Additional Comments</label><textarea id="ac-txt" placeholder="Share what you appreciated most…"></textarea></div>
+      </div>
+      <div class="sp" id="sp2">
+        <div class="rrow"><div><div class="rl-t">Delay in Response</div><div class="rl-s">Waiting time issues (1 = severe, 5 = no issue)</div></div><div class="stars" data-key="dr"></div></div>
+        <div class="rrow"><div><div class="rl-t">Miscommunication</div><div class="rl-s">Wrong / incomplete information shared</div></div><div class="stars" data-key="mc"></div></div>
+        <div class="rrow"><div><div class="rl-t">Process Complexity</div><div class="rl-s">Too many steps / confusion involved</div></div><div class="stars" data-key="pc"></div></div>
+        <div class="rrow"><div><div class="rl-t">Staff Behavior Issue</div><div class="rl-s">Any negative interaction (1 = severe, 5 = no issue)</div></div><div class="stars" data-key="si"></div></div>
+        <div style="margin-top:1.1rem"><label class="flabel">Describe the Issue</label><textarea id="cp-txt" placeholder="Please describe your complaint in detail…"></textarea></div>
+      </div>
+    </div>
+
+    <div class="anon-card">
+      <div class="anon-top">
+        <div><div class="anon-label">Submit Anonymously?</div><div class="anon-sub">Your feedback will be recorded without identifying you</div></div>
+        <div class="tgroup">
+          <button class="tbtn" id="by" onclick="anon(true)">Yes</button>
+          <button class="tbtn" id="bn" onclick="anon(false)">No</button>
+        </div>
+      </div>
+      <div class="id-fields" id="idf">
+        <div class="fg" style="margin:0"><label class="flabel">Your Name</label><input type="text" id="sn" placeholder="Full name"></div>
+        <div class="fg" style="margin:0"><label class="flabel">PW ID</label><input type="text" id="sp" placeholder="e.g. PW12345"></div>
+      </div>
+    </div>
+
+    <p id="e2" class="err">⚠ Please select an NPS score before submitting.</p>
+    <div class="nav-row">
+      <button class="btn btn-ol" onclick="g1()">&larr; Back</button>
+      <button class="btn btn-blue" onclick="submit()">Submit Feedback ✓</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="page" id="page3">
+    <div class="card ty">
+      <div class="ty-ring">✓</div>
+      <div class="ty-title">Thank You!</div>
+      <p class="ty-sub">Your feedback has been recorded and will help shape a better Analytics department experience for everyone.</p>
+      <div class="ty-ref" id="tref"></div>
+      <button class="btn btn-gold" style="margin:0 auto" onclick="reset()">Submit Another Response</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CA={
+  'Bihar+JH':['Rajnish Sharma - PW30574','Piyush Raj - PW12642','Saurav Kumar - PW5420','Shyam Kumar - PW29064'],
+  'Delhi + HR':['Aditi Goyal - PW21170','Anjali Prasad - PW20632','Manik Gupta - PW27156','Yash Rajput - PW29910'],
+  'East':['Gourab Roy - PW21631','Arkajyoti Roy - PW8333','Arjun Kumar Sahoo - PW7003'],
+  'Gujarat':['Mradul Pandya - PW26931','Harshal Pradip Bawne - PW28320'],
+  'Maharashtra':['Bhushan Ghanshyam Mali - PW8223','Ambikesh Shrivastava - PW23824','Prateek Gaur - PW28736'],
+  'MP+CG':['Manish Vasanta Kawale - PW9267','Sourabh Yadav - PW6274','Nitin Namdev - PW27713','Mohit Namdev - PW3996'],
+  'NCR +UK':['Dikshita Manik - PW18794','Shreyansha Tai Sonwane - PW10103','Tanu Rajput - PW8611','Sanya Dubey - PW17316'],
+  'PB + J&K':['Mayank Kumar - PW10407','Vishal Yadav - PW2441','Kanika Agrawal - PW8137'],
+  'Rajasthan':['Rahul Yadav - PW27161','Mohammad Faisal - PW15611','Pranjal Bhojak - PW2649'],
+  'UP':['Kaberi Devi - PW10951','Alok Kumar - PW16309','Sougata Mitra - PW12967'],
+  'South':[]
+};
+const HA={
+  'Ops':['Sneha Agarwal - PW20011','Tushar Mehta - PW20012','Divya Rao - PW20013','Kunal Mishra - PW20014'],
+  'Acad':['Rajeev Sharma - PW20021','Nidhi Singh - PW20022','Aakash Jain - PW20023','Preeti Kumari - PW20024'],
+  'Marketing':['Vikas Gupta - PW20031','Shweta Bansal - PW20032','Mohit Arora - PW20033'],
+  'Business':['Ananya Mishra - PW20041','Gaurav Pandey - PW20042','Ritika Verma - PW20043','Harsh Agarwal - PW20044']
+};
+
+const R={};let nps=null,ia=null;
+
+function onVert(){const v=document.getElementById('vertical').value,t=document.getElementById('team');t.value='';t.style.opacity=v?'1':'0.35';t.style.pointerEvents=v?'auto':'none';document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';}
+function onTeam(){const t=document.getElementById('team').value;document.getElementById('cf').style.display=t==='City'?'block':'none';document.getElementById('hf').style.display=t==='Head Office (Noida)'?'block':'none';document.getElementById('region').value='';document.getElementById('dept').value='';rsel('ac','— Select Region first —');rsel('ah','— Select Department first —');}
+function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[],'— Select Analyst —');}
+function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[],'— Select Analyst —');}
+function rsel(id,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;s.disabled=true;}
+function fsel(id,it,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;it.forEach(a=>s.innerHTML+=`<option value="${a}">${a}</option>`);s.disabled=it.length===0;}
+
+function g2(){
+  const t=document.getElementById('team').value,ic=t==='City';
+  let ok=document.getElementById('vertical').value&&t;
+  if(ic)ok=ok&&document.getElementById('region').value&&document.getElementById('ac').value;
+  else if(t)ok=ok&&document.getElementById('dept').value&&document.getElementById('ah').value;
+  if(!ok){document.getElementById('e1').classList.add('show');return;}
+  document.getElementById('e1').classList.remove('show');sp(1,2);
+}
+function g1(){sp(2,1);}
+function sp(f,t){
+  document.getElementById('page'+f).classList.remove('active');
+  document.getElementById('page'+t).classList.add('active');
+  const s=['','',''];
+  if(t===1)s[0]='active';if(t===2){s[0]='done';s[1]='active';}if(t===3){s[0]='done';s[1]='done';s[2]='active';}
+  [1,2,3].forEach((n,i)=>document.getElementById('step'+n).className='step-item '+(s[i]||''));
+  window.scrollTo(0,0);
+}
+
+// NPS buttons
+const g=document.getElementById('nps-grid');
+for(let i=0;i<=10;i++){
+  const b=document.createElement('button');b.className='nps-btn';b.textContent=i;
+  b.onclick=()=>{
+    nps=i;document.querySelectorAll('.nps-btn').forEach(x=>x.className='nps-btn');
+    const c=i<=6?'sd':i<=8?'sp':'sg';b.className='nps-btn '+c;
+    const[l,bc]=c==='sd'?['Detractor','bd']:c==='sp'?['Passive','bp']:['Promoter','bg'];
+    document.getElementById('nbw').innerHTML=`<span class="nps-badge ${bc}"><span style="font-size:8px">●</span> Score ${i} — ${l}</span>`;
+    document.getElementById('ne').classList.remove('show');
+  };g.appendChild(b);
+}
+
+// Stars
+function bs(c){const k=c.dataset.key;R[k]=0;for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star';s.textContent='★';s.onclick=()=>{R[k]=i;pt(c,k);};s.onmouseenter=()=>c.querySelectorAll('.star').forEach((x,j)=>x.classList.toggle('lit',j<i));s.onmouseleave=()=>pt(c,k);c.appendChild(s);}}
+function pt(c,k){c.querySelectorAll('.star').forEach((s,j)=>s.classList.toggle('lit',j<(R[k]||0)));}
+document.querySelectorAll('.stars').forEach(bs);
+
+function tab(i,b){document.querySelectorAll('.stab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.sp').forEach(p=>p.classList.remove('active'));b.classList.add('active');document.getElementById('sp'+i).classList.add('active');}
+
+function anon(v){ia=v;document.getElementById('by').className='tbtn'+(v?' ay':'');document.getElementById('bn').className='tbtn'+(!v?' an':'');document.getElementById('idf').className='id-fields'+(!v?' show':'');}
+
+// ── PASTE YOUR SCRIPT URL HERE AFTER SETUP ───────────────────────
+const SHEET_URL = 'https://script.google.com/a/macros/pw.live/s/AKfycbxiIc_SD97XFku0scmN4Z4lM0VH40p1BcscCw84mekUMLytDdnlgcLeC7Mol3reyCq2/exec';
+// ─────────────────────────────────────────────────────────────────
+
+async function submit(){
+  if(nps===null){document.getElementById('ne').classList.add('show');return;}
+
+  // Show loading state
+  const submitBtn = document.querySelector('.btn-blue');
+  const origText = submitBtn.innerHTML;
+  submitBtn.innerHTML = 'Submitting…';
+  submitBtn.disabled = true;
+
+  const t=document.getElementById('team').value,ic=t==='City';
+  const e={
+    id:'NPS-'+Date.now(),
+    timestamp:new Date().toISOString(),
+    vertical:document.getElementById('vertical').value,team:t,
+    region:ic?document.getElementById('region').value:'',
+    department:!ic?document.getElementById('dept').value:'',
+    analyst:ic?document.getElementById('ac').value:document.getElementById('ah').value,
+    nps_score:nps,nps_category:nps<=6?'Detractor':nps<=8?'Passive':'Promoter',
+    overall_exp:R['oe']||0,staff_behavior:R['sb']||0,process_smooth:R['ps']||0,comm_clarity:R['cc']||0,
+    understanding:R['un']||0,professionalism:R['pr']||0,responsiveness:R['re']||0,problem_solving:R['psa']||0,
+    appr_comment:document.getElementById('ac-txt').value,
+    delay_response:R['dr']||0,miscommunication:R['mc']||0,process_complexity:R['pc']||0,staff_issue:R['si']||0,
+    comp_comment:document.getElementById('cp-txt').value,
+    anonymous:ia!==false,
+    submitter_name:ia===false?document.getElementById('sn').value:'Anonymous',
+    submitter_pwid:ia===false?document.getElementById('sp').value:'—',
+  };
+
+  // Always save locally
+  const all=JSON.parse(localStorage.getItem('nps_responses')||'[]');
+  all.push(e);
+  localStorage.setItem('nps_responses',JSON.stringify(all));
+
+  // Send to Google Sheets via POST
+  if(SHEET_URL){
+    try{
+      const params = new URLSearchParams();
+      params.append('data', JSON.stringify(e));
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: params.toString()
+      });
+    }catch(err){
+      console.warn('Sheets sync failed, saved locally:', err);
+    }
+  }
+
+  submitBtn.innerHTML = origText;
+  submitBtn.disabled = false;
+  document.getElementById('tref').innerHTML=`Response ID: <strong>${e.id}</strong>`;
+  sp(2,3);
+}
+
+function reset(){
+  nps=null;ia=null;Object.keys(R).forEach(k=>R[k]=0);
+  ['vertical','team','region','dept','ac','ah'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.value='';if(id==='team'){el.style.opacity='0.35';el.style.pointerEvents='none';}else{el.disabled=['ac','ah'].includes(id);}});
+  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
+  document.querySelectorAll('.nps-btn').forEach(b=>b.className='nps-btn');
+  document.getElementById('nbw').innerHTML='';
+  document.querySelectorAll('.stars').forEach(c=>pt(c,c.dataset.key));
+  document.getElementById('ac-txt').value='';document.getElementById('cp-txt').value='';
+  document.getElementById('by').className='tbtn';document.getElementById('bn').className='tbtn';
+  document.getElementById('idf').className='id-fields';
+  document.getElementById('sn').value='';document.getElementById('sp').value='';
+  tab(0,document.querySelectorAll('.stab')[0]);sp(3,1);
+}
+</script>
+</body>
+</html>
