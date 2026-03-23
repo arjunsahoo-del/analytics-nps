@@ -283,10 +283,16 @@ textarea::placeholder{color:var(--text3);}
           <label class="flabel">Region <span class="req">*</span></label>
           <div class="sel-wrap"><select id="region" onchange="onRegion()">
             <option value="">— Select Region —</option>
-            <option>Bihar+JH</option><option>Delhi + HR</option><option>East</option>
-            <option>Gujarat</option><option>Maharashtra</option><option>MP+CG</option>
-            <option>NCR +UK</option><option>PB + J&amp;K</option><option>Rajasthan</option>
-            <option>UP</option><option>South</option>
+            <option>East</option>
+            <option>Maharashtra</option>
+            <option>Gujarat</option>
+            <option>PB + JK</option>
+            <option>MP + CG</option>
+            <option>Rajasthan</option>
+            <option>NCR + UK</option>
+            <option>Bihar + JH</option>
+            <option>UP</option>
+            <option>South</option>
           </select></div>
         </div>
         <div class="fg">
@@ -299,7 +305,12 @@ textarea::placeholder{color:var(--text3);}
           <label class="flabel">Department <span class="req">*</span></label>
           <div class="sel-wrap"><select id="dept" onchange="onDept()">
             <option value="">— Select Department —</option>
-            <option>Ops</option><option>Acad</option><option>Marketing</option><option>Business</option>
+            <option>Ops</option>
+            <option>Acad</option>
+            <option>Biz Finance and Compliance</option>
+            <option>Sales</option>
+            <option>Marketing</option>
+            <option>Analytics Lead</option>
           </select></div>
         </div>
         <div class="fg">
@@ -387,23 +398,24 @@ textarea::placeholder{color:var(--text3);}
 
 <script>
 const CA={
-  'Bihar+JH':['Rajnish Sharma - PW30574','Piyush Raj - PW12642','Saurav Kumar - PW5420','Shyam Kumar - PW29064'],
-  'Delhi + HR':['Aditi Goyal - PW21170','Anjali Prasad - PW20632','Manik Gupta - PW27156','Yash Rajput - PW29910'],
-  'East':['Gourab Roy - PW21631','Arkajyoti Roy - PW8333','Arjun Kumar Sahoo - PW7003'],
-  'Gujarat':['Mradul Pandya - PW26931','Harshal Pradip Bawne - PW28320'],
-  'Maharashtra':['Bhushan Ghanshyam Mali - PW8223','Ambikesh Shrivastava - PW23824','Prateek Gaur - PW28736'],
-  'MP+CG':['Manish Vasanta Kawale - PW9267','Sourabh Yadav - PW6274','Nitin Namdev - PW27713','Mohit Namdev - PW3996'],
-  'NCR +UK':['Dikshita Manik - PW18794','Shreyansha Tai Sonwane - PW10103','Tanu Rajput - PW8611','Sanya Dubey - PW17316'],
-  'PB + J&K':['Mayank Kumar - PW10407','Vishal Yadav - PW2441','Kanika Agrawal - PW8137'],
-  'Rajasthan':['Rahul Yadav - PW27161','Mohammad Faisal - PW15611','Pranjal Bhojak - PW2649'],
-  'UP':['Kaberi Devi - PW10951','Alok Kumar - PW16309','Sougata Mitra - PW12967'],
+  'East':['arjun.sahoo@pw.live - PW7003','arkajyoti.roy@pw.live - PW8333','gourab.roy@pw.live - PW21631'],
+  'Maharashtra':['bhushan.mail@pw.live - PW8223','ambikesh.srivastava@pw.live - PW23824','prateek.gaur@pw.live - PW28736'],
+  'Gujarat':['harshil.shah@pw.live - PW16484','harshal.bawne@pw.live - PW28320','nitin.namdev@pw.live - PW27713'],
+  'PB + JK':['kanika.agrawal@pw.live - PW8137','mayank.kumar1@pw.live - PW10407','vishal.yadav@pw.live - PW2441'],
+  'MP + CG':['mohit.namdev@pw.live - PW3996','manish.kawale@pw.live - PW9267','sourabh.yadav@pw.live - PW6274'],
+  'Rajasthan':['pranjal.bhojak@pw.live - PW2649','mohammad.faisal2@pw.live - PW15611','rahul.yadav5@pw.live - PW27161'],
+  'NCR + UK':['sanya.dubey1@pw.live - PW17316','dikshita.manik1@pw.live - PW18794','shreyansha.sonwane@pw.live - PW10103','tanu.rajput@pw.live - PW8611'],
+  'Bihar + JH':['shyam.kumar1@pw.live - PW29064','piyush.raj@pw.live - PW12642','rajnish.sharma1@pw.live - PW30574','saurav.kumar1@pw.live - PW5420'],
+  'UP':['sougata.mitra@pw.live - PW12967','alok.kumar3@pw.live - PW16309','kaberi.devi@pw.live - PW10951'],
   'South':[]
 };
 const HA={
-  'Ops':['Sneha Agarwal - PW20011','Tushar Mehta - PW20012','Divya Rao - PW20013','Kunal Mishra - PW20014'],
-  'Acad':['Rajeev Sharma - PW20021','Nidhi Singh - PW20022','Aakash Jain - PW20023','Preeti Kumari - PW20024'],
-  'Marketing':['Vikas Gupta - PW20031','Shweta Bansal - PW20032','Mohit Arora - PW20033'],
-  'Business':['Ananya Mishra - PW20041','Gaurav Pandey - PW20042','Ritika Verma - PW20043','Harsh Agarwal - PW20044']
+  'Ops':['tanya.bhagat@pw.live - PW0658','shreya.kansal@pw.live - PW8595','aditya.kumar11@pw.live - PW17577'],
+  'Acad':['himanshu.sethi@pw.live - PW0935','ranvijay.singh2@pw.live - PW19008','shivendra.singh2@pw.live - PW26405','deepak.singh11@pw.live - PW26476','vishwajeet.singh@pw.live - PW9191','mohammad.aadil@pw.live - PW8919'],
+  'Biz Finance and Compliance':['deepanshu.verma@pw.live - PW10357','ajay.gupta1@pw.live - PW14683','vishwaradya.1@pw.live - PW18728','saloni.maheshwari@pw.live - PW18651'],
+  'Sales':['madhav.gotmare@pw.live - PW3195','kamlesh.kumar2@pw.live - PW20352','mahima.soni1@pw.live - PW20535','gaurav.joshi@pw.live - PW31182','srishti.saini@pw.live - PW31343'],
+  'Marketing':['sachin.kumar@pw.live - PW2366','arvind.yadav@pw.live - PW9155','harshit.arora@pw.live - PW18652','puneet.sirohi@pw.live - PW20318'],
+  'Analytics Lead':['ankit.kumar11@pw.live - PW11292']
 };
 
 const R={};let nps=null,ia=null;
