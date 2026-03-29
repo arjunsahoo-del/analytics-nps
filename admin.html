@@ -243,6 +243,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     <button class="sb-link active" onclick="showSec('dashboard',this)"><span class="sb-icon">◈</span> Dashboard</button>
     <button class="sb-link" onclick="showSec('responses',this)"><span class="sb-icon">≡</span> All Responses</button>
     <button class="sb-link" onclick="showSec('analyst',this)"><span class="sb-icon">👤</span> Analyst Reports</button>
+    <button class="sb-link" onclick="showSec('teamnps',this)"><span class="sb-icon">👥</span> Team NPS</button>
     <button class="sb-link" onclick="showSec('analytics',this)"><span class="sb-icon">◉</span> Analytics</button>
     <hr class="sb-div">
     <div class="sb-title">Quick Filters</div>
@@ -352,6 +353,31 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
       </div>
     </div>
 
+    <!-- TEAM NPS -->
+    <div class="sec" id="sec-teamnps">
+      <div class="metrics" style="margin-bottom:1.25rem;">
+        <div class="mc m1"><div class="mc-label">Team NPS Score</div><div class="mc-val" id="team-m-nps" style="color:var(--gold)">—</div><div class="mc-sub">Team Promoters − Detractors %</div></div>
+        <div class="mc m2"><div class="mc-label">Total Responses</div><div class="mc-val" id="team-m-total">0</div><div class="mc-sub">With team NPS</div></div>
+        <div class="mc m3"><div class="mc-label">Team Promoters</div><div class="mc-val" id="team-m-pro" style="color:var(--green)">0</div><div class="mc-sub" id="team-m-pro-p"></div></div>
+        <div class="mc m4"><div class="mc-label">Team Detractors</div><div class="mc-val" id="team-m-det" style="color:var(--red)">0</div><div class="mc-sub" id="team-m-det-p"></div></div>
+      </div>
+      <div class="chart-row2" style="margin-bottom:1.25rem;">
+        <div class="glass-card"><div class="gc-title">Team NPS distribution</div><div class="cwrap"><canvas id="c-team-dist"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Team category split</div><div class="cwrap"><canvas id="c-team-donut"></canvas></div></div>
+      </div>
+      <div class="chart-row2" style="margin-bottom:1.25rem;">
+        <div class="glass-card"><div class="gc-title">Analyst NPS vs Team NPS comparison</div><div class="cwrap"><canvas id="c-compare"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Peer vs External review split</div><div class="cwrap"><canvas id="c-review-type"></canvas></div></div>
+      </div>
+      <div class="glass-card">
+        <div class="gc-title">Team NPS by region / department</div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Group</th><th>Responses</th><th>Analyst NPS</th><th>Team NPS</th><th>Peer Reviews</th><th>External Reviews</th></tr></thead>
+          <tbody id="team-bk-body"></tbody></table>
+        </div>
+      </div>
+    </div>
+
     <!-- ANALYTICS -->
     <div class="sec" id="sec-analytics">
       <div class="chart-row2" style="margin-bottom:1.25rem">
@@ -384,7 +410,6 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
 const ALLOWED_EMAILS = [
   'arjun.sahoo@pw.live',
   'deepanshu.verma@pw.live',
-  'ankit.kumar11@pw.live'
   // Add more emails below this line:
   // 'newperson@pw.live',
 ];
@@ -523,7 +548,7 @@ function parseCSV(text){
   return rows;
 }
 
-function renderAll(){renderMetrics();renderCharts();renderTable();renderBreakdown();renderApprComp();renderAnalystGrid();}
+function renderAll(){renderMetrics();renderCharts();renderTable();renderBreakdown();renderApprComp();renderAnalystGrid();renderTeamNPS();}
 
 // ── METRICS ───────────────────────────────────────────────────────
 function renderMetrics(){
@@ -771,6 +796,7 @@ function showSec(name,btn){
   if(btn)btn.classList.add('active');
   if(name==='analytics'){renderApprComp();renderBreakdown();}
   if(name==='analyst'){renderAnalystGrid();}
+  if(name==='teamnps'){renderTeamNPS();}
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────
@@ -829,6 +855,70 @@ function exportCSV(){
 }
 
 // ── SEED ─────────────────────────────────────────────────────────
+function renderTeamNPS(){
+  const d=filtered;
+  // Only entries that have team_nps
+  const td=d.filter(x=>x.team_nps!==undefined&&x.team_nps!==null&&x.team_nps!=='');
+  const n=td.length;
+  const tpro=td.filter(x=>x.team_nps_category==='Promoter').length;
+  const tdet=td.filter(x=>x.team_nps_category==='Detractor').length;
+  const tnps=n?Math.round((tpro-tdet)/n*100):0;
+  document.getElementById('team-m-nps').textContent=(tnps>=0?'+':'')+tnps;
+  document.getElementById('team-m-nps').style.color=tnps>=30?'var(--green)':tnps>=0?'var(--amber)':'var(--red)';
+  document.getElementById('team-m-total').textContent=n;
+  document.getElementById('team-m-pro').textContent=tpro;
+  document.getElementById('team-m-pro-p').textContent=n?Math.round(tpro/n*100)+'% of responses':'';
+  document.getElementById('team-m-det').textContent=tdet;
+  document.getElementById('team-m-det-p').textContent=n?Math.round(tdet/n*100)+'% of responses':'';
+
+  // Team NPS distribution
+  dc('c-team-dist');
+  const tdist=Array(11).fill(0);td.forEach(x=>{if(x.team_nps!==undefined)tdist[Number(x.team_nps)]++;});
+  CH['c-team-dist']=new Chart(document.getElementById('c-team-dist'),{type:'bar',
+    data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{data:tdist,backgroundColor:tdist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'),borderRadius:6,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{display:false}}}}});
+
+  // Team category donut
+  dc('c-team-donut');
+  const tpas=td.filter(x=>x.team_nps_category==='Passive').length;
+  CH['c-team-donut']=new Chart(document.getElementById('c-team-donut'),{type:'doughnut',
+    data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[tpro,tpas,tdet],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
+
+  // Analyst NPS vs Team NPS comparison
+  dc('c-compare');
+  const groups={};
+  d.forEach(x=>{const k=x.region||x.department||'Unknown';if(!groups[k])groups[k]={analyst:[],team:[]};if(x.analyst_nps!==undefined)groups[k].analyst.push(Number(x.analyst_nps));if(x.team_nps!==undefined)groups[k].team.push(Number(x.team_nps));});
+  const glabels=Object.keys(groups).slice(0,8);
+  const analystAvg=glabels.map(k=>groups[k].analyst.length?Math.round(groups[k].analyst.reduce((a,b)=>a+b,0)/groups[k].analyst.length*10)/10:0);
+  const teamAvg=glabels.map(k=>groups[k].team.length?Math.round(groups[k].team.reduce((a,b)=>a+b,0)/groups[k].team.length*10)/10:0);
+  CH['c-compare']=new Chart(document.getElementById('c-compare'),{type:'bar',
+    data:{labels:glabels,datasets:[{label:'Analyst NPS',data:analystAvg,backgroundColor:'rgba(201,168,76,0.65)',borderRadius:5,borderWidth:0},{label:'Team NPS',data:teamAvg,backgroundColor:'rgba(79,142,247,0.65)',borderRadius:5,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:12,boxWidth:10}}},scales:{y:{min:0,max:10,ticks:{color:'#3d4460',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:9}},grid:{display:false}}}}});
+
+  // Peer vs External donut
+  dc('c-review-type');
+  const peerCount=d.filter(x=>x.review_type==='peer').length;
+  const extCount=d.filter(x=>x.review_type!=='peer').length;
+  CH['c-review-type']=new Chart(document.getElementById('c-review-type'),{type:'doughnut',
+    data:{labels:['External Reviews','Peer Reviews'],datasets:[{data:[extCount,peerCount],backgroundColor:['rgba(201,168,76,0.7)','rgba(79,142,247,0.7)'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
+
+  // Team NPS breakdown table
+  const tb=document.getElementById('team-bk-body');tb.innerHTML='';
+  Object.entries(groups).forEach(([k,v])=>{
+    const src=d.filter(x=>(x.region||x.department||'Unknown')===k);
+    const anpsVals=src.map(x=>x.analyst_nps!==undefined?Number(x.analyst_nps):null).filter(x=>x!==null);
+    const tnpsVals=src.map(x=>x.team_nps!==undefined?Number(x.team_nps):null).filter(x=>x!==null);
+    const anps=anpsVals.length?Math.round(anpsVals.reduce((a,b)=>a+b,0)/anpsVals.length*10)/10:'—';
+    const tnps=tnpsVals.length?Math.round(tnpsVals.reduce((a,b)=>a+b,0)/tnpsVals.length*10)/10:'—';
+    const peerC=src.filter(x=>x.review_type==='peer').length;
+    const extC=src.filter(x=>x.review_type!=='peer').length;
+    tb.innerHTML+=\`<tr><td><strong>\${k}</strong></td><td>\${src.length}</td><td style="color:var(--gold);font-weight:600">\${anps}</td><td style="color:var(--blue);font-weight:600">\${tnps}</td><td>\${peerC}</td><td>\${extC}</td></tr>\`;
+  });
+  if(!Object.keys(groups).length)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">No data available</td></tr>';
+}
+
 function seedData(){
   const verts=['Vidyapeeth','Pathshala'],regions=['East','Maharashtra','Gujarat','PB + JK','MP + CG','Rajasthan','NCR + UK','Bihar + JH','UP'];
   const depts=['Ops','Acad','Marketing','Business'];
@@ -842,6 +932,10 @@ function seedData(){
       region:ic?regions[Math.floor(Math.random()*regions.length)]:'',department:!ic?depts[Math.floor(Math.random()*depts.length)]:'',
       analyst:ic?cA[Math.floor(Math.random()*cA.length)]:hA[Math.floor(Math.random()*hA.length)],
       nps_score:np,nps_category:np<=6?'Detractor':np<=8?'Passive':'Promoter',
+      analyst_nps:np,analyst_nps_category:np<=6?'Detractor':np<=8?'Passive':'Promoter',
+      team_nps:Math.floor(Math.random()*11),team_nps_category:['Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Passive','Passive','Promoter','Promoter'][Math.floor(Math.random()*11)],
+      review_type:Math.random()>0.7?'peer':'external',
+      reviewer:Math.random()>0.7?'Ankit Kumar - PW11292':'',
       overall_exp:Math.floor(Math.random()*3)+3,staff_behavior:Math.floor(Math.random()*3)+3,
       process_smooth:Math.floor(Math.random()*4)+2,comm_clarity:Math.floor(Math.random()*3)+3,
       understanding:Math.floor(Math.random()*3)+3,professionalism:Math.floor(Math.random()*2)+4,
