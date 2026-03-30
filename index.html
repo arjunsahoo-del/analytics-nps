@@ -500,7 +500,7 @@ function onPeerRegion(){
   let list=[];
   if(type==='city')list=CA[key]||[];
   else list=HA[key]||[];
-  list.forEach(a=>sel.innerHTML+=\`<option value="\${a}">\${a}</option>\`);
+  list.forEach(a=>sel.innerHTML+=`<option value="${a}">${a}</option>`);
   sel.disabled=list.length===0;
 }
 
@@ -521,8 +521,8 @@ function onTeam(){
 }
 function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[],'\u2014 Select Analyst \u2014');}
 function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[],'\u2014 Select Analyst \u2014');}
-function rsel(id,ph){const s=document.getElementById(id);s.innerHTML=\`<option value="">\${ph}</option>\`;s.disabled=true;}
-function fsel(id,it,ph){const s=document.getElementById(id);s.innerHTML=\`<option value="">\${ph}</option>\`;it.forEach(a=>s.innerHTML+=\`<option value="\${a}">\${a}</option>\`);s.disabled=it.length===0;}
+function rsel(id,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;s.disabled=true;}
+function fsel(id,it,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;it.forEach(a=>s.innerHTML+=`<option value="${a}">${a}</option>`);s.disabled=it.length===0;}
 
 function g2(){
   const team=document.getElementById('team').value,ic=team==='City';
@@ -555,7 +555,7 @@ function buildNPSGrid(gridId, badgeId, varName){
       grid.querySelectorAll('.nps-btn').forEach(x=>x.className='nps-btn');
       const c=score<=6?'sd':score<=8?'sp':'sg';btn2.className='nps-btn '+c;
       const[l,bc]=c==='sd'?['Detractor','bd']:c==='sp'?['Passive','bp']:['Promoter','bg'];
-      document.getElementById(badgeId).innerHTML=\`<span class="nps-badge \${bc}"><span style="font-size:8px">&bull;</span> Score \${score} \u2014 \${l}</span>\`;
+      document.getElementById(badgeId).innerHTML=`<span class="nps-badge ${bc}"><span style="font-size:8px">&bull;</span> Score ${score} \u2014 ${l}</span>`;
       document.getElementById('ne').classList.remove('show');
     };})(i,b);
     grid.appendChild(b);
