@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzFhMWEyZSIvPgogIDxyZWN0IHg9IjQiIHk9IjE4IiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIgcng9IjEiIGZpbGw9IiNjOWE4NGMiLz4KICA8cmVjdCB4PSIxMSIgeT0iMTIiIHdpZHRoPSI1IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2U4Yzk3YSIvPgogIDxyZWN0IHg9IjE4IiB5PSI2IiB3aWR0aD0iNSIgaGVpZ2h0PSIyMiIgcng9IjEiIGZpbGw9IiMzNGQzOTkiLz4KICA8cmVjdCB4PSIyNSIgeT0iMTQiIHdpZHRoPSIzIiBoZWlnaHQ9IjE0IiByeD0iMSIgZmlsbD0iIzRmOGVmNyIvPgo8L3N2Zz4=">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPS Feedback — Analytics Team</title>
+<title>NPS Feedback - Analytics Team</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzFhMWEyZSIvPjxyZWN0IHg9IjQiIHk9IjE4IiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIgcng9IjEiIGZpbGw9IiNjOWE4NGMiLz48cmVjdCB4PSIxMSIgeT0iMTIiIHdpZHRoPSI1IiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2U4Yzk3YSIvPjxyZWN0IHg9IjE4IiB5PSI2IiB3aWR0aD0iNSIgaGVpZ2h0PSIyMiIgcng9IjEiIGZpbGw9IiMzNGQzOTkiLz48cmVjdCB4PSIyNSIgeT0iMTQiIHdpZHRoPSIzIiBoZWlnaHQ9IjE0IiByeD0iMSIgZmlsbD0iIzRmOGVmNyIvPjwvc3ZnPg==">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#080c18;--bg2:#0d1225;
-  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
+  --bg:#080c18;--glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
   --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e4a8;--gold-glow:rgba(201,168,76,0.2);
   --blue:#4f8ef7;--text:#eef0f8;--text2:#7a8099;--text3:#3d4460;
@@ -25,42 +24,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);
   background-size:64px 64px;}
 .z1{position:relative;z-index:1;}
-
 /* HEADER */
-.header{position:sticky;top:0;z-index:200;background:rgba(8,12,24,0.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 2rem;height:66px;display:flex;align-items:center;justify-content:space-between;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;background:linear-gradient(135deg,#eef0f8 0%,var(--gold2) 60%,var(--gold3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.header{position:sticky;top:0;z-index:200;background:rgba(8,12,24,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 2rem;height:66px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;background:linear-gradient(135deg,#eef0f8 0%,var(--gold2) 60%,var(--gold3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .logo-tag{font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
-.admin-pill{font-size:12px;color:var(--text2);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:7px 16px;letter-spacing:.04em;transition:all .25s;background:var(--glass);}
-.admin-pill:hover{color:var(--gold);border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.06);box-shadow:0 0 20px var(--gold-glow);}
-
+.admin-pill{font-size:12px;color:var(--text2);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:7px 16px;transition:all .25s;background:var(--glass);}
+.admin-pill:hover{color:var(--gold);border-color:rgba(201,168,76,.35);box-shadow:0 0 20px var(--gold-glow);}
 /* HERO */
-.hero{position:relative;z-index:1;padding:4.5rem 1.5rem 3.5rem;text-align:center;}
+.hero{position:relative;z-index:1;padding:4rem 1.5rem 3rem;text-align:center;}
 .hero-chip{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.22);background:rgba(201,168,76,.07);padding:7px 18px;border-radius:20px;margin-bottom:1.5rem;animation:fadeUp .5s ease both;}
 .hero-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5.5vw,58px);font-weight:600;line-height:1.08;margin-bottom:1rem;animation:fadeUp .5s .08s ease both;}
-.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--gold) 0%,var(--gold2) 50%,var(--gold3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5.5vw,54px);font-weight:600;line-height:1.1;margin-bottom:1rem;animation:fadeUp .5s .08s ease both;}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hero-desc{font-size:15px;color:var(--text2);line-height:1.75;max-width:440px;margin:0 auto;animation:fadeUp .5s .16s ease both;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-
-/* REVIEW TYPE TOGGLE */
-.review-toggle-wrap{position:relative;z-index:1;margin-bottom:0;}
-.review-toggle{
-  max-width:680px;margin:0 auto 0;padding:1.25rem 1rem 0;
-  display:flex;gap:10px;align-items:center;justify-content:center;
-}
-.rtbtn{
-  flex:1;max-width:280px;
-  padding:14px 20px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:var(--glass);
-  color:var(--text2);
-  font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;
-  cursor:pointer;transition:all .25s;
-  display:flex;align-items:center;gap:10px;
-  position:relative;overflow:hidden;
-}
+/* REVIEW TOGGLE */
+.review-toggle-wrap{position:relative;z-index:1;}
+.review-toggle{max-width:680px;margin:0 auto;padding:1.25rem 1rem 0;display:flex;gap:10px;align-items:center;justify-content:center;}
+.rtbtn{flex:1;max-width:280px;padding:14px 20px;border-radius:14px;border:1px solid var(--border);background:var(--glass);color:var(--text2);font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px;}
 .rtbtn:hover{border-color:var(--border2);color:var(--text);}
 .rtbtn.active-ext{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.4);color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.15);}
 .rtbtn.active-peer{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.4);color:var(--blue);box-shadow:0 0 20px rgba(79,142,247,.15);}
@@ -68,7 +50,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .rtbtn-label{font-size:13px;font-weight:600;display:block;}
 .rtbtn-sub{font-size:10px;opacity:.7;display:block;margin-top:2px;}
 .rt-sep{font-size:11px;color:var(--text3);font-weight:500;}
-
+/* PEER BANNER */
+.peer-banner{max-width:680px;margin:.75rem auto 0;padding:0 1rem;display:none;}
+.peer-banner.show{display:block;}
+.peer-banner-inner{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.25);border-radius:12px;padding:.9rem 1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;color:#7fb3ff;font-weight:500;}
 /* PROGRESS */
 .prog-bar{position:relative;z-index:1;background:rgba(8,12,24,.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
 .prog-inner{max-width:680px;margin:0 auto;display:flex;padding:0 1rem;}
@@ -81,46 +66,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .step-label{font-size:11.5px;font-weight:500;color:var(--text3);transition:color .3s;}
 .step-item.active .step-label,.step-item.done .step-label{color:var(--text);}
 .step-sep{padding:0 4px;color:var(--text3);font-size:12px;display:flex;align-items:center;}
-
-/* PEER BANNER */
-.peer-banner{
-  max-width:680px;margin:1.25rem auto 0;padding:0 1rem;
-  display:none;
-}
-.peer-banner.show{display:block;}
-.peer-banner-inner{
-  background:rgba(79,142,247,.08);
-  border:1px solid rgba(79,142,247,.25);
-  border-radius:12px;padding:.9rem 1.25rem;
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;color:#7fb3ff;font-weight:500;
-}
-
-/* MAIN */
+/* WRAP */
 .wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 5rem;position:relative;z-index:1;}
 .page{display:none;}.page.active{display:block;}
-
-/* GLASS CARD */
+/* CARD */
 .card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem 2rem;margin-bottom:1.25rem;transition:border-color .3s;animation:fadeUp .45s ease both;}
 .card:hover{border-color:var(--border2);}
 .card-title{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;}
 .card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent);}
-.card-title.blue{color:var(--blue);}
-.card-title.blue::after{background:linear-gradient(90deg,rgba(79,142,247,.3),transparent);}
-
 /* FORM */
 .fg{margin-bottom:1.2rem;}
 .flabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.03em;}
 .req{color:var(--gold);}
 .sel-wrap{position:relative;}
-.sel-wrap::after{content:'\u25be';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:10px;}
+.sel-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:10px;}
 select,input[type="text"]{width:100%;padding:11px 40px 11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);transition:all .2s;-webkit-appearance:none;appearance:none;}
 select option{background:#141c30;color:var(--text);}
 select:disabled{opacity:.35;cursor:not-allowed;}
 select:focus,input[type="text"]:focus{outline:none;border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.03);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
 input[type="text"]{padding-right:14px;}
 input[type="text"]::placeholder{color:var(--text3);}
-
 /* NPS DUAL */
 .nps-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
 .nps-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
@@ -129,15 +94,14 @@ input[type="text"]::placeholder{color:var(--text3);}
 .nps-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:6px;}
 .nps-btn{aspect-ratio:1;border:1px solid var(--border);border-radius:10px;background:var(--glass);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--text2);font-family:'Outfit',sans-serif;}
 .nps-btn:hover{transform:translateY(-3px);border-color:var(--border2);color:var(--text);box-shadow:0 8px 20px rgba(0,0,0,.35);}
-.nps-btn.sd{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);color:var(--red);box-shadow:0 0 14px rgba(248,113,113,.12);}
-.nps-btn.sp{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);color:var(--amber);box-shadow:0 0 14px rgba(251,191,36,.12);}
-.nps-btn.sg{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35);color:var(--green);box-shadow:0 0 14px rgba(52,211,153,.12);}
+.nps-btn.sd{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);color:var(--red);}
+.nps-btn.sp{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);color:var(--amber);}
+.nps-btn.sg{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35);color:var(--green);}
 .nps-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);}
-.nps-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;margin-top:8px;letter-spacing:.03em;}
+.nps-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;margin-top:8px;}
 .bd{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.22);color:var(--red);}
 .bp{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.22);color:var(--amber);}
 .bg{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);color:var(--green);}
-
 /* STARS */
 .rrow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:1rem;transition:all .18s;}
 .rrow:last-child{border-bottom:none;padding-bottom:0;}
@@ -145,20 +109,17 @@ input[type="text"]::placeholder{color:var(--text3);}
 .rl-t{font-size:13px;font-weight:500;color:var(--text);}
 .rl-s{font-size:11px;color:var(--text3);margin-top:2px;}
 .stars{display:flex;gap:4px;flex-shrink:0;}
-.star{font-size:21px;cursor:pointer;color:var(--text3);transition:all .14s;user-select:none;line-height:1;filter:drop-shadow(0 0 0 transparent);}
+.star{font-size:21px;cursor:pointer;color:var(--text3);transition:all .14s;user-select:none;line-height:1;}
 .star:hover,.star.lit{color:var(--gold);filter:drop-shadow(0 0 5px rgba(201,168,76,.55));}
 .star:hover{transform:scale(1.2);}
-
 /* STABS */
 .stabs{display:flex;gap:3px;background:rgba(255,255,255,.025);padding:4px;border-radius:12px;margin-bottom:1.5rem;border:1px solid var(--border);}
-.stab{flex:1;padding:9px 6px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-radius:9px;transition:all .2s;text-align:center;letter-spacing:.02em;}
-.stab.active{background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.06));color:var(--gold);border:1px solid rgba(201,168,76,.18);box-shadow:0 2px 12px rgba(201,168,76,.08);}
+.stab{flex:1;padding:9px 6px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-radius:9px;transition:all .2s;text-align:center;}
+.stab.active{background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.06));color:var(--gold);border:1px solid rgba(201,168,76,.18);}
 .sp{display:none;}.sp.active{display:block;}
-
 textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;resize:vertical;min-height:90px;color:var(--text);transition:all .2s;}
 textarea:focus{outline:none;border-color:rgba(201,168,76,.35);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
 textarea::placeholder{color:var(--text3);}
-
 /* ANON */
 .anon-card{background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.14);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
 .anon-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
@@ -170,222 +131,143 @@ textarea::placeholder{color:var(--text3);}
 .tbtn.an{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:var(--red);}
 .id-fields{margin-top:1rem;display:none;}
 .id-fields.show{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
+/* PEER REVIEWER IN ANON */
+.peer-id-section{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;display:none;}
+.peer-id-section.show{display:block;}
+.peer-id-title{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
+.peer-id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 /* BUTTONS */
 .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem;}
-.btn{padding:12px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;border:none;display:inline-flex;align-items:center;gap:7px;letter-spacing:.02em;}
+.btn{padding:12px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;border:none;display:inline-flex;align-items:center;gap:7px;}
 .btn-ol{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-ol:hover{border-color:var(--border2);color:var(--text);}
 .btn-gold{background:linear-gradient(135deg,var(--gold),#a8792e);color:#080c18;font-weight:600;box-shadow:0 4px 24px rgba(201,168,76,.28);}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(201,168,76,.38);}
 .btn-blue{background:linear-gradient(135deg,#1e3f80,#2d5fcc);color:#fff;font-weight:600;border:1px solid rgba(79,142,247,.25);box-shadow:0 4px 24px rgba(79,142,247,.2);}
 .btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(79,142,247,.32);}
-
-.err{color:var(--red);font-size:12px;margin-top:6px;display:none;opacity:.9;}
+.err{color:var(--red);font-size:12px;margin-top:6px;display:none;}
 .err.show{display:block;}
-
 /* THANK YOU */
 .ty{text-align:center;padding:3.5rem 1.5rem;}
-.ty-ring{width:100px;height:100px;border-radius:50%;margin:0 auto 2rem;background:radial-gradient(circle,rgba(52,211,153,.18),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;font-size:40px;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;box-shadow:0 0 50px rgba(52,211,153,.12);}
+.ty-ring{width:100px;height:100px;border-radius:50%;margin:0 auto 2rem;background:radial-gradient(circle,rgba(52,211,153,.18),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;font-size:40px;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;}
 @keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
 .ty-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;background:linear-gradient(135deg,var(--text),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
 .ty-sub{font-size:14px;color:var(--text2);line-height:1.75;max-width:380px;margin:0 auto 1.75rem;}
-.ty-ref{background:var(--glass);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:12px;color:var(--text3);display:inline-block;margin-bottom:2rem;font-family:monospace;letter-spacing:.05em;}
+.ty-ref{background:var(--glass);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:12px;color:var(--text3);display:inline-block;margin-bottom:2rem;font-family:monospace;}
 .ty-ref strong{color:var(--gold);}
 .ty-badges{display:flex;gap:10px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;}
 .ty-badge{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;}
 .ty-badge.ext{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:var(--gold);}
 .ty-badge.peer{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);color:var(--blue);}
-
 @media(max-width:560px){
   .nps-grid{gap:3px;}.nps-btn{font-size:11px;border-radius:7px;}
-  .id-fields.show{grid-template-columns:1fr;}
-  .hero{padding:3rem 1rem 2.5rem;}
-  .card{padding:1.25rem;}
-  .stab{font-size:11px;padding:8px 3px;}
-  .rrow:hover{margin:0;padding:13px 0;}
-  .review-toggle{flex-direction:column;}
-  .rtbtn{max-width:100%;}
+  .id-fields.show,.peer-id-grid{grid-template-columns:1fr;}
+  .review-toggle{flex-direction:column;}.rtbtn{max-width:100%;}
+  .card{padding:1.25rem;}.stab{font-size:11px;padding:8px 3px;}
 }
 </style>
 </head>
 <body>
-<div class="bg-ambient"></div>
-<div class="bg-grid"></div>
-
+<div class="bg-ambient"></div><div class="bg-grid"></div>
 <header class="header">
-  <div class="logo-wrap">
-    <div class="logo">Analytics NPS</div>
-    <div class="logo-tag">PW Education &middot; Feedback Portal</div>
-  </div>
+  <div><div class="logo">Analytics NPS</div><div class="logo-tag">PW Education &middot; Feedback Portal</div></div>
   <a href="admin.html" class="admin-pill">Admin Portal &rarr;</a>
 </header>
-
 <div class="hero z1">
   <div class="hero-chip"><span class="hero-dot"></span>Share Your Experience</div>
-  <h1>Your Voice <em>Shapes<br>Our Team</em></h1>
+  <h1>Your Voice <em>Shapes Our Team</em></h1>
   <p class="hero-desc">Help us build a stronger Analytics department. Your honest feedback drives real change.</p>
 </div>
-
-<!-- REVIEW TYPE TOGGLE -->
 <div class="review-toggle-wrap z1">
   <div class="review-toggle">
-    <button class="rtbtn active-ext" id="rt-ext" onclick="setReviewType('external')">
-      <span class="rtbtn-icon">&#x1F4CB;</span>
-      <span><span class="rtbtn-label">External Review</span><span class="rtbtn-sub">Customer / stakeholder feedback</span></span>
+    <button class="rtbtn active-ext" id="rt-ext" onclick="setRT('external')">
+      <span class="rtbtn-icon">📋</span>
+      <span><span class="rtbtn-label">Stakeholder Review</span><span class="rtbtn-sub">Customer / external feedback</span></span>
     </button>
     <span class="rt-sep">or</span>
-    <button class="rtbtn" id="rt-peer" onclick="setReviewType('peer')">
-      <span class="rtbtn-icon">&#x1F91D;</span>
+    <button class="rtbtn" id="rt-peer" onclick="setRT('peer')">
+      <span class="rtbtn-icon">🤝</span>
       <span><span class="rtbtn-label">Peer Review</span><span class="rtbtn-sub">Analyst rating another analyst</span></span>
     </button>
   </div>
 </div>
-
-<!-- PEER BANNER -->
 <div class="peer-banner z1" id="peer-banner">
-  <div class="peer-banner-inner">
-    &#x1F4CC; <strong>Peer Review Mode</strong> &mdash; You are rating a fellow analyst. Please select your own name below as the reviewer.
-  </div>
+  <div class="peer-banner-inner">📌 <strong>Peer Review Mode</strong> &mdash; You are rating a fellow analyst. Select "No" for anonymous to identify yourself as the reviewer.</div>
 </div>
-
 <div class="prog-bar z1">
   <div class="prog-inner">
     <div class="step-item active" id="step1"><div class="step-num">1</div><div class="step-label">Your Details</div></div>
-    <div class="step-sep">&#x203A;</div>
+    <div class="step-sep">›</div>
     <div class="step-item" id="step2"><div class="step-num">2</div><div class="step-label">Rating &amp; Feedback</div></div>
-    <div class="step-sep">&#x203A;</div>
+    <div class="step-sep">›</div>
     <div class="step-item" id="step3"><div class="step-num">3</div><div class="step-label">Done</div></div>
   </div>
 </div>
-
 <div class="wrap">
-
   <!-- PAGE 1 -->
   <div class="page active" id="page1">
     <div class="card">
-      <div class="card-title" id="card1-title">Basic Information</div>
-
-      <div class="fg">
-        <label class="flabel">Vertical <span class="req">*</span></label>
+      <div class="card-title">Basic Information</div>
+      <div class="fg"><label class="flabel">Vertical <span class="req">*</span></label>
         <div class="sel-wrap"><select id="vertical" onchange="onVert()">
-          <option value="">&#x2014; Select Vertical &#x2014;</option>
+          <option value="">-- Select Vertical --</option>
           <option>Vidyapeeth</option><option>Pathshala</option>
-        </select></div>
-      </div>
-      <div class="fg">
-        <label class="flabel">Team <span class="req">*</span></label>
+        </select></div></div>
+      <div class="fg"><label class="flabel">Team <span class="req">*</span></label>
         <div class="sel-wrap"><select id="team" onchange="onTeam()">
-          <option value="">&#x2014; Select Team &#x2014;</option>
+          <option value="">-- Select Team --</option>
           <option value="City">City</option>
           <option value="Head Office (Noida)">Head Office (Noida)</option>
-        </select></div>
-      </div>
-
-      <!-- City -->
+        </select></div></div>
       <div id="cf" style="display:none">
-        <div class="fg">
-          <label class="flabel">Region <span class="req">*</span></label>
+        <div class="fg"><label class="flabel" id="analyst-label">Analyst Being Rated <span class="req">*</span></label>
           <div class="sel-wrap"><select id="region" onchange="onRegion()">
-            <option value="">&#x2014; Select Region &#x2014;</option>
+            <option value="">-- Select Region --</option>
             <option>East</option><option>Maharashtra</option><option>Gujarat</option>
             <option>PB + JK</option><option>MP + CG</option><option>Rajasthan</option>
             <option>NCR + UK</option><option>Bihar + JH</option><option>UP</option><option>South</option>
-          </select></div>
-        </div>
-        <div class="fg">
-          <label class="flabel" id="analyst-label">Analyst Being Rated <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="ac" disabled><option value="">&#x2014; Select Region first &#x2014;</option></select></div>
-        </div>
+          </select></div></div>
+        <div class="fg"><div class="sel-wrap"><select id="ac" disabled><option value="">-- Select Region first --</option></select></div></div>
       </div>
-
-      <!-- HO -->
       <div id="hf" style="display:none">
-        <div class="fg">
-          <label class="flabel">Department <span class="req">*</span></label>
+        <div class="fg"><label class="flabel" id="analyst-label-ho">Analyst Being Rated <span class="req">*</span></label>
           <div class="sel-wrap"><select id="dept" onchange="onDept()">
-            <option value="">&#x2014; Select Department &#x2014;</option>
-            <option>Ops</option><option>Acad</option>
-            <option>Biz Finance and Compliance</option><option>Sales</option>
-            <option>Marketing</option><option>Analytics Lead</option>
-          </select></div>
-        </div>
-        <div class="fg">
-          <label class="flabel" id="analyst-label-ho">Analyst Being Rated <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="ah" disabled><option value="">&#x2014; Select Department first &#x2014;</option></select></div>
-        </div>
+            <option value="">-- Select Department --</option>
+            <option>Ops</option><option>Acad</option><option>Biz Finance and Compliance</option>
+            <option>Sales</option><option>Marketing</option><option>Analytics Lead</option>
+          </select></div></div>
+        <div class="fg"><div class="sel-wrap"><select id="ah" disabled><option value="">-- Select Department first --</option></select></div></div>
       </div>
-
-      <!-- Peer Reviewer section (only shown in peer mode) -->
-      <div id="peer-reviewer-section" style="display:none">
-        <div style="border-top:1px solid var(--border);margin:1.25rem 0;"></div>
-        <div class="fg">
-          <label class="flabel">Your Name (Reviewer) <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="peer-region" onchange="onPeerRegion()">
-            <option value="">&#x2014; Select Your Region / Dept &#x2014;</option>
-            <option value="city-East">City &mdash; East</option>
-            <option value="city-Maharashtra">City &mdash; Maharashtra</option>
-            <option value="city-Gujarat">City &mdash; Gujarat</option>
-            <option value="city-PB + JK">City &mdash; PB + JK</option>
-            <option value="city-MP + CG">City &mdash; MP + CG</option>
-            <option value="city-Rajasthan">City &mdash; Rajasthan</option>
-            <option value="city-NCR + UK">City &mdash; NCR + UK</option>
-            <option value="city-Bihar + JH">City &mdash; Bihar + JH</option>
-            <option value="city-UP">City &mdash; UP</option>
-            <option value="ho-Ops">HO &mdash; Ops</option>
-            <option value="ho-Acad">HO &mdash; Acad</option>
-            <option value="ho-Biz Finance and Compliance">HO &mdash; Biz Finance</option>
-            <option value="ho-Sales">HO &mdash; Sales</option>
-            <option value="ho-Marketing">HO &mdash; Marketing</option>
-            <option value="ho-Analytics Lead">HO &mdash; Analytics Lead</option>
-          </select></div>
-        </div>
-        <div class="fg">
-          <label class="flabel">Select Your Name <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="peer-reviewer" disabled><option value="">&#x2014; Select region/dept first &#x2014;</option></select></div>
-        </div>
-      </div>
-
-      <p id="e1" class="err">&#x26A0; Please fill all required fields to continue.</p>
+      <p id="e1" class="err">Please fill all required fields to continue.</p>
     </div>
     <div class="nav-row"><div></div><button class="btn btn-gold" onclick="g2()">Continue &rarr;</button></div>
   </div>
-
   <!-- PAGE 2 -->
   <div class="page" id="page2">
-
-    <!-- DUAL NPS -->
     <div class="card">
       <div class="card-title">NPS Scores</div>
-
-      <!-- Analyst NPS -->
       <div class="nps-section">
-        <div class="nps-section-label" id="analyst-nps-label">&#x1F464; Analyst NPS</div>
-        <div class="nps-section-sub" id="analyst-nps-sub">How likely are you to recommend this analyst to a colleague? (0 = not at all, 10 = extremely)</div>
+        <div class="nps-section-label" id="analyst-nps-label">👤 Analyst NPS</div>
+        <div class="nps-section-sub" id="analyst-nps-sub">How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)</div>
         <div class="nps-grid" id="nps-grid-analyst"></div>
         <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
         <div id="nbw-analyst" style="min-height:30px;margin-top:6px;"></div>
       </div>
-
-      <!-- Team NPS -->
       <div class="nps-section">
-        <div class="nps-section-label">&#x1F465; Team NPS</div>
-        <div class="nps-section-sub">How likely are you to recommend the overall Analytics team to a colleague? (0 = not at all, 10 = extremely)</div>
+        <div class="nps-section-label">👥 Team NPS</div>
+        <div class="nps-section-sub">How likely are you to recommend the overall Analytics team? (0=not at all, 10=extremely)</div>
         <div class="nps-grid" id="nps-grid-team"></div>
         <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
         <div id="nbw-team" style="min-height:30px;margin-top:6px;"></div>
       </div>
-
-      <p id="ne" class="err">&#x26A0; Please select both NPS scores.</p>
+      <p id="ne" class="err">Please select both NPS scores.</p>
     </div>
-
-    <!-- Feedback -->
     <div class="card">
       <div class="card-title">Feedback</div>
       <div class="stabs">
-        <button class="stab active" onclick="doStab(0,this)">&#x1F4CB; General</button>
-        <button class="stab" onclick="doStab(1,this)">&#x1F31F; Appreciation</button>
-        <button class="stab" onclick="doStab(2,this)">&#x26A0;&#xFE0F; Complaint</button>
+        <button class="stab active" onclick="doStab(0,this)">📋 General</button>
+        <button class="stab" onclick="doStab(1,this)">🌟 Appreciation</button>
+        <button class="stab" onclick="doStab(2,this)">⚠️ Complaint</button>
       </div>
       <div class="sp active" id="sp0">
         <div class="rrow"><div><div class="rl-t">Overall Experience</div><div class="rl-s">How was your overall interaction?</div></div><div class="stars" data-key="oe"></div></div>
@@ -398,17 +280,16 @@ textarea::placeholder{color:var(--text3);}
         <div class="rrow"><div><div class="rl-t">Professionalism</div><div class="rl-s">Behavior, politeness, and attitude</div></div><div class="stars" data-key="pr"></div></div>
         <div class="rrow"><div><div class="rl-t">Responsiveness</div><div class="rl-s">How quickly they handled your queries</div></div><div class="stars" data-key="re"></div></div>
         <div class="rrow"><div><div class="rl-t">Problem-Solving Ability</div><div class="rl-s">Ability to resolve doubts / issues</div></div><div class="stars" data-key="psa"></div></div>
-        <div style="margin-top:1.1rem"><label class="flabel">Additional Comments</label><textarea id="ac-txt" placeholder="Share what you appreciated most…"></textarea></div>
+        <div style="margin-top:1.1rem"><label class="flabel">Additional Comments</label><textarea id="ac-txt" placeholder="Share what you appreciated most..."></textarea></div>
       </div>
       <div class="sp" id="sp2">
-        <div class="rrow"><div><div class="rl-t">Delay in Response</div><div class="rl-s">Waiting time issues (1 = severe, 5 = no issue)</div></div><div class="stars" data-key="dr"></div></div>
+        <div class="rrow"><div><div class="rl-t">Delay in Response</div><div class="rl-s">Waiting time issues (1=severe, 5=no issue)</div></div><div class="stars" data-key="dr"></div></div>
         <div class="rrow"><div><div class="rl-t">Miscommunication</div><div class="rl-s">Wrong / incomplete information shared</div></div><div class="stars" data-key="mc"></div></div>
         <div class="rrow"><div><div class="rl-t">Process Complexity</div><div class="rl-s">Too many steps / confusion involved</div></div><div class="stars" data-key="pc"></div></div>
-        <div class="rrow"><div><div class="rl-t">Staff Behavior Issue</div><div class="rl-s">Any negative interaction (1 = severe, 5 = no issue)</div></div><div class="stars" data-key="si"></div></div>
-        <div style="margin-top:1.1rem"><label class="flabel">Describe the Issue</label><textarea id="cp-txt" placeholder="Please describe your complaint in detail…"></textarea></div>
+        <div class="rrow"><div><div class="rl-t">Staff Behavior Issue</div><div class="rl-s">Any negative interaction (1=severe, 5=no issue)</div></div><div class="stars" data-key="si"></div></div>
+        <div style="margin-top:1.1rem"><label class="flabel">Describe the Issue</label><textarea id="cp-txt" placeholder="Please describe your complaint in detail..."></textarea></div>
       </div>
     </div>
-
     <div class="anon-card">
       <div class="anon-top">
         <div><div class="anon-label">Submit Anonymously?</div><div class="anon-sub">Your feedback will be recorded without identifying you</div></div>
@@ -417,25 +298,51 @@ textarea::placeholder{color:var(--text3);}
           <button class="tbtn" id="bn" onclick="setAnon(false)">No</button>
         </div>
       </div>
+      <!-- Identity fields (non-anonymous) -->
       <div class="id-fields" id="idf">
         <div class="fg" style="margin:0"><label class="flabel">Your Name</label><input type="text" id="sn" placeholder="Full name"></div>
         <div class="fg" style="margin:0"><label class="flabel">PW ID</label><input type="text" id="sp2i" placeholder="e.g. PW12345"></div>
       </div>
+      <!-- Peer reviewer fields: shown only when peer mode + not anonymous -->
+      <div class="peer-id-section" id="peer-id-section">
+        <div class="peer-id-title">📌 Peer Reviewer Details</div>
+        <div class="peer-id-grid">
+          <div class="fg" style="margin:0"><label class="flabel">Your Team (Reviewer) <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="peer-region" onchange="onPeerRegion()">
+              <option value="">-- Select Your Team --</option>
+              <option value="city-East">City - East</option>
+              <option value="city-Maharashtra">City - Maharashtra</option>
+              <option value="city-Gujarat">City - Gujarat</option>
+              <option value="city-PB + JK">City - PB + JK</option>
+              <option value="city-MP + CG">City - MP + CG</option>
+              <option value="city-Rajasthan">City - Rajasthan</option>
+              <option value="city-NCR + UK">City - NCR + UK</option>
+              <option value="city-Bihar + JH">City - Bihar + JH</option>
+              <option value="city-UP">City - UP</option>
+              <option value="ho-Ops">HO - Ops</option>
+              <option value="ho-Acad">HO - Acad</option>
+              <option value="ho-Biz Finance and Compliance">HO - Biz Finance</option>
+              <option value="ho-Sales">HO - Sales</option>
+              <option value="ho-Marketing">HO - Marketing</option>
+              <option value="ho-Analytics Lead">HO - Analytics Lead</option>
+            </select></div></div>
+          <div class="fg" style="margin:0"><label class="flabel">Your Name (Reviewer) <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="peer-reviewer" disabled><option value="">-- Select team first --</option></select></div></div>
+        </div>
+      </div>
     </div>
-
-    <p id="e2" class="err">&#x26A0; Please select both NPS scores before submitting.</p>
+    <p id="e2" class="err">Please select both NPS scores before submitting.</p>
     <div class="nav-row">
       <button class="btn btn-ol" onclick="g1()">&larr; Back</button>
-      <button class="btn btn-blue" onclick="submitF()">Submit Feedback &#x2713;</button>
+      <button class="btn btn-blue" onclick="submitF()">Submit Feedback</button>
     </div>
   </div>
-
   <!-- PAGE 3 -->
   <div class="page" id="page3">
     <div class="card ty">
-      <div class="ty-ring">&#x2713;</div>
+      <div class="ty-ring">✓</div>
       <div class="ty-title">Thank You!</div>
-      <p class="ty-sub">Your feedback has been recorded and will help shape a better Analytics team experience for everyone.</p>
+      <p class="ty-sub">Your feedback has been recorded and will help shape a better Analytics team experience.</p>
       <div class="ty-badges">
         <span class="ty-badge" id="ty-type-badge"></span>
         <span class="ty-badge" id="ty-nps-badge" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);color:var(--green);"></span>
@@ -444,12 +351,9 @@ textarea::placeholder{color:var(--text3);}
       <button class="btn btn-gold" style="margin:0 auto" onclick="resetAll()">Submit Another Response</button>
     </div>
   </div>
-
-</div><!-- end wrap -->
-
+</div>
 <script>
 const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
-
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
   'Maharashtra':['Bhushan Mail - PW8223','Ambikesh Srivastava - PW23824','Prateek Gaur - PW28736'],
@@ -470,66 +374,58 @@ const HA={
   'Marketing':['Sachin Kumar - PW2366','Arvind Yadav - PW9155','Harshit Arora - PW18652','Puneet Sirohi - PW20318'],
   'Analytics Lead':['Ankit Kumar - PW11292']
 };
-
 const R={};
-let analystNPS=null, teamNPS=null, isAnon=null;
-let reviewType='external';
+let analystNPS=null,teamNPS=null,isAnon=null,reviewType='external';
 
-// ── Review Type Toggle ────────────────────────────────────────────
-function setReviewType(type){
-  reviewType=type;
-  document.getElementById('rt-ext').className='rtbtn'+(type==='external'?' active-ext':'');
-  document.getElementById('rt-peer').className='rtbtn'+(type==='peer'?' active-peer':'');
-  document.getElementById('peer-banner').className='peer-banner z1'+(type==='peer'?' show':'');
-  document.getElementById('peer-reviewer-section').style.display=type==='peer'?'block':'none';
-  // Update label
-  const lbl=type==='peer'?'Analyst Being Rated (Peer) <span class="req">*</span>':'Analyst Being Rated <span class="req">*</span>';
-  document.getElementById('analyst-label').innerHTML=lbl;
-  document.getElementById('analyst-label-ho').innerHTML=lbl;
-  // Update NPS label
-  document.getElementById('analyst-nps-label').textContent=type==='peer'?'\uD83E\uDD1D Peer Analyst NPS':'\uD83D\uDC64 Analyst NPS';
-  document.getElementById('analyst-nps-sub').textContent=type==='peer'?'How likely are you to recommend this peer analyst to a colleague?':'How likely are you to recommend this analyst to a colleague?';
+function setRT(t){
+  reviewType=t;
+  document.getElementById('rt-ext').className='rtbtn'+(t==='external'?' active-ext':'');
+  document.getElementById('rt-peer').className='rtbtn'+(t==='peer'?' active-peer':'');
+  document.getElementById('peer-banner').className='peer-banner z1'+(t==='peer'?' show':'');
+  updatePeerSection();
+  const lbl=t==='peer'?'Analyst Being Rated (Peer) <span class="req">*</span>':'Analyst Being Rated <span class="req">*</span>';
+  if(document.getElementById('analyst-label'))document.getElementById('analyst-label').innerHTML=lbl;
+  if(document.getElementById('analyst-label-ho'))document.getElementById('analyst-label-ho').innerHTML=lbl;
+  document.getElementById('analyst-nps-label').textContent=t==='peer'?'🤝 Peer Analyst NPS':'👤 Analyst NPS';
+  document.getElementById('analyst-nps-sub').textContent=t==='peer'?'How likely are you to recommend this peer analyst to a colleague? (0=not at all, 10=extremely)':'How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)';
 }
-
-function onPeerRegion(){
-  const val=document.getElementById('peer-region').value;
-  const sel=document.getElementById('peer-reviewer');
-  sel.innerHTML='<option value="">\u2014 Select Your Name \u2014</option>';
-  if(!val){sel.disabled=true;return;}
-  const [type,key]=val.split('-').reduce((a,c,i)=>i===0?[c,'']:[a[0],a[1]+(a[1]?'-':'')+c],['','']);
-  let list=[];
-  if(type==='city')list=CA[key]||[];
-  else list=HA[key]||[];
-  list.forEach(a=>sel.innerHTML+=`<option value="${a}">${a}</option>`);
-  sel.disabled=list.length===0;
+function updatePeerSection(){
+  const show=reviewType==='peer'&&isAnon===false;
+  document.getElementById('peer-id-section').className='peer-id-section'+(show?' show':'');
 }
-
-// ── Page 1 ────────────────────────────────────────────────────────
 function onVert(){
   const v=document.getElementById('vertical').value;
   const t=document.getElementById('team');
   t.value='';t.style.opacity=v?'1':'0.4';t.style.pointerEvents=v?'auto':'none';
-  document.getElementById('cf').style.display='none';
-  document.getElementById('hf').style.display='none';
+  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
 }
 function onTeam(){
   const t=document.getElementById('team').value;
   document.getElementById('cf').style.display=t==='City'?'block':'none';
   document.getElementById('hf').style.display=t==='Head Office (Noida)'?'block':'none';
   document.getElementById('region').value='';document.getElementById('dept').value='';
-  rsel('ac','\u2014 Select Region first \u2014');rsel('ah','\u2014 Select Department first \u2014');
+  rsel('ac','-- Select Region first --');rsel('ah','-- Select Department first --');
 }
-function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[],'\u2014 Select Analyst \u2014');}
-function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[],'\u2014 Select Analyst \u2014');}
-function rsel(id,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;s.disabled=true;}
-function fsel(id,it,ph){const s=document.getElementById(id);s.innerHTML=`<option value="">${ph}</option>`;it.forEach(a=>s.innerHTML+=`<option value="${a}">${a}</option>`);s.disabled=it.length===0;}
-
+function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[]);}
+function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[]);}
+function rsel(id,ph){const s=document.getElementById(id);if(!s)return;s.innerHTML='<option value="">'+ph+'</option>';s.disabled=true;}
+function fsel(id,it){const s=document.getElementById(id);s.innerHTML='<option value="">-- Select Analyst --</option>';it.forEach(function(a){s.innerHTML+='<option value="'+a+'">'+a+'</option>';});s.disabled=it.length===0;}
+function onPeerRegion(){
+  const val=document.getElementById('peer-region').value;
+  const sel=document.getElementById('peer-reviewer');
+  sel.innerHTML='<option value="">-- Select Your Name --</option>';
+  if(!val){sel.disabled=true;return;}
+  const parts=val.split('-');const type=parts[0];const key=parts.slice(1).join('-');
+  const list=type==='city'?(CA[key]||[]):(HA[key]||[]);
+  list.forEach(function(a){sel.innerHTML+='<option value="'+a+'">'+a+'</option>';});
+  sel.disabled=list.length===0;
+}
 function g2(){
   const team=document.getElementById('team').value,ic=team==='City';
   let ok=document.getElementById('vertical').value&&team;
   if(ic)ok=ok&&document.getElementById('region').value&&document.getElementById('ac').value;
   else if(team)ok=ok&&document.getElementById('dept').value&&document.getElementById('ah').value;
-  if(reviewType==='peer'){
+  if(reviewType==='peer'&&isAnon===false){
     ok=ok&&document.getElementById('peer-region').value&&document.getElementById('peer-reviewer').value;
   }
   if(!ok){document.getElementById('e1').classList.add('show');return;}
@@ -541,53 +437,71 @@ function setPage(f,t){
   document.getElementById('page'+t).classList.add('active');
   const s=['','',''];
   if(t===1)s[0]='active';if(t===2){s[0]='done';s[1]='active';}if(t===3){s[0]=s[1]='done';s[2]='active';}
-  [1,2,3].forEach((n,i)=>document.getElementById('step'+n).className='step-item '+(s[i]||''));
+  [1,2,3].forEach(function(n,i){document.getElementById('step'+n).className='step-item '+(s[i]||'');});
   window.scrollTo(0,0);
 }
-
-// ── NPS grids ─────────────────────────────────────────────────────
-function buildNPSGrid(gridId, badgeId, varName){
+function buildNPS(gridId,badgeId,which){
   const grid=document.getElementById(gridId);
   for(let i=0;i<=10;i++){
     const b=document.createElement('button');b.className='nps-btn';b.textContent=i;
-    b.onclick=(function(score,btn2){return function(){
-      if(varName==='analyst')analystNPS=score;else teamNPS=score;
-      grid.querySelectorAll('.nps-btn').forEach(x=>x.className='nps-btn');
-      const c=score<=6?'sd':score<=8?'sp':'sg';btn2.className='nps-btn '+c;
-      const[l,bc]=c==='sd'?['Detractor','bd']:c==='sp'?['Passive','bp']:['Promoter','bg'];
-      document.getElementById(badgeId).innerHTML=`<span class="nps-badge ${bc}"><span style="font-size:8px">&bull;</span> Score ${score} \u2014 ${l}</span>`;
-      document.getElementById('ne').classList.remove('show');
-    };})(i,b);
+    (function(score,btn){
+      btn.onclick=function(){
+        if(which==='analyst')analystNPS=score;else teamNPS=score;
+        grid.querySelectorAll('.nps-btn').forEach(function(x){x.className='nps-btn';});
+        const c=score<=6?'sd':score<=8?'sp':'sg';btn.className='nps-btn '+c;
+        const l=c==='sd'?'Detractor':c==='sp'?'Passive':'Promoter';
+        const bc=c==='sd'?'bd':c==='sp'?'bp':'bg';
+        document.getElementById(badgeId).innerHTML='<span class="nps-badge '+bc+'">Score '+score+' - '+l+'</span>';
+        document.getElementById('ne').classList.remove('show');
+      };
+    })(i,b);
     grid.appendChild(b);
   }
 }
-buildNPSGrid('nps-grid-analyst','nbw-analyst','analyst');
-buildNPSGrid('nps-grid-team','nbw-team','team');
-
-// ── Stars ─────────────────────────────────────────────────────────
-function bs(c){const k=c.dataset.key;R[k]=0;for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star';s.textContent='\u2605';s.onclick=()=>{R[k]=i;pt(c,k);};s.onmouseenter=()=>c.querySelectorAll('.star').forEach((x,j)=>x.classList.toggle('lit',j<i));s.onmouseleave=()=>pt(c,k);c.appendChild(s);}}
-function pt(c,k){c.querySelectorAll('.star').forEach((s,j)=>s.classList.toggle('lit',j<(R[k]||0)));}
+buildNPS('nps-grid-analyst','nbw-analyst','analyst');
+buildNPS('nps-grid-team','nbw-team','team');
+function bs(c){
+  const k=c.dataset.key;R[k]=0;
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');s.className='star';s.textContent='★';
+    s.onclick=function(){R[k]=i;pt(c,k);};
+    s.onmouseenter=function(){c.querySelectorAll('.star').forEach(function(x,j){x.classList.toggle('lit',j<i);});};
+    s.onmouseleave=function(){pt(c,k);};
+    c.appendChild(s);
+  }
+}
+function pt(c,k){c.querySelectorAll('.star').forEach(function(s,j){s.classList.toggle('lit',j<(R[k]||0));});}
 document.querySelectorAll('.stars').forEach(bs);
-
-function doStab(i,b){document.querySelectorAll('.stab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.sp').forEach(p=>p.classList.remove('active'));b.classList.add('active');document.getElementById('sp'+i).classList.add('active');}
-
-function setAnon(v){isAnon=v;document.getElementById('by').className='tbtn'+(v?' ay':'');document.getElementById('bn').className='tbtn'+(!v?' an':'');document.getElementById('idf').className='id-fields'+(!v?' show':'');}
-
-// ── Submit ────────────────────────────────────────────────────────
+function doStab(i,b){
+  document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.sp').forEach(function(p){p.classList.remove('active');});
+  b.classList.add('active');document.getElementById('sp'+i).classList.add('active');
+}
+function setAnon(v){
+  isAnon=v;
+  document.getElementById('by').className='tbtn'+(v?' ay':'');
+  document.getElementById('bn').className='tbtn'+(!v?' an':'');
+  document.getElementById('idf').className='id-fields'+(!v?' show':'');
+  updatePeerSection();
+}
 async function submitF(){
   if(analystNPS===null||teamNPS===null){document.getElementById('ne').classList.add('show');return;}
-  const btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting\u2026';btn.disabled=true;
+  const btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
   const team=document.getElementById('team').value,ic=team==='City';
   const analyst=ic?document.getElementById('ac').value:document.getElementById('ah').value;
-  const reviewer=reviewType==='peer'?document.getElementById('peer-reviewer').value:'';
+  const reviewer=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-reviewer').value:'';
+  const reviewerTeam=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-region').value:'';
   const e={
-    id:'NPS-'+Date.now(),timestamp:new Date().toISOString(),
+    id:'NPS-'+Date.now(),
+    timestamp:new Date().toISOString(),
     review_type:reviewType,
-    vertical:document.getElementById('vertical').value,team,
+    vertical:document.getElementById('vertical').value,
+    team:team,
     region:ic?document.getElementById('region').value:'',
     department:!ic?document.getElementById('dept').value:'',
-    analyst,
+    analyst:analyst,
     reviewer:reviewer,
+    reviewer_team:reviewerTeam,
     analyst_nps:analystNPS,
     analyst_nps_category:analystNPS<=6?'Detractor':analystNPS<=8?'Passive':'Promoter',
     team_nps:teamNPS,
@@ -599,36 +513,41 @@ async function submitF(){
     comp_comment:document.getElementById('cp-txt').value,
     anonymous:isAnon!==false,
     submitter_name:isAnon===false?document.getElementById('sn').value:'Anonymous',
-    submitter_pwid:isAnon===false?document.getElementById('sp2i').value:'\u2014',
+    submitter_pwid:isAnon===false?document.getElementById('sp2i').value:'--'
   };
-  const all=JSON.parse(localStorage.getItem('nps_responses')||'[]');all.push(e);localStorage.setItem('nps_responses',JSON.stringify(all));
+  const all=JSON.parse(localStorage.getItem('nps_responses')||'[]');
+  all.push(e);localStorage.setItem('nps_responses',JSON.stringify(all));
   if(SHEET_URL){
-    try{const params=new URLSearchParams();params.append('data',JSON.stringify(e));await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});}
-    catch(err){console.warn('Sheet sync failed:',err);}
+    try{
+      const params=new URLSearchParams();
+      params.append('data',JSON.stringify(e));
+      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});
+    }catch(err){console.warn('Sheet sync failed:',err);}
   }
-  btn.innerHTML='Submit Feedback \u2713';btn.disabled=false;
-  document.getElementById('ty-type-badge').textContent=reviewType==='peer'?'\uD83E\uDD1D Peer Review':'\uD83D\uDCCB External Review';
+  btn.innerHTML='Submit Feedback';btn.disabled=false;
+  document.getElementById('ty-type-badge').textContent=reviewType==='peer'?'🤝 Peer Review':'📋 Stakeholder Review';
   document.getElementById('ty-type-badge').className='ty-badge '+(reviewType==='peer'?'peer':'ext');
-  document.getElementById('ty-nps-badge').textContent='Analyst NPS: '+analystNPS+' | Team NPS: '+teamNPS;
+  document.getElementById('ty-nps-badge').textContent='Analyst: '+analystNPS+' | Team: '+teamNPS;
   document.getElementById('tref').innerHTML='Response ID: <strong>'+e.id+'</strong>';
   setPage(2,3);
 }
-
-// ── Reset ─────────────────────────────────────────────────────────
 function resetAll(){
-  analystNPS=null;teamNPS=null;isAnon=null;Object.keys(R).forEach(k=>R[k]=0);
-  ['vertical','team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.value='';el.disabled=['ac','ah','peer-reviewer'].includes(id);});
+  analystNPS=null;teamNPS=null;isAnon=null;Object.keys(R).forEach(function(k){R[k]=0;});
+  ['vertical','team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id){
+    const el=document.getElementById(id);if(!el)return;
+    el.value='';el.disabled=['ac','ah','peer-reviewer'].includes(id);
+  });
   document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
-  document.querySelectorAll('.nps-btn').forEach(b=>b.className='nps-btn');
+  document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
   document.getElementById('nbw-analyst').innerHTML='';document.getElementById('nbw-team').innerHTML='';
-  document.querySelectorAll('.stars').forEach(c=>pt(c,c.dataset.key));
+  document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
   document.getElementById('ac-txt').value='';document.getElementById('cp-txt').value='';
   document.getElementById('by').className='tbtn';document.getElementById('bn').className='tbtn';
   document.getElementById('idf').className='id-fields';
+  document.getElementById('peer-id-section').className='peer-id-section';
   document.getElementById('sn').value='';document.getElementById('sp2i').value='';
   doStab(0,document.querySelectorAll('.stab')[0]);
-  setReviewType('external');
-  setPage(3,1);
+  setRT('external');setPage(3,1);
 }
 </script>
 </body>
