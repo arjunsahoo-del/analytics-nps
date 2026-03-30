@@ -226,7 +226,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
   </div>
   <div class="hbtns">
     <button class="hbtn hbtn-seed" onclick="seedData()">✦ Sample Data</button>
-    <button id="sync-btn" class="hbtn hbtn-sync" onclick="syncSheet()">⟳ Sync Sheet</button>
+    <button id="sync-btn" class="hbtn hbtn-sync" onclick="syncSheet()">⟳ Sync Admin Portal</button>
     <button class="hbtn hbtn-export" onclick="exportCSV()">⬇ Export CSV</button>
     <div class="user-pill">
       <div class="user-avatar" id="user-avatar">A</div>
@@ -414,7 +414,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLOg-6mctTB9P4OlPCAzQyndwCxUT5-7eej_E__JNMcl1PpY1937_AIWzGRhAyJpki/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -982,6 +982,19 @@ function seedData(){
   }
   localStorage.setItem('nps_responses',JSON.stringify([...ex,...ne]));load();alert('40 sample responses loaded!');
 }
+
+// ── AUTO SYNC every 5 minutes ────────────────────────────────────
+function autoSync(){
+  if(SHEET_ID && SHEET_ID !== 'YOUR_SHEET_ID_HERE'){
+    console.log('Auto-syncing from Google Sheets...');
+    syncSheet(true); // silent mode
+  }
+}
+// Start auto sync after page loads
+setTimeout(function(){
+  autoSync();
+  setInterval(autoSync, 5 * 60 * 1000); // every 5 minutes
+}, 10000); // first sync after 10 seconds
 </script>
 </body>
 </html>
