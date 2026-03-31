@@ -260,7 +260,7 @@ textarea::placeholder{color:var(--text3);}
         <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
         <div id="nbw-team" style="min-height:30px;margin-top:6px;"></div>
       </div>
-      <p id="ne" class="err">Please select both NPS scores.</p>
+      <p id="ne" class="err">Please select both NPS scores before continuing.</p>
     </div>
     <div class="card">
       <div class="card-title">Feedback</div>
@@ -301,7 +301,7 @@ textarea::placeholder{color:var(--text3);}
       <!-- Identity fields (non-anonymous) -->
       <div class="id-fields" id="idf">
         <div class="fg" style="margin:0"><label class="flabel">Your Name</label><input type="text" id="sn" placeholder="Full name"></div>
-        <div class="fg" style="margin:0"><label class="flabel">PW ID</label><input type="text" id="sp2i" placeholder="e.g. PW12345"></div>
+        <div class="fg" style="margin:0"><label class="flabel">PW ID</label><input type="text" id="spid" placeholder="e.g. PW12345"></div>
       </div>
       <!-- Peer reviewer fields: shown only when peer mode + not anonymous -->
       <div class="peer-id-section" id="peer-id-section">
@@ -334,7 +334,7 @@ textarea::placeholder{color:var(--text3);}
     <p id="e2" class="err">Please select both NPS scores before submitting.</p>
     <div class="nav-row">
       <button class="btn btn-ol" onclick="g1()">&larr; Back</button>
-      <button class="btn btn-blue" onclick="submitF()">Submit Feedback</button>
+      <button class="btn btn-blue" id="submit-btn" onclick="submitF()">Submit Feedback</button>
     </div>
   </div>
   <!-- PAGE 3 -->
@@ -353,201 +353,375 @@ textarea::placeholder{color:var(--text3);}
   </div>
 </div>
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbzLOg-6mctTB9P4OlPCAzQyndwCxUT5-7eej_E__JNMcl1PpY1937_AIWzGRhAyJpki/exec';
-const CA={
-  'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
-  'Maharashtra':['Bhushan Mail - PW8223','Ambikesh Srivastava - PW23824','Prateek Gaur - PW28736'],
-  'Gujarat':['Harshil Shah - PW16484','Harshal Bawne - PW28320','Nitin Namdev - PW27713'],
-  'PB + JK':['Kanika Agrawal - PW8137','Mayank Kumar - PW10407','Vishal Yadav - PW2441'],
-  'MP + CG':['Mohit Namdev - PW3996','Manish Kawale - PW9267','Sourabh Yadav - PW6274'],
-  'Rajasthan':['Pranjal Bhojak - PW2649','Mohammad Faisal - PW15611','Rahul Yadav - PW27161'],
-  'NCR + UK':['Sanya Dubey - PW17316','Dikshita Manik - PW18794','Shreyansha Sonwane - PW10103','Tanu Rajput - PW8611'],
-  'Bihar + JH':['Shyam Kumar - PW29064','Piyush Raj - PW12642','Rajnish Sharma - PW30574','Saurav Kumar - PW5420'],
-  'UP':['Sougata Mitra - PW12967','Alok Kumar - PW16309','Kaberi Devi - PW10951'],
-  'South':[]
-};
-const HA={
-  'Ops':['Tanya Bhagat - PW0658','Shreya Kansal - PW8595','Aditya Kumar - PW17577'],
-  'Acad':['Himanshu Sethi - PW0935','Ranvijay Singh - PW19008','Shivendra Singh - PW26405','Deepak Singh - PW26476','Vishwajeet Singh - PW9191','Mohammad Aadil - PW8919'],
-  'Biz Finance and Compliance':['Deepanshu Verma - PW10357','Ajay Gupta - PW14683','Vishwaradya - PW18728','Saloni Maheshwari - PW18651'],
-  'Sales':['Madhav Gotmare - PW3195','Kamlesh Kumar - PW20352','Mahima Soni - PW20535','Gaurav Joshi - PW31182','Srishti Saini - PW31343'],
-  'Marketing':['Sachin Kumar - PW2366','Arvind Yadav - PW9155','Harshit Arora - PW18652','Puneet Sirohi - PW20318'],
-  'Analytics Lead':['Ankit Kumar - PW11292']
-};
-const R={};
-let analystNPS=null,teamNPS=null,isAnon=null,reviewType='external';
+// ── CONFIG ────────────────────────────────────────────────────────
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLOg-6mctTB9P4OlPCAzQyndwCxUT5-7eej_E__JNMcl1PpY1937_AIWzGRhAyJpki/exec';
 
-function setRT(t){
-  reviewType=t;
-  document.getElementById('rt-ext').className='rtbtn'+(t==='external'?' active-ext':'');
-  document.getElementById('rt-peer').className='rtbtn'+(t==='peer'?' active-peer':'');
-  document.getElementById('peer-banner').className='peer-banner z1'+(t==='peer'?' show':'');
+// ── ANALYST DATA ──────────────────────────────────────────────────
+const CA = {
+  'East':       ['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
+  'Maharashtra':['Bhushan Mail - PW8223','Ambikesh Srivastava - PW23824','Prateek Gaur - PW28736'],
+  'Gujarat':    ['Harshil Shah - PW16484','Harshal Bawne - PW28320','Nitin Namdev - PW27713'],
+  'PB + JK':    ['Kanika Agrawal - PW8137','Mayank Kumar - PW10407','Vishal Yadav - PW2441'],
+  'MP + CG':    ['Mohit Namdev - PW3996','Manish Kawale - PW9267','Sourabh Yadav - PW6274'],
+  'Rajasthan':  ['Pranjal Bhojak - PW2649','Mohammad Faisal - PW15611','Rahul Yadav - PW27161'],
+  'NCR + UK':   ['Sanya Dubey - PW17316','Dikshita Manik - PW18794','Shreyansha Sonwane - PW10103','Tanu Rajput - PW8611'],
+  'Bihar + JH': ['Shyam Kumar - PW29064','Piyush Raj - PW12642','Rajnish Sharma - PW30574','Saurav Kumar - PW5420'],
+  'UP':         ['Sougata Mitra - PW12967','Alok Kumar - PW16309','Kaberi Devi - PW10951'],
+  'South':      []
+};
+const HA = {
+  'Ops':                      ['Tanya Bhagat - PW0658','Shreya Kansal - PW8595','Aditya Kumar - PW17577'],
+  'Acad':                     ['Himanshu Sethi - PW0935','Ranvijay Singh - PW19008','Shivendra Singh - PW26405','Deepak Singh - PW26476','Vishwajeet Singh - PW9191','Mohammad Aadil - PW8919'],
+  'Biz Finance and Compliance':['Deepanshu Verma - PW10357','Ajay Gupta - PW14683','Vishwaradya - PW18728','Saloni Maheshwari - PW18651'],
+  'Sales':                    ['Madhav Gotmare - PW3195','Kamlesh Kumar - PW20352','Mahima Soni - PW20535','Gaurav Joshi - PW31182','Srishti Saini - PW31343'],
+  'Marketing':                ['Sachin Kumar - PW2366','Arvind Yadav - PW9155','Harshit Arora - PW18652','Puneet Sirohi - PW20318'],
+  'Analytics Lead':           ['Ankit Kumar - PW11292']
+};
+
+// ── STATE ─────────────────────────────────────────────────────────
+const R = {};           // star ratings keyed by data-key
+let analystNPS  = null; // number 0-10 or null
+let teamNPS     = null; // number 0-10 or null
+let isAnon      = null; // true/false/null
+let reviewType  = 'external';
+
+// ── NPS CATEGORY HELPER (matches admin.html) ──────────────────────
+// 9-10 = Promoter, 7-8 = Passive, 0-6 = Detractor
+function npsCategory(score) {
+  const s = Number(score);
+  if (s >= 9) return 'Promoter';
+  if (s >= 7) return 'Passive';
+  return 'Detractor';
+}
+
+// ── REVIEW TYPE TOGGLE ────────────────────────────────────────────
+function setRT(t) {
+  reviewType = t;
+  document.getElementById('rt-ext').className  = 'rtbtn' + (t === 'external' ? ' active-ext' : '');
+  document.getElementById('rt-peer').className = 'rtbtn' + (t === 'peer'     ? ' active-peer' : '');
+  document.getElementById('peer-banner').className = 'peer-banner z1' + (t === 'peer' ? ' show' : '');
   updatePeerSection();
-  const lbl=t==='peer'?'Analyst Being Rated (Peer) <span class="req">*</span>':'Analyst Being Rated <span class="req">*</span>';
-  if(document.getElementById('analyst-label'))document.getElementById('analyst-label').innerHTML=lbl;
-  if(document.getElementById('analyst-label-ho'))document.getElementById('analyst-label-ho').innerHTML=lbl;
-  document.getElementById('analyst-nps-label').textContent=t==='peer'?'🤝 Peer Analyst NPS':'👤 Analyst NPS';
-  document.getElementById('analyst-nps-sub').textContent=t==='peer'?'How likely are you to recommend this peer analyst to a colleague? (0=not at all, 10=extremely)':'How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)';
+  const lbl = t === 'peer'
+    ? 'Analyst Being Rated (Peer) <span class="req">*</span>'
+    : 'Analyst Being Rated <span class="req">*</span>';
+  const el1 = document.getElementById('analyst-label');
+  const el2 = document.getElementById('analyst-label-ho');
+  if (el1) el1.innerHTML = lbl;
+  if (el2) el2.innerHTML = lbl;
+  document.getElementById('analyst-nps-label').textContent =
+    t === 'peer' ? '🤝 Peer Analyst NPS' : '👤 Analyst NPS';
+  document.getElementById('analyst-nps-sub').textContent =
+    t === 'peer'
+      ? 'How likely are you to recommend this peer analyst to a colleague? (0=not at all, 10=extremely)'
+      : 'How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)';
 }
-function updatePeerSection(){
-  const show=reviewType==='peer'&&isAnon===false;
-  document.getElementById('peer-id-section').className='peer-id-section'+(show?' show':'');
+
+function updatePeerSection() {
+  const show = reviewType === 'peer' && isAnon === false;
+  document.getElementById('peer-id-section').className = 'peer-id-section' + (show ? ' show' : '');
 }
-function onVert(){
-  const v=document.getElementById('vertical').value;
-  const t=document.getElementById('team');
-  t.value='';t.style.opacity=v?'1':'0.4';t.style.pointerEvents=v?'auto':'none';
-  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
+
+// ── DROPDOWNS ─────────────────────────────────────────────────────
+function onVert() {
+  const v = document.getElementById('vertical').value;
+  const t = document.getElementById('team');
+  t.value = ''; t.style.opacity = v ? '1' : '0.4'; t.style.pointerEvents = v ? 'auto' : 'none';
+  document.getElementById('cf').style.display = 'none';
+  document.getElementById('hf').style.display = 'none';
 }
-function onTeam(){
-  const t=document.getElementById('team').value;
-  document.getElementById('cf').style.display=t==='City'?'block':'none';
-  document.getElementById('hf').style.display=t==='Head Office (Noida)'?'block':'none';
-  document.getElementById('region').value='';document.getElementById('dept').value='';
-  rsel('ac','-- Select Region first --');rsel('ah','-- Select Department first --');
+
+function onTeam() {
+  const t = document.getElementById('team').value;
+  document.getElementById('cf').style.display = t === 'City' ? 'block' : 'none';
+  document.getElementById('hf').style.display = t === 'Head Office (Noida)' ? 'block' : 'none';
+  document.getElementById('region').value = '';
+  document.getElementById('dept').value   = '';
+  rsel('ac', '-- Select Region first --');
+  rsel('ah', '-- Select Department first --');
 }
-function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[]);}
-function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[]);}
-function rsel(id,ph){const s=document.getElementById(id);if(!s)return;s.innerHTML='<option value="">'+ph+'</option>';s.disabled=true;}
-function fsel(id,it){const s=document.getElementById(id);s.innerHTML='<option value="">-- Select Analyst --</option>';it.forEach(function(a){s.innerHTML+='<option value="'+a+'">'+a+'</option>';});s.disabled=it.length===0;}
-function onPeerRegion(){
-  const val=document.getElementById('peer-region').value;
-  const sel=document.getElementById('peer-reviewer');
-  sel.innerHTML='<option value="">-- Select Your Name --</option>';
-  if(!val){sel.disabled=true;return;}
-  const parts=val.split('-');const type=parts[0];const key=parts.slice(1).join('-');
-  const list=type==='city'?(CA[key]||[]):(HA[key]||[]);
-  list.forEach(function(a){sel.innerHTML+='<option value="'+a+'">'+a+'</option>';});
-  sel.disabled=list.length===0;
+
+function onRegion() {
+  const r = document.getElementById('region').value;
+  fsel('ac', r ? (CA[r] || []) : []);
 }
-function g2(){
-  const team=document.getElementById('team').value,ic=team==='City';
-  let ok=document.getElementById('vertical').value&&team;
-  if(ic)ok=ok&&document.getElementById('region').value&&document.getElementById('ac').value;
-  else if(team)ok=ok&&document.getElementById('dept').value&&document.getElementById('ah').value;
-  if(reviewType==='peer'&&isAnon===false){
-    ok=ok&&document.getElementById('peer-region').value&&document.getElementById('peer-reviewer').value;
-  }
-  if(!ok){document.getElementById('e1').classList.add('show');return;}
-  document.getElementById('e1').classList.remove('show');setPage(1,2);
+
+function onDept() {
+  const d = document.getElementById('dept').value;
+  fsel('ah', d ? (HA[d] || []) : []);
 }
-function g1(){setPage(2,1);}
-function setPage(f,t){
-  document.getElementById('page'+f).classList.remove('active');
-  document.getElementById('page'+t).classList.add('active');
-  const s=['','',''];
-  if(t===1)s[0]='active';if(t===2){s[0]='done';s[1]='active';}if(t===3){s[0]=s[1]='done';s[2]='active';}
-  [1,2,3].forEach(function(n,i){document.getElementById('step'+n).className='step-item '+(s[i]||'');});
-  window.scrollTo(0,0);
+
+function rsel(id, ph) {
+  const s = document.getElementById(id);
+  if (!s) return;
+  s.innerHTML = '<option value="">' + ph + '</option>';
+  s.disabled  = true;
 }
-function buildNPS(gridId,badgeId,which){
-  const grid=document.getElementById(gridId);
-  for(let i=0;i<=10;i++){
-    const b=document.createElement('button');b.className='nps-btn';b.textContent=i;
-    (function(score,btn){
-      btn.onclick=function(){
-        if(which==='analyst')analystNPS=score;else teamNPS=score;
-        grid.querySelectorAll('.nps-btn').forEach(function(x){x.className='nps-btn';});
-        const c=score<=6?'sd':score<=8?'sp':'sg';btn.className='nps-btn '+c;
-        const l=c==='sd'?'Detractor':c==='sp'?'Passive':'Promoter';
-        const bc=c==='sd'?'bd':c==='sp'?'bp':'bg';
-        document.getElementById(badgeId).innerHTML='<span class="nps-badge '+bc+'">Score '+score+' - '+l+'</span>';
+
+function fsel(id, items) {
+  const s = document.getElementById(id);
+  s.innerHTML = '<option value="">-- Select Analyst --</option>';
+  items.forEach(function(a) { s.innerHTML += '<option value="' + a + '">' + a + '</option>'; });
+  s.disabled = items.length === 0;
+}
+
+function onPeerRegion() {
+  const val  = document.getElementById('peer-region').value;
+  const sel  = document.getElementById('peer-reviewer');
+  sel.innerHTML = '<option value="">-- Select Your Name --</option>';
+  if (!val) { sel.disabled = true; return; }
+  const parts = val.split('-');
+  const type  = parts[0];
+  const key   = parts.slice(1).join('-');
+  const list  = type === 'city' ? (CA[key] || []) : (HA[key] || []);
+  list.forEach(function(a) { sel.innerHTML += '<option value="' + a + '">' + a + '</option>'; });
+  sel.disabled = list.length === 0;
+}
+
+// ── PAGE NAVIGATION ───────────────────────────────────────────────
+function g2() {
+  const team = document.getElementById('team').value;
+  const ic   = team === 'City';
+  let ok = document.getElementById('vertical').value && team;
+  if (ic)   ok = ok && document.getElementById('region').value && document.getElementById('ac').value;
+  else if (team) ok = ok && document.getElementById('dept').value && document.getElementById('ah').value;
+  if (!ok) { document.getElementById('e1').classList.add('show'); return; }
+  document.getElementById('e1').classList.remove('show');
+  setPage(1, 2);
+}
+
+function g1() { setPage(2, 1); }
+
+function setPage(from, to) {
+  document.getElementById('page' + from).classList.remove('active');
+  document.getElementById('page' + to).classList.add('active');
+  const s = ['', '', ''];
+  if (to === 1) s[0] = 'active';
+  if (to === 2) { s[0] = 'done'; s[1] = 'active'; }
+  if (to === 3) { s[0] = s[1] = 'done'; s[2] = 'active'; }
+  [1, 2, 3].forEach(function(n, i) {
+    document.getElementById('step' + n).className = 'step-item ' + (s[i] || '');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ── NPS BUTTONS ───────────────────────────────────────────────────
+function buildNPS(gridId, badgeId, which) {
+  const grid = document.getElementById(gridId);
+  for (let i = 0; i <= 10; i++) {
+    const b = document.createElement('button');
+    b.className  = 'nps-btn';
+    b.textContent = i;
+    (function(score, btn) {
+      btn.onclick = function() {
+        if (which === 'analyst') analystNPS = score;
+        else                     teamNPS    = score;
+        grid.querySelectorAll('.nps-btn').forEach(function(x) { x.className = 'nps-btn'; });
+        const cls = score <= 6 ? 'sd' : score <= 8 ? 'sp' : 'sg';
+        btn.className = 'nps-btn ' + cls;
+        const label = cls === 'sd' ? 'Detractor' : cls === 'sp' ? 'Passive' : 'Promoter';
+        const bc    = cls === 'sd' ? 'bd'        : cls === 'sp' ? 'bp'      : 'bg';
+        document.getElementById(badgeId).innerHTML =
+          '<span class="nps-badge ' + bc + '">Score ' + score + ' - ' + label + '</span>';
         document.getElementById('ne').classList.remove('show');
       };
-    })(i,b);
+    })(i, b);
     grid.appendChild(b);
   }
 }
-buildNPS('nps-grid-analyst','nbw-analyst','analyst');
-buildNPS('nps-grid-team','nbw-team','team');
-function bs(c){
-  const k=c.dataset.key;R[k]=0;
-  for(let i=1;i<=5;i++){
-    const s=document.createElement('span');s.className='star';s.textContent='★';
-    s.onclick=function(){R[k]=i;pt(c,k);};
-    s.onmouseenter=function(){c.querySelectorAll('.star').forEach(function(x,j){x.classList.toggle('lit',j<i);});};
-    s.onmouseleave=function(){pt(c,k);};
-    c.appendChild(s);
+buildNPS('nps-grid-analyst', 'nbw-analyst', 'analyst');
+buildNPS('nps-grid-team',    'nbw-team',    'team');
+
+// ── STAR RATINGS ──────────────────────────────────────────────────
+function buildStars(container) {
+  const k = container.dataset.key;
+  R[k] = 0;
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement('span');
+    s.className   = 'star';
+    s.textContent = '★';
+    s.onclick       = function() { R[k] = i; paintStars(container, k); };
+    s.onmouseenter  = function() {
+      container.querySelectorAll('.star').forEach(function(x, j) { x.classList.toggle('lit', j < i); });
+    };
+    s.onmouseleave  = function() { paintStars(container, k); };
+    container.appendChild(s);
   }
 }
-function pt(c,k){c.querySelectorAll('.star').forEach(function(s,j){s.classList.toggle('lit',j<(R[k]||0));});}
-document.querySelectorAll('.stars').forEach(bs);
-function doStab(i,b){
-  document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('active');});
-  document.querySelectorAll('.sp').forEach(function(p){p.classList.remove('active');});
-  b.classList.add('active');document.getElementById('sp'+i).classList.add('active');
+
+function paintStars(container, k) {
+  container.querySelectorAll('.star').forEach(function(s, j) {
+    s.classList.toggle('lit', j < (R[k] || 0));
+  });
 }
-function setAnon(v){
-  isAnon=v;
-  document.getElementById('by').className='tbtn'+(v?' ay':'');
-  document.getElementById('bn').className='tbtn'+(!v?' an':'');
-  document.getElementById('idf').className='id-fields'+(!v?' show':'');
+
+document.querySelectorAll('.stars').forEach(buildStars);
+
+// ── SECTION TABS ──────────────────────────────────────────────────
+function doStab(i, btn) {
+  document.querySelectorAll('.stab').forEach(function(x) { x.classList.remove('active'); });
+  document.querySelectorAll('.sp').forEach(function(p)   { p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('sp' + i).classList.add('active');
+}
+
+// ── ANONYMOUS TOGGLE ──────────────────────────────────────────────
+function setAnon(v) {
+  isAnon = v;
+  document.getElementById('by').className  = 'tbtn' + (v  ? ' ay' : '');
+  document.getElementById('bn').className  = 'tbtn' + (!v ? ' an' : '');
+  document.getElementById('idf').className = 'id-fields' + (!v ? ' show' : '');
   updatePeerSection();
 }
-async function submitF(){
-  if(analystNPS===null||teamNPS===null){document.getElementById('ne').classList.add('show');return;}
-  const btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
-  const team=document.getElementById('team').value,ic=team==='City';
-  const analyst=ic?document.getElementById('ac').value:document.getElementById('ah').value;
-  const reviewer=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-reviewer').value:'';
-  const reviewerTeam=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-region').value:'';
-  const e={
-    id:'NPS-'+Date.now(),
-    timestamp:new Date().toISOString(),
-    review_type:reviewType,
-    vertical:document.getElementById('vertical').value,
-    team:team,
-    region:ic?document.getElementById('region').value:'',
-    department:!ic?document.getElementById('dept').value:'',
-    analyst:analyst,
-    reviewer:reviewer,
-    reviewer_team:reviewerTeam,
-    analyst_nps:analystNPS,
-    analyst_nps_category:analystNPS<=6?'Detractor':analystNPS<=8?'Passive':'Promoter',
-    team_nps:teamNPS,
-    team_nps_category:teamNPS<=6?'Detractor':teamNPS<=8?'Passive':'Promoter',
-    overall_exp:R['oe']||0,staff_behavior:R['sb']||0,process_smooth:R['ps']||0,comm_clarity:R['cc']||0,
-    understanding:R['un']||0,professionalism:R['pr']||0,responsiveness:R['re']||0,problem_solving:R['psa']||0,
-    appr_comment:document.getElementById('ac-txt').value,
-    delay_response:R['dr']||0,miscommunication:R['mc']||0,process_complexity:R['pc']||0,staff_issue:R['si']||0,
-    comp_comment:document.getElementById('cp-txt').value,
-    anonymous:isAnon!==false,
-    submitter_name:isAnon===false?document.getElementById('sn').value:'Anonymous',
-    submitter_pwid:isAnon===false?document.getElementById('sp2i').value:'--'
-  };
-  const all=JSON.parse(localStorage.getItem('nps_responses')||'[]');
-  all.push(e);localStorage.setItem('nps_responses',JSON.stringify(all));
-  if(SHEET_URL){
-    try{
-      const params=new URLSearchParams();
-      params.append('data',JSON.stringify(e));
-      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});
-    }catch(err){console.warn('Sheet sync failed:',err);}
+
+// ── SUBMIT ────────────────────────────────────────────────────────
+async function submitF() {
+  // Validate NPS scores
+  if (analystNPS === null || teamNPS === null) {
+    document.getElementById('ne').classList.add('show');
+    return;
   }
-  btn.innerHTML='Submit Feedback';btn.disabled=false;
-  document.getElementById('ty-type-badge').textContent=reviewType==='peer'?'🤝 Peer Review':'📋 Stakeholder Review';
-  document.getElementById('ty-type-badge').className='ty-badge '+(reviewType==='peer'?'peer':'ext');
-  document.getElementById('ty-nps-badge').textContent='Analyst: '+analystNPS+' | Team: '+teamNPS;
-  document.getElementById('tref').innerHTML='Response ID: <strong>'+e.id+'</strong>';
-  setPage(2,3);
+
+  const btn = document.getElementById('submit-btn');
+  btn.innerHTML = 'Submitting…'; btn.disabled = true;
+
+  const team   = document.getElementById('team').value;
+  const ic     = team === 'City';
+  const analyst = ic
+    ? document.getElementById('ac').value
+    : document.getElementById('ah').value;
+
+  const reviewer     = (reviewType === 'peer' && isAnon === false)
+    ? document.getElementById('peer-reviewer').value : '';
+  const reviewerTeam = (reviewType === 'peer' && isAnon === false)
+    ? document.getElementById('peer-region').value   : '';
+
+  // Derive categories using the same logic as admin.html
+  const analystCat = npsCategory(analystNPS);
+  const teamCat    = npsCategory(teamNPS);
+
+  // ── DATA OBJECT ──────────────────────────────────────────────
+  // IMPORTANT: We save BOTH nps_score/nps_category AND analyst_nps/analyst_nps_category
+  // so that admin.html can read either field without needing normalisation.
+  const entry = {
+    id:        'NPS-' + Date.now(),
+    timestamp: new Date().toISOString(),
+    review_type: reviewType,
+
+    // Location / target
+    vertical:   document.getElementById('vertical').value,
+    team:       team,
+    region:     ic  ? document.getElementById('region').value : '',
+    department: !ic ? document.getElementById('dept').value   : '',
+    analyst:    analyst,
+    reviewer:   reviewer,
+    reviewer_team: reviewerTeam,
+
+    // ── NPS SCORES (dual fields for full compatibility) ──────────
+    // Primary fields used by admin.html charts & metrics
+    nps_score:    analystNPS,    // required by charts (dist, donut, vertical NPS)
+    nps_category: analystCat,   // required by metrics (Promoter / Passive / Detractor)
+
+    // Named fields used by admin.html table & analyst report
+    analyst_nps:          analystNPS,
+    analyst_nps_category: analystCat,
+    team_nps:             teamNPS,
+    team_nps_category:    teamCat,
+
+    // ── GENERAL FEEDBACK ─────────────────────────────────────────
+    overall_exp:    R['oe']  || 0,
+    staff_behavior: R['sb']  || 0,
+    process_smooth: R['ps']  || 0,
+    comm_clarity:   R['cc']  || 0,
+
+    // ── APPRECIATION ─────────────────────────────────────────────
+    understanding:   R['un']  || 0,
+    professionalism: R['pr']  || 0,
+    responsiveness:  R['re']  || 0,
+    problem_solving: R['psa'] || 0,
+    appr_comment:    document.getElementById('ac-txt').value,
+
+    // ── COMPLAINT ────────────────────────────────────────────────
+    delay_response:     R['dr'] || 0,
+    miscommunication:   R['mc'] || 0,
+    process_complexity: R['pc'] || 0,
+    staff_issue:        R['si'] || 0,
+    comp_comment: document.getElementById('cp-txt').value,
+
+    // ── IDENTITY ─────────────────────────────────────────────────
+    anonymous:      isAnon !== false,
+    submitter_name: isAnon === false ? document.getElementById('sn').value   : 'Anonymous',
+    submitter_pwid: isAnon === false ? document.getElementById('spid').value : '--'
+  };
+
+  // Save to localStorage
+  const all = JSON.parse(localStorage.getItem('nps_responses') || '[]');
+  all.push(entry);
+  localStorage.setItem('nps_responses', JSON.stringify(all));
+
+  // Send to Google Sheet (fire-and-forget, no-cors)
+  if (SHEET_URL) {
+    try {
+      const params = new URLSearchParams();
+      params.append('data', JSON.stringify(entry));
+      await fetch(SHEET_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      });
+    } catch (err) {
+      console.warn('Sheet sync failed:', err);
+    }
+  }
+
+  btn.innerHTML = 'Submit Feedback'; btn.disabled = false;
+
+  // Thank you page
+  document.getElementById('ty-type-badge').textContent =
+    reviewType === 'peer' ? '🤝 Peer Review' : '📋 Stakeholder Review';
+  document.getElementById('ty-type-badge').className =
+    'ty-badge ' + (reviewType === 'peer' ? 'peer' : 'ext');
+  document.getElementById('ty-nps-badge').textContent =
+    'Analyst: ' + analystNPS + ' (' + analystCat + ') | Team: ' + teamNPS + ' (' + teamCat + ')';
+  document.getElementById('tref').innerHTML =
+    'Response ID: <strong>' + entry.id + '</strong>';
+  setPage(2, 3);
 }
-function resetAll(){
-  analystNPS=null;teamNPS=null;isAnon=null;Object.keys(R).forEach(function(k){R[k]=0;});
-  ['vertical','team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id){
-    const el=document.getElementById(id);if(!el)return;
-    el.value='';el.disabled=['ac','ah','peer-reviewer'].includes(id);
+
+// ── RESET ─────────────────────────────────────────────────────────
+function resetAll() {
+  analystNPS = null; teamNPS = null; isAnon = null;
+  Object.keys(R).forEach(function(k) { R[k] = 0; });
+
+  ['vertical','team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value   = '';
+    el.disabled = ['ac','ah','peer-reviewer'].includes(id);
   });
-  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
-  document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
-  document.getElementById('nbw-analyst').innerHTML='';document.getElementById('nbw-team').innerHTML='';
-  document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
-  document.getElementById('ac-txt').value='';document.getElementById('cp-txt').value='';
-  document.getElementById('by').className='tbtn';document.getElementById('bn').className='tbtn';
-  document.getElementById('idf').className='id-fields';
-  document.getElementById('peer-id-section').className='peer-id-section';
-  document.getElementById('sn').value='';document.getElementById('sp2i').value='';
-  doStab(0,document.querySelectorAll('.stab')[0]);
-  setRT('external');setPage(3,1);
+
+  document.getElementById('cf').style.display = 'none';
+  document.getElementById('hf').style.display = 'none';
+
+  document.querySelectorAll('.nps-btn').forEach(function(b) { b.className = 'nps-btn'; });
+  document.getElementById('nbw-analyst').innerHTML = '';
+  document.getElementById('nbw-team').innerHTML    = '';
+
+  // Reset star visuals
+  document.querySelectorAll('.stars').forEach(function(c) { paintStars(c, c.dataset.key); });
+
+  document.getElementById('ac-txt').value = '';
+  document.getElementById('cp-txt').value = '';
+
+  document.getElementById('by').className  = 'tbtn';
+  document.getElementById('bn').className  = 'tbtn';
+  document.getElementById('idf').className = 'id-fields';
+  document.getElementById('peer-id-section').className = 'peer-id-section';
+  document.getElementById('sn').value   = '';
+  document.getElementById('spid').value = '';
+
+  doStab(0, document.querySelectorAll('.stab')[0]);
+  setRT('external');
+  setPage(3, 1);
 }
 </script>
 </body>
