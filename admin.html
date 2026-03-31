@@ -422,7 +422,6 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
 const ALLOWED_EMAILS = [
   'arjun.sahoo@pw.live',
   'deepanshu.verma@pw.live',
-  'ankit.kumar11@pw.live'
   // Add more: 'newperson@pw.live',
 ];
 
@@ -509,22 +508,38 @@ function npsCategory(score){
 function load(){
   const raw = JSON.parse(localStorage.getItem('nps_responses') || '[]');
   all = raw.map(d => {
-    // Normalise legacy format
-    if(d.analyst_nps === undefined && d.nps_score !== undefined){
-      d.analyst_nps          = d.nps_score;
-      d.analyst_nps_category = npsCategory(d.nps_score);
+    // ── Step 1: resolve analyst NPS score from whichever field exists ──
+    // New form saves:  analyst_nps (primary), nps_score (also set for compat)
+    // Old form saved:  nps_score only
+    // Seed data saved: nps_score + analyst_nps
+    let aScore = null;
+    if (d.analyst_nps !== undefined && d.analyst_nps !== null && d.analyst_nps !== '' && !isNaN(Number(d.analyst_nps))) {
+      aScore = Number(d.analyst_nps);
+    } else if (d.nps_score !== undefined && d.nps_score !== null && d.nps_score !== '' && !isNaN(Number(d.nps_score))) {
+      aScore = Number(d.nps_score);
     }
-    if(d.nps_score === undefined && d.analyst_nps !== undefined){
-      d.nps_score    = d.analyst_nps;
-      d.nps_category = npsCategory(d.analyst_nps);
+
+    // ── Step 2: resolve team NPS score ────────────────────────────────
+    let tScore = null;
+    if (d.team_nps !== undefined && d.team_nps !== null && d.team_nps !== '' && !isNaN(Number(d.team_nps))) {
+      tScore = Number(d.team_nps);
     }
-    // Always recompute categories from scores to keep them correct
-    d.nps_category          = npsCategory(d.nps_score);
-    d.analyst_nps_category  = npsCategory(d.analyst_nps !== undefined ? d.analyst_nps : d.nps_score);
-    if(d.team_nps !== undefined && d.team_nps !== null && d.team_nps !== ''){
-      d.team_nps_category = npsCategory(d.team_nps);
+
+    // ── Step 3: write back normalised values (always overwrite) ───────
+    d.analyst_nps          = aScore;
+    d.nps_score            = aScore;   // needed by dist chart
+    d.nps_category         = aScore !== null ? npsCategory(aScore) : 'Detractor';
+    d.analyst_nps_category = d.nps_category;
+
+    if (tScore !== null) {
+      d.team_nps          = tScore;
+      d.team_nps_category = npsCategory(tScore);
+    } else {
+      d.team_nps          = null;
+      d.team_nps_category = '';
     }
-    if(!d.review_type) d.review_type = 'external';
+
+    if (!d.review_type) d.review_type = 'external';
     return d;
   });
   all.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -662,16 +677,21 @@ function mkBar(id, labels, data, colors, horiz){
   });
 }
 
+// avg: only skip entries where the field was never set (undefined/null)
+// score=0 IS a valid rating and must be included
 function avg(arr, key){
-  const v = arr.map(x => x[key]).filter(x => x > 0);
-  return v.length ? (v.reduce((a, b) => a + b, 0) / v.length).toFixed(2) : 0;
+  const v = arr.map(x => x[key]).filter(x => x !== undefined && x !== null && x !== '' && !isNaN(Number(x)));
+  return v.length ? (v.reduce((a, b) => Number(a) + Number(b), 0) / v.length).toFixed(2) : 0;
 }
 
 function renderCharts(){
   const d = filtered;
-  // Distribution
+  // Distribution — guard against null/NaN
   const dist = Array(11).fill(0);
-  d.forEach(x => { if(x.nps_score !== undefined) dist[Number(x.nps_score)]++; });
+  d.forEach(x => {
+    const s = Number(x.nps_score);
+    if (!isNaN(s) && s >= 0 && s <= 10) dist[s]++;
+  });
   mkBar('c-dist', ['0','1','2','3','4','5','6','7','8','9','10'], dist,
     dist.map((_, i) => i <= 6 ? 'rgba(248,113,113,0.6)' : i <= 8 ? 'rgba(251,191,36,0.6)' : 'rgba(52,211,153,0.6)'));
 
@@ -731,7 +751,7 @@ function renderTable(){
     const rtBadge = d.review_type === 'peer'
       ? '<span style="font-size:9px;background:rgba(79,142,247,0.15);border:1px solid rgba(79,142,247,0.3);color:#7fb3ff;padding:2px 7px;border-radius:10px;font-weight:600">Peer</span>'
       : '<span style="font-size:9px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:2px 7px;border-radius:10px;font-weight:600">Ext</span>';
-    const analystNpsVal = d.analyst_nps !== undefined ? d.analyst_nps : d.nps_score;
+    const analystNpsVal = (d.analyst_nps !== null && d.analyst_nps !== undefined) ? d.analyst_nps : (d.nps_score !== null && d.nps_score !== undefined ? d.nps_score : '—');
     const teamNpsVal    = (d.team_nps !== undefined && d.team_nps !== null && d.team_nps !== '') ? d.team_nps : '—';
     tbody.innerHTML += `<tr>
       <td style="color:var(--text2)">${dt}</td>
@@ -835,7 +855,10 @@ function openAnalystReport(analyst){
   // Score dist chart
   dc('ar-c-dist');
   const dist = Array(11).fill(0);
-  data.forEach(x => { if(x.nps_score !== undefined) dist[Number(x.nps_score)]++; });
+  data.forEach(x => {
+    const s = Number(x.nps_score);
+    if (!isNaN(s) && s >= 0 && s <= 10) dist[s]++;
+  });
   CH['ar-c-dist'] = new Chart(document.getElementById('ar-c-dist'), {
     type: 'bar',
     data: { labels: ['0','1','2','3','4','5','6','7','8','9','10'],
@@ -880,7 +903,7 @@ function openAnalystReport(analyst){
     const dt  = new Date(d.timestamp).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'2-digit'});
     const bc  = d.nps_category === 'Promoter' ? 'b-pro' : d.nps_category === 'Passive' ? 'b-pas' : 'b-det';
     const idx = all.indexOf(d); // correct: index in all[]
-    const analystNps = d.analyst_nps !== undefined ? d.analyst_nps : d.nps_score;
+    const analystNps = (d.analyst_nps !== null && d.analyst_nps !== undefined) ? d.analyst_nps : (d.nps_score !== null && d.nps_score !== undefined ? d.nps_score : '—');
     tbody.innerHTML += `<tr>
       <td style="color:var(--text2)">${dt}</td>
       <td>${d.region || d.department || '—'}</td>
@@ -968,7 +991,10 @@ function renderTeamNPS(){
   // Team NPS distribution
   dc('c-team-dist');
   const tdist = Array(11).fill(0);
-  td.forEach(x => { tdist[Number(x.team_nps)]++; });
+  td.forEach(x => {
+    const s = Number(x.team_nps);
+    if (!isNaN(s) && s >= 0 && s <= 10) tdist[s]++;
+  });
   CH['c-team-dist'] = new Chart(document.getElementById('c-team-dist'), {
     type: 'bar',
     data: { labels: ['0','1','2','3','4','5','6','7','8','9','10'],
@@ -1115,7 +1141,7 @@ function openModalData(d){
     ? '<span class="mstar">' + '★'.repeat(n) + '</span><span style="color:var(--text3);font-size:12px">' + '☆'.repeat(5 - n) + '</span>'
     : '<span style="color:var(--text3)">Not rated</span>';
 
-  const analystNps    = d.analyst_nps !== undefined ? d.analyst_nps : d.nps_score;
+  const analystNps    = (d.analyst_nps !== null && d.analyst_nps !== undefined) ? d.analyst_nps : (d.nps_score !== null && d.nps_score !== undefined ? d.nps_score : '—');
   const analystCat    = d.analyst_nps_category || d.nps_category || '';
   const analystCatKey = analystCat.toLowerCase().slice(0, 3) || 'pas';
   const teamNps       = (d.team_nps !== undefined && d.team_nps !== null && d.team_nps !== '') ? d.team_nps : '—';
