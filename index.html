@@ -441,7 +441,7 @@ textarea::placeholder{color:var(--text3);}
 </div><!-- end wrap -->
 
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
@@ -678,7 +678,7 @@ async function submitF(){
       await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});
     }catch(err){console.warn('Sheet sync failed:',err);}
   }
-  btn.innerHTML='Submit Feedback ✓';btn.disabled=false;
+  btn.innerHTML='Submit Feedback';btn.disabled=false;
   document.getElementById('tref').innerHTML='Response ID: <strong>'+e.id+'</strong>';
   setPage(2,3);
 }
