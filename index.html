@@ -338,7 +338,7 @@ textarea::placeholder{color:var(--text3);}
           <div class="stars" data-key="bu"></div>
         </div>
         <div class="rrow">
-          <div><div class="rl-t">Ownership &amp; Accountability</div><div class="rl-s">Commitment to delivering results and owning outcomes</div></div>
+          <div><div class="rl-t">Communication &amp; Collaboration</div><div class="rl-s">Commitment to delivering results and owning outcomes</div></div>
           <div class="stars" data-key="cc"></div>
         </div>
         <div style="margin-top:1.1rem">
@@ -441,7 +441,7 @@ textarea::placeholder{color:var(--text3);}
 </div><!-- end wrap -->
 
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbwIrIBhd_y-pI0zc1gz5XDi3J3SDW6oTM1vjZ89f6abpyQp0Uvyx1dA91OqX1Rv3ihM/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
@@ -471,18 +471,43 @@ let analystNPS=null, teamNPS=null, reviewType='team';
 
 // ── Review Type Toggle ────────────────────────────────────────────
 function setRT(t){
-  if(t===reviewType) return; // no change, do nothing
-  var wasOnPage2 = document.getElementById('page2').classList.contains('active');
-  // If mid-form on page 2, ask for confirmation before resetting
-  if(wasOnPage2){
-    var label = t==='peer'?'Peer Review':'Team Review';
-    if(!confirm('Switching to '+label+' will reset your current feedback. Continue?')) return;
+  // ── Full reset when user switches sections (not on initial load) ──
+  if(t !== reviewType){
+    // Reset star ratings
+    Object.keys(R).forEach(function(k){R[k]=0;});
+    // Reset complaint emoji selections
+    Object.keys(CR).forEach(function(k){delete CR[k];});
+    // Reset all dropdowns
+    ['team','region','dept','ac','ah'].forEach(function(id){
+      var el=document.getElementById(id); if(!el)return;
+      el.value='';
+      el.disabled=(id==='ac'||id==='ah');
+    });
+    // Hide city/HO sub-forms
+    document.getElementById('cf').style.display='none';
+    document.getElementById('hf').style.display='none';
+    // Clear text areas
+    document.getElementById('gen-txt').value='';
+    document.getElementById('ac-txt').value='';
+    document.getElementById('cp-txt').value='';
+    // Reset complaint emoji buttons
+    document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
+    // Reset star renders
+    document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
+    // Reset feedback tabs back to first tab (General)
+    doStab(0,document.querySelectorAll('.stab')[0]);
+    // Clear validation error
+    document.getElementById('e1').classList.remove('show');
+    document.getElementById('ne').classList.remove('show');
+    // Navigate back to page 1 if on page 2
+    var p2=document.getElementById('page2');
+    if(p2&&p2.classList.contains('active')) setPage(2,1);
   }
   reviewType=t;
   document.getElementById('rt-team').className='rtbtn'+(t==='team'?' active-team':'');
   document.getElementById('rt-peer').className='rtbtn'+(t==='peer'?' active-peer':'');
   // Mode badge
-  var badge=document.getElementById('mode-badge');
+  const badge=document.getElementById('mode-badge');
   badge.className='review-mode-badge'+(t==='peer'?' show':'');
   badge.textContent='Peer Mode Active';
   // Show/hide analyst dropdowns
@@ -491,40 +516,11 @@ function setRT(t){
   // Show/hide NPS sections
   document.getElementById('nps-analyst-section').style.display=t==='peer'?'block':'none';
   document.getElementById('nps-team-section').style.display=t==='team'?'block':'none';
-  // Reset NPS scores
-  analystNPS=null;teamNPS=null;
+  // Reset NPS
+  analystNPS=null; teamNPS=null;
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
-  // If user was mid-form (page 2), reset everything back to page 1
-  if(wasOnPage2){
-    // Reset all star ratings
-    Object.keys(R).forEach(function(k){R[k]=0;});
-    Object.keys(CR).forEach(function(k){delete CR[k];});
-    document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
-    document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
-    document.getElementById('gen-txt').value='';
-    document.getElementById('ac-txt').value='';
-    document.getElementById('cp-txt').value='';
-    document.getElementById('e1').classList.remove('show');
-    document.getElementById('ne').classList.remove('show');
-    doStab(0,document.querySelectorAll('.stab')[0]);
-    setPage(2,1);
-  }
-  // Also reset page 1 dropdowns so they reflect new review mode context
-  var team=document.getElementById('team').value;
-  if(team){
-    // Re-trigger team selection to show/hide analyst fields correctly
-    document.getElementById('city-analyst-fg').style.display=(t==='peer'&&team==='City')?'block':'none';
-    document.getElementById('ho-analyst-fg').style.display=(t==='peer'&&team==='Head Office (Noida)')?'block':'none';
-    // Reset analyst selections
-    rsel('ac','-- Select Region first --');
-    rsel('ah','-- Select Department first --');
-    if(t==='peer'){
-      var region=document.getElementById('region').value;
-      if(region) fsel('ac',CA[region]||[]);
-      var dept=document.getElementById('dept').value;
-      if(dept) fsel('ah',HA[dept]||[]);
-    }
-  }
+  // Scroll to top so user sees the fresh form from beginning
+  window.scrollTo(0,0);
 }
 
 // ── Page 1 ────────────────────────────────────────────────────────
