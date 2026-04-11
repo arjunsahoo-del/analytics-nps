@@ -249,8 +249,6 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     <button class="sb-link" onclick="showSec('analytics',this)"><span class="sb-icon">◉</span> Analytics</button>
     <hr class="sb-div">
     <div class="sb-title">Quick Filters</div>
-    <button class="sb-link" onclick="qf('vertical','Vidyapeeth')"><span class="sb-icon">🏫</span> Vidyapeeth</button>
-    <button class="sb-link" onclick="qf('vertical','Pathshala')"><span class="sb-icon">📚</span> Pathshala</button>
     <button class="sb-link" onclick="qf('team','City')"><span class="sb-icon">🌆</span> City Team</button>
     <button class="sb-link" onclick="qf('team','Head Office (Noida)')"><span class="sb-icon">🏢</span> Head Office</button>
     <hr class="sb-div">
@@ -284,7 +282,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     <div class="sec" id="sec-responses">
       <div class="filter-bar">
         <span class="f-label">Filter</span>
-        <select class="fsel" id="f-v" onchange="applyF()"><option value="">All Verticals</option><option>Vidyapeeth</option><option>Pathshala</option></select>
+        <select class="fsel" id="f-rt" onchange="applyF()"><option value="">All Types</option><option value="team">Team Review</option><option value="peer">Peer Review</option></select>
         <select class="fsel" id="f-t" onchange="applyF()"><option value="">All Teams</option><option>City</option><option>Head Office (Noida)</option></select>
         <select class="fsel" id="f-r" onchange="applyF()">
           <option value="">All Regions</option>
@@ -305,7 +303,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
       <div class="glass-card">
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Date</th><th>Type</th><th>Vertical</th><th>Team</th><th>Region/Dept</th><th>Analyst</th><th>Analyst NPS</th><th>Team NPS</th><th>Anon</th><th></th></tr></thead>
+            <thead><tr><th>Date</th><th>Type</th><th>Team</th><th>Region/Dept</th><th>Analyst</th><th>Team NPS</th><th>Analyst NPS</th><th></th></tr></thead>
             <tbody id="tbl-body"></tbody>
           </table>
         </div>
@@ -368,13 +366,13 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
         <div class="glass-card"><div class="gc-title">Team category split</div><div class="cwrap"><canvas id="c-team-donut"></canvas></div></div>
       </div>
       <div class="chart-row2" style="margin-bottom:1.25rem;">
-        <div class="glass-card"><div class="gc-title">Analyst NPS vs Team NPS comparison</div><div class="cwrap"><canvas id="c-compare"></canvas></div></div>
-        <div class="glass-card"><div class="gc-title">Peer vs External review split</div><div class="cwrap"><canvas id="c-review-type"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Team NPS by region / department</div><div class="cwrap"><canvas id="c-compare"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Team review vs Peer review split</div><div class="cwrap"><canvas id="c-review-type"></canvas></div></div>
       </div>
       <div class="glass-card">
         <div class="gc-title">Team NPS by region / department</div>
         <div class="tbl-wrap">
-          <table><thead><tr><th>Group</th><th>Responses</th><th>Analyst NPS</th><th>Team NPS</th><th>Peer Reviews</th><th>External Reviews</th></tr></thead>
+          <table><thead><tr><th>Group</th><th>Responses</th><th>Promoters</th><th>Passives</th><th>Detractors</th><th>Team NPS</th></tr></thead>
           <tbody id="team-bk-body"></tbody></table>
         </div>
       </div>
@@ -477,32 +475,15 @@ let currentAnalyst=null;
 
 async function load(){
   const raw=JSON.parse(localStorage.getItem('nps_responses')||'[]');
-  // Normalise: support both old format (nps_score) and new format (analyst_nps)
+  function cat(s){return Number(s)<=6?'Detractor':Number(s)<=8?'Passive':'Promoter';}
   all=raw.map(function(d){
-    // Ensure analyst_nps always has a value
-    if((d.analyst_nps===undefined||d.analyst_nps===null||isNaN(d.analyst_nps)) && d.nps_score!==undefined){
-      d.analyst_nps=Number(d.nps_score)||0;
-      d.analyst_nps_category=d.nps_category||'';
-    }
-    if((d.team_nps===undefined||d.team_nps===null||isNaN(d.team_nps)) && d.nps_score!==undefined){
-      d.team_nps=Number(d.nps_score)||0;
-      d.team_nps_category=d.nps_category||'';
-    }
-    // Ensure nps_score always has a value (for backward compat)
-    if((d.nps_score===undefined||isNaN(d.nps_score)) && d.analyst_nps!==undefined){
-      d.nps_score=Number(d.analyst_nps)||0;
-      d.nps_category=d.analyst_nps_category||'';
-    }
-    // Always coerce numbers
-    d.analyst_nps=Number(d.analyst_nps)||0;
-    d.team_nps=Number(d.team_nps)||0;
-    d.nps_score=Number(d.nps_score)||0;
-    if(!d.review_type) d.review_type='stakeholder';
-    // Fix categories based on scores if missing
-    function cat(s){return s<=6?'Detractor':s<=8?'Passive':'Promoter';}
-    if(!d.analyst_nps_category&&d.analyst_nps) d.analyst_nps_category=cat(d.analyst_nps);
-    if(!d.team_nps_category&&d.team_nps) d.team_nps_category=cat(d.team_nps);
-    if(!d.nps_category&&d.nps_score) d.nps_category=cat(d.nps_score);
+    if(!d.review_type) d.review_type='team';
+    // Coerce NPS numbers
+    if(d.team_nps!==null&&d.team_nps!==undefined) d.team_nps=Number(d.team_nps)||0;
+    if(d.analyst_nps!==null&&d.analyst_nps!==undefined) d.analyst_nps=Number(d.analyst_nps)||0;
+    // Fix categories
+    if(d.team_nps!==null&&d.team_nps!==undefined&&!d.team_nps_category) d.team_nps_category=cat(d.team_nps);
+    if(d.analyst_nps!==null&&d.analyst_nps!==undefined&&!d.analyst_nps_category) d.analyst_nps_category=cat(d.analyst_nps);
     return d;
   });
   all.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
@@ -529,45 +510,42 @@ async function syncSheet(){
     const newEntries = rows.slice(1).map(row => {
       const d = {};
       headers.forEach((h,i) => d[h.trim()] = (row[i]||'').trim());
-      // Support both old column names and new column names
-      const analystNps = Number(d['Analyst NPS'] || d['NPS Score'] || 0);
-      const teamNps    = Number(d['Team NPS'] || d['NPS Score'] || 0);
-      const analystCat = d['Analyst NPS Category'] || d['NPS Category'] || '';
-      const teamCat    = d['Team NPS Category'] || d['NPS Category'] || '';
+      function cat(s){ const n=Number(s); return n<=6?'Detractor':n<=8?'Passive':'Promoter'; }
+      const tnps  = Number(d['Team NPS'])||0;
+      const anps  = Number(d['Analyst NPS'])||0;
       return {
-        id:                  d['ID']||'',
-        timestamp:           d['Timestamp']||'',
-        review_type:         d['Review Type']||'stakeholder',
-        vertical:            d['Vertical']||'',
-        team:                d['Team']||'',
-        region:              d['Region']||'',
-        department:          d['Department']||'',
-        analyst:             d['Analyst (Rated)']||d['Analyst']||'',
-        reviewer:            d['Reviewer Name (Peer)']||d['Reviewer']||'',
-        reviewer_team:       d['Reviewer Team (Peer)']||'',
-        analyst_nps:         analystNps,
-        analyst_nps_category:analystCat,
-        team_nps:            teamNps,
-        team_nps_category:   teamCat,
-        nps_score:           analystNps,
-        nps_category:        analystCat,
-        overall_exp:         Number(d['Overall Experience'])||0,
-        staff_behavior:      Number(d['Staff Behavior'])||0,
-        process_smooth:      Number(d['Process Smoothness'])||0,
-        comm_clarity:        Number(d['Communication Clarity'])||0,
-        understanding:       Number(d['Understanding Needs'])||0,
-        professionalism:     Number(d['Professionalism'])||0,
-        responsiveness:      Number(d['Responsiveness'])||0,
-        problem_solving:     Number(d['Problem Solving'])||0,
-        appr_comment:        d['Appreciation Comment']||'',
-        delay_response:      Number(d['Delay Response'])||0,
-        miscommunication:    Number(d['Miscommunication'])||0,
-        process_complexity:  Number(d['Process Complexity'])||0,
-        staff_issue:         Number(d['Staff Issue'])||0,
-        comp_comment:        d['Complaint Comment']||'',
-        anonymous:           d['Anonymous']==='Yes',
-        submitter_name:      d['Submitter Name']||'',
-        submitter_pwid:      d['PW ID']||''
+        id:                         d['ID']||'',
+        timestamp:                  d['Timestamp']||'',
+        review_type:                d['Review Type']||'team',
+        team:                       d['Team']||'',
+        region:                     d['Region']||'',
+        department:                 d['Department']||'',
+        analyst:                    d['Analyst (Rated)']||'',
+        team_nps:                   tnps,
+        team_nps_category:          d['Team NPS Category']||cat(tnps),
+        analyst_nps:                anps,
+        analyst_nps_category:       d['Analyst NPS Category']||cat(anps),
+        // General
+        stakeholder_mgmt:           Number(d['Stakeholder Management'])||0,
+        ownership_accountability:   Number(d['Ownership & Accountability'])||0,
+        problem_solving_analytical: Number(d['Problem-Solving & Analytical Thinking'])||0,
+        business_understanding:     Number(d['Business Understanding'])||0,
+        ownership_accountability2:  Number(d['Ownership & Accountability 2'])||0,
+        gen_comment:                d['General Comment']||'',
+        // Appreciation
+        strong_analytical_skills:   Number(d['Strong Analytical Skills'])||0,
+        business_impact:            Number(d['Business Impact'])||0,
+        technical_expertise:        Number(d['Technical Expertise'])||0,
+        problem_solving_mindset:    Number(d['Problem-Solving Mindset'])||0,
+        learning_growth:            Number(d['Learning & Growth'])||0,
+        appr_comment:               d['Appreciation Comment']||'',
+        // Complaint
+        delay_response:             d['Delay Response']!==''?Number(d['Delay Response']):null,
+        miscommunication:           d['Miscommunication']!==''?Number(d['Miscommunication']):null,
+        process_complexity:         d['Process Complexity']!==''?Number(d['Process Complexity']):null,
+        staff_issue:                d['Staff Issue']!==''?Number(d['Staff Issue']):null,
+        comp_comment:               d['Complaint Comment']||'',
+        anonymous:                  true
       };
     }).filter(r => r.id);
     // Always use sheet as source of truth - full replace
@@ -623,9 +601,10 @@ function renderAll(){renderMetrics();renderCharts();renderTable();renderBreakdow
 // ── METRICS ───────────────────────────────────────────────────────
 function renderMetrics(){
   const d=filtered,n=d.length;
-  // Use analyst_nps for promoter/detractor calculation (primary NPS)
-  const pro=d.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length;
-  const det=d.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;
+  // Combined NPS: use team_nps for team reviews, analyst_nps for peer reviews
+  const getNPS=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
+  const pro=d.filter(x=>getNPS(x)==='Promoter').length;
+  const det=d.filter(x=>getNPS(x)==='Detractor').length;
   const nps=n?Math.round((pro-det)/n*100):0;
   document.getElementById('m-nps').textContent=(nps>=0?'+':'')+nps;
   document.getElementById('m-nps').style.color=nps>=30?'var(--green)':nps>=0?'var(--amber)':'var(--red)';
@@ -649,33 +628,37 @@ function mkBar(id,labels,data,colors,horiz){
 
 function renderCharts(){
   const d=filtered;
-  // Distribution
-  const dist=Array(11).fill(0);d.forEach(x=>{const s=Number(x.analyst_nps||x.nps_score||0);if(s>=0&&s<=10)dist[s]++;});
+  const getNPS=x=>x.review_type==='peer'?Number(x.analyst_nps||0):Number(x.team_nps||0);
+  const getCat=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
+  // NPS Distribution
+  const dist=Array(11).fill(0);d.forEach(x=>{const s=getNPS(x);if(s>=0&&s<=10)dist[s]++;});
   mkBar('c-dist',['0','1','2','3','4','5','6','7','8','9','10'],dist,
     dist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'));
   // Donut
   dc('c-donut');
-  const pro=d.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length;
-  const pas=d.filter(x=>(x.analyst_nps_category||x.nps_category)==='Passive').length;
-  const det=d.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;
+  const pro=d.filter(x=>getCat(x)==='Promoter').length;
+  const pas=d.filter(x=>getCat(x)==='Passive').length;
+  const det=d.filter(x=>getCat(x)==='Detractor').length;
   CH['c-donut']=new Chart(document.getElementById('c-donut'),{type:'doughnut',
     data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[pro,pas,det],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
-  // General
-  const gk=['overall_exp','staff_behavior','process_smooth','comm_clarity'];
-  const gl=['Overall Exp','Staff Behavior','Process Smooth','Comm Clarity'];
+  // General feedback averages (new field names)
+  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding'];
+  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding'];
   mkBar('c-gen',gl,gk.map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(201,168,76,0.5)',true);
-  // Vertical NPS
-  const verts=['Vidyapeeth','Pathshala'];
-  mkBar('c-vert',verts,verts.map(v=>{const vd=d.filter(x=>x.vertical===v);if(!vd.length)return 0;const vp=vd.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length,vdt=vd.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;return Math.round((vp-vdt)/vd.length*100);}),['rgba(79,142,247,0.6)','rgba(201,168,76,0.6)']);
+  // Team NPS by team
+  const teams=['City','Head Office (Noida)'];
+  mkBar('c-vert',teams,teams.map(t=>{const td=d.filter(x=>x.team===t);if(!td.length)return 0;const tp=td.filter(x=>getCat(x)==='Promoter').length,tdt=td.filter(x=>getCat(x)==='Detractor').length;return Math.round((tp-tdt)/td.length*100);}),['rgba(79,142,247,0.6)','rgba(201,168,76,0.6)']);
 }
 
 function renderApprComp(){
   const d=filtered;
-  mkBar('c-appr',['Understanding','Professionalism','Responsiveness','Problem Solving'],
-    ['understanding','professionalism','responsiveness','problem_solving'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(52,211,153,0.5)',true);
+  mkBar('c-appr',['Strong Analytical','Business Impact','Technical Expertise','Problem-Solving','Learning & Growth'],
+    ['strong_analytical_skills','business_impact','technical_expertise','problem_solving_mindset','learning_growth'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(52,211,153,0.5)',true);
+  // Complaint: 0=No Issue, 1=Minor, 2=Moderate, 3=Major — lower is better
+  const CLABELS=['No Issue','Minor','Moderate','Major'];
   mkBar('c-comp',['Delay Response','Miscommunication','Process Complexity','Staff Issue'],
-    ['delay_response','miscommunication','process_complexity','staff_issue'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(248,113,113,0.5)',true);
+    ['delay_response','miscommunication','process_complexity','staff_issue'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x!==null&&x!==undefined&&x!=='');return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(248,113,113,0.5)',true);
 }
 
 // ── TABLE ─────────────────────────────────────────────────────────
@@ -687,25 +670,25 @@ function renderTable(){
   document.getElementById('tbl-empty').style.display=n===0?'block':'none';
   sl.forEach((d,i)=>{
     const dt=new Date(d.timestamp).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});
-    const bc=(d.analyst_nps_category||d.nps_category)==='Promoter'?'b-pro':(d.analyst_nps_category||d.nps_category)==='Passive'?'b-pas':'b-det';
     const idx=(cur-1)*PS+i;
     const rtBadge=d.review_type==='peer'
       ?'<span style="font-size:9px;background:rgba(79,142,247,0.15);border:1px solid rgba(79,142,247,0.3);color:#7fb3ff;padding:2px 7px;border-radius:10px;font-weight:600">Peer</span>'
-      :'<span style="font-size:9px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:2px 7px;border-radius:10px;font-weight:600">Ext</span>';
-    const analystNpsVal=d.analyst_nps!==undefined?d.analyst_nps:d.nps_score;
-    const teamNpsVal=d.team_nps!==undefined?d.team_nps:'—';
-    const analystCat=d.analyst_nps_category||d.nps_category;
-    const bca=analystCat==='Promoter'?'b-pro':analystCat==='Passive'?'b-pas':'b-det';
+      :'<span style="font-size:9px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:2px 7px;border-radius:10px;font-weight:600">Team</span>';
+    const isPeer=d.review_type==='peer';
+    const npsVal=isPeer?(d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'—'):(d.team_nps!==null&&d.team_nps!==undefined?d.team_nps:'—');
+    const npsCat=isPeer?(d.analyst_nps_category||''):(d.team_nps_category||'');
+    const npsColor=isPeer?'var(--blue)':'var(--gold)';
+    const bc=npsCat==='Promoter'?'b-pro':npsCat==='Passive'?'b-pas':'b-det';
+    const teamNpsVal=d.team_nps!==null&&d.team_nps!==undefined?d.team_nps:'—';
+    const analystNpsVal=d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'—';
     tbody.innerHTML+=`<tr>
       <td style="color:var(--text2)">${dt}</td>
       <td>${rtBadge}</td>
-      <td>${d.vertical||'—'}</td>
       <td>${d.team||'—'}</td>
       <td>${d.region||d.department||'—'}</td>
       <td>${(d.analyst||'').split('-')[0].trim()||'—'}</td>
-      <td><strong style="font-size:14px;color:var(--gold)">${analystNpsVal}</strong></td>
-      <td><strong style="font-size:14px;color:var(--blue)">${teamNpsVal}</strong></td>
-      <td style="color:var(--text3)">${d.anonymous?'✓':'—'}</td>
+      <td><strong style="font-size:14px;color:var(--gold)">${teamNpsVal}</strong></td>
+      <td><strong style="font-size:14px;color:var(--blue)">${analystNpsVal}</strong></td>
       <td><button class="view-btn" onclick="openM(${idx})">View →</button></td>
     </tr>`;
   });
@@ -723,20 +706,19 @@ function renderPag(pages){
 // ── ANALYST REPORTS ───────────────────────────────────────────────
 function getAnalystStats(data){
   const byAnalyst={};
-  data.forEach(d=>{
+  data.filter(d=>d.review_type==='peer').forEach(d=>{
     if(!d.analyst)return;
-    const key=d.analyst;
-    if(!byAnalyst[key])byAnalyst[key]={analyst:d.analyst,responses:[]};
-    byAnalyst[key].responses.push(d);
+    if(!byAnalyst[d.analyst])byAnalyst[d.analyst]={analyst:d.analyst,responses:[]};
+    byAnalyst[d.analyst].responses.push(d);
   });
   return Object.values(byAnalyst).map(a=>{
     const r=a.responses,n=r.length;
-    const pro=r.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length;
-    const det=r.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;
+    const pro=r.filter(x=>x.analyst_nps_category==='Promoter').length;
+    const det=r.filter(x=>x.analyst_nps_category==='Detractor').length;
     const nps=n?Math.round((pro-det)/n*100):0;
-    const avgOE=r.map(x=>x.overall_exp||0).filter(x=>x>0);
+    const avgVals=r.map(x=>x.strong_analytical_skills||0).filter(x=>x>0);
     return {...a,count:n,nps,promoters:pro,detractors:det,
-      avgExp:avgOE.length?(avgOE.reduce((a,b)=>a+b,0)/avgOE.length).toFixed(1):0};
+      avgExp:avgVals.length?(avgVals.reduce((a,b)=>a+b,0)/avgVals.length).toFixed(1):0};
   }).sort((a,b)=>b.nps-a.nps);
 }
 
@@ -762,18 +744,18 @@ function renderAnalystGrid(){
 
 function openAnalystReport(analyst){
   currentAnalyst=analyst;
-  const data=all.filter(d=>d.analyst===analyst);
+  const data=all.filter(d=>d.analyst===analyst&&d.review_type==='peer');
   const name=(analyst||'').split('-')[0].trim();
   const pwid=(analyst||'').split('-')[1]?.trim()||'';
   const n=data.length;
-  const pro=data.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length;
-  const det=data.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;
+  const pro=data.filter(x=>x.analyst_nps_category==='Promoter').length;
+  const det=data.filter(x=>x.analyst_nps_category==='Detractor').length;
   const nps=n?Math.round((pro-det)/n*100):0;
-  const avgOE=data.map(x=>x.overall_exp||0).filter(x=>x>0);
-  const avgExp=avgOE.length?(avgOE.reduce((a,b)=>a+b,0)/avgOE.length).toFixed(1):0;
+  const avgVals=data.map(x=>x.strong_analytical_skills||0).filter(x=>x>0);
+  const avgExp=avgVals.length?(avgVals.reduce((a,b)=>a+b,0)/avgVals.length).toFixed(1):0;
 
   document.getElementById('ar-name').textContent=name;
-  document.getElementById('ar-meta').textContent=pwid+' · '+n+' total responses';
+  document.getElementById('ar-meta').textContent=pwid+' · '+n+' peer responses';
   document.getElementById('ar-nps').textContent=(nps>=0?'+':'')+nps;
   document.getElementById('ar-nps').style.color=nps>=30?'var(--green)':nps>=0?'var(--amber)':'var(--red)';
   document.getElementById('ar-total').textContent=n;
@@ -783,15 +765,15 @@ function openAnalystReport(analyst){
 
   // Score dist chart
   dc('ar-c-dist');
-  const dist=Array(11).fill(0);data.forEach(x=>{const s=Number(x.analyst_nps||x.nps_score||0);if(s>=0&&s<=10)dist[s]++;});
+  const dist=Array(11).fill(0);data.forEach(x=>{const s=Number(x.analyst_nps||0);if(s>=0&&s<=10)dist[s]++;});
   CH['ar-c-dist']=new Chart(document.getElementById('ar-c-dist'),{type:'bar',
     data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{data:dist,backgroundColor:dist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'),borderRadius:5,borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#3d4460',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:10}},grid:{display:false}}}}});
 
-  // Feedback radar
+  // Appreciation radar (new fields)
   dc('ar-c-radar');
-  const rk=['overall_exp','staff_behavior','process_smooth','comm_clarity','understanding','professionalism','responsiveness','problem_solving'];
-  const rl=['Overall Exp','Staff Behavior','Process Smooth','Comm Clarity','Understanding','Professionalism','Responsiveness','Problem Solving'];
+  const rk=['strong_analytical_skills','business_impact','technical_expertise','problem_solving_mindset','learning_growth'];
+  const rl=['Analytical Skills','Business Impact','Technical','Problem-Solving','Learning & Growth'];
   const ra=rk.map(k=>{const v=data.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;});
   CH['ar-c-radar']=new Chart(document.getElementById('ar-c-radar'),{type:'radar',
     data:{labels:rl,datasets:[{data:ra,backgroundColor:'rgba(201,168,76,0.12)',borderColor:'rgba(201,168,76,0.6)',borderWidth:1.5,pointBackgroundColor:'rgba(201,168,76,0.8)',pointRadius:3}]},
@@ -801,13 +783,13 @@ function openAnalystReport(analyst){
   const tbody=document.getElementById('ar-tbl-body');tbody.innerHTML='';
   data.forEach((d,i)=>{
     const dt=new Date(d.timestamp).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});
-    const bc=(d.analyst_nps_category||d.nps_category)==='Promoter'?'b-pro':(d.analyst_nps_category||d.nps_category)==='Passive'?'b-pas':'b-det';
+    const bc=d.analyst_nps_category==='Promoter'?'b-pro':d.analyst_nps_category==='Passive'?'b-pas':'b-det';
     tbody.innerHTML+=`<tr><td style="color:var(--text2)">${dt}</td>
       <td>${d.region||d.department||'—'}</td>
-      <td><strong>${d.analyst_nps!==undefined?d.analyst_nps:(d.nps_score||0)}</strong></td>
-      <td><span class="badge ${bc}">${d.nps_category}</span></td>
-      <td>${d.overall_exp?'★'.repeat(d.overall_exp):'—'}</td>
-      <td style="color:var(--text3)">${d.anonymous?'✓':'—'}</td>
+      <td><strong>${d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:0}</strong></td>
+      <td><span class="badge ${bc}">${d.analyst_nps_category||'—'}</span></td>
+      <td>${d.strong_analytical_skills?'★'.repeat(d.strong_analytical_skills):'—'}</td>
+      <td style="color:var(--text3)">✓</td>
       <td><button class="view-btn" onclick="openMDirect(${all.indexOf(d)})">View →</button></td></tr>`;
   });
 
@@ -836,12 +818,13 @@ function exportAnalystCSV(){
 // ── BREAKDOWN ─────────────────────────────────────────────────────
 function renderBreakdown(){
   const groups={};
+  const getCat=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
   filtered.forEach(d=>{const k=(d.region||d.department||'Unknown')+' ('+d.team+')';if(!groups[k])groups[k]=[];groups[k].push(d);});
   const tb=document.getElementById('bk-body');tb.innerHTML='';
   Object.entries(groups).forEach(([k,v])=>{
-    const p=v.filter(x=>(x.analyst_nps_category||x.nps_category)==='Promoter').length;
-    const pa=v.filter(x=>(x.analyst_nps_category||x.nps_category)==='Passive').length;
-    const d=v.filter(x=>(x.analyst_nps_category||x.nps_category)==='Detractor').length;
+    const p=v.filter(x=>getCat(x)==='Promoter').length;
+    const pa=v.filter(x=>getCat(x)==='Passive').length;
+    const d=v.filter(x=>getCat(x)==='Detractor').length;
     const nps=v.length?Math.round((p-d)/v.length*100):0;
     const nc=nps>=30?'var(--green)':nps>=0?'var(--amber)':'var(--red)';
     tb.innerHTML+=`<tr><td><strong>${k}</strong></td><td>${v.length}</td>
@@ -854,20 +837,23 @@ function renderBreakdown(){
 
 // ── FILTERS ───────────────────────────────────────────────────────
 function applyF(){
-  const fv=document.getElementById('f-v').value,ft=document.getElementById('f-t').value;
-  const fr=document.getElementById('f-r').value,fd=document.getElementById('f-d').value,fc=document.getElementById('f-c').value;
+  const ft=document.getElementById('f-t').value;
+  const fr=document.getElementById('f-r').value,fd=document.getElementById('f-d').value,fc=document.getElementById('f-c').value,frt=document.getElementById('f-rt').value;
+  const getCat=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
   filtered=all.filter(d=>{
-    if(fv&&d.vertical!==fv)return false;if(ft&&d.team!==ft)return false;
-    if(fr&&d.region!==fr)return false;if(fd&&d.department!==fd)return false;
-    if(fc&&d.nps_category!==fc)return false;return true;
+    if(ft&&d.team!==ft)return false;
+    if(fr&&d.region!==fr)return false;
+    if(fd&&d.department!==fd)return false;
+    if(fc&&getCat(d)!==fc)return false;
+    if(frt&&d.review_type!==frt)return false;
+    return true;
   });
   cur=1;renderAll();
 }
-function clearF(){['f-v','f-t','f-r','f-d','f-c'].forEach(id=>document.getElementById(id).value='');filtered=[...all];cur=1;renderAll();}
+function clearF(){['f-t','f-r','f-d','f-c','f-rt'].forEach(id=>document.getElementById(id).value='');filtered=[...all];cur=1;renderAll();}
 function qf(type,val){
   clearF();
-  if(type==='vertical')document.getElementById('f-v').value=val;
-  else if(type==='team')document.getElementById('f-t').value=val;
+  if(type==='team')document.getElementById('f-t').value=val;
   else if(type==='cat')document.getElementById('f-c').value=val;
   applyF();showSec('responses',document.querySelectorAll('.sb-link')[1]);
 }
@@ -888,49 +874,50 @@ function openM(idx){openMDirect(idx);}
 function openMDirect(idx){
   const d=filtered[idx]||all[idx];if(!d)return;
   const st=n=>n>0?'<span class="mstar">'+'★'.repeat(n)+'</span><span style="color:var(--text3);font-size:12px">'+'☆'.repeat(5-n)+'</span>':'<span style="color:var(--text3)">Not rated</span>';
+  const isPeer=d.review_type==='peer';
+  const CLABEL=['🟢 No Issue','🟡 Minor Improvement Needed','🟠 Moderate Concern','🔴 Major Concern'];
   document.getElementById('modal-body').innerHTML=`
     <div class="msec"><div class="msec-title">Submission Info</div>
       <div class="mrow"><span class="mk">Response ID</span><span class="mv" style="font-family:monospace;font-size:11px;color:var(--gold)">${d.id}</span></div>
       <div class="mrow"><span class="mk">Date &amp; Time</span><span class="mv">${new Date(d.timestamp).toLocaleString('en-IN')}</span></div>
-      <div class="mrow"><span class="mk">Submitted by</span><span class="mv">${d.anonymous?'<em style="color:var(--text3)">Anonymous</em>':(d.submitter_name||'—')}</span></div>
-      <div class="mrow"><span class="mk">PW ID</span><span class="mv">${d.anonymous?'—':(d.submitter_pwid||'—')}</span></div>
+      <div class="mrow"><span class="mk">Submitted as</span><span class="mv"><em style="color:var(--text3)">Anonymous</em></span></div>
     </div>
-    <div class="msec"><div class="msec-title">Basic Details</div>
-      <div class="mrow"><span class="mk">Vertical</span><span class="mv">${d.vertical}</span></div>
-      <div class="mrow"><span class="mk">Team</span><span class="mv">${d.team}</span></div>
+    <div class="msec"><div class="msec-title">Team Details</div>
+      <div class="mrow"><span class="mk">Team</span><span class="mv">${d.team||'—'}</span></div>
       <div class="mrow"><span class="mk">Region / Department</span><span class="mv">${d.region||d.department||'—'}</span></div>
-      <div class="mrow"><span class="mk">Analyst</span><span class="mv">${d.analyst||'—'}</span></div>
+      ${d.analyst?`<div class="mrow"><span class="mk">Analyst (Rated)</span><span class="mv">${d.analyst}</span></div>`:''}
     </div>
-    <div class="msec"><div class="msec-title">Review Info</div>
-      <div class="mrow"><span class="mk">Review Type</span><span class="mv">${d.review_type==='peer'?'🤝 Peer Review':'📋 External Review'}</span></div>
-      ${d.reviewer?'<div class="mrow"><span class="mk">Reviewer (Peer)</span><span class="mv">'+d.reviewer+'</div>':''}
+    <div class="msec"><div class="msec-title">Review Type</div>
+      <div class="mrow"><span class="mk">Type</span><span class="mv">${isPeer?'🤝 Peer Review':'👥 Team Review'}</span></div>
     </div>
     <div class="msec"><div class="msec-title">NPS Scores</div>
-      <div class="mrow"><span class="mk">👤 Analyst NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--gold)">${d.analyst_nps!==undefined?d.analyst_nps:d.nps_score}</span></div>
-      <div class="mrow"><span class="mk">Analyst Category</span><span class="mv"><span class="badge b-${(d.analyst_nps_category||d.nps_category||'').toLowerCase().slice(0,3)||'pas'}">${d.analyst_nps_category||d.nps_category||'—'}</span></span></div>
-      <div class="mrow"><span class="mk">👥 Team NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--blue)">${d.team_nps!==undefined?d.team_nps:'—'}</span></div>
-      <div class="mrow"><span class="mk">Team Category</span><span class="mv">${d.team_nps_category||'—'}</span></div>
-    </div>
+      ${!isPeer?`<div class="mrow"><span class="mk">👥 Team NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--gold)">${d.team_nps!==null&&d.team_nps!==undefined?d.team_nps:'—'}</span></div>
+      <div class="mrow"><span class="mk">Team Category</span><span class="mv">${d.team_nps_category?`<span class="badge b-${(d.team_nps_category||'').toLowerCase().slice(0,3)||'pas'}">${d.team_nps_category}</span>`:'—'}</span></div>`:''}
+      ${isPeer?`<div class="mrow"><span class="mk">🤝 Analyst NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--blue)">${d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'—'}</span></div>
+      <div class="mrow"><span class="mk">Analyst Category</span><span class="mv">${d.analyst_nps_category?`<span class="badge b-${(d.analyst_nps_category||'').toLowerCase().slice(0,3)||'pas'}">${d.analyst_nps_category}</span>`:'—'}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">General Feedback</div>
-      <div class="mrow"><span class="mk">Overall Experience</span><span class="mv">${st(d.overall_exp)}</span></div>
-      <div class="mrow"><span class="mk">Staff Behavior</span><span class="mv">${st(d.staff_behavior)}</span></div>
-      <div class="mrow"><span class="mk">Process Smoothness</span><span class="mv">${st(d.process_smooth)}</span></div>
-      <div class="mrow"><span class="mk">Communication Clarity</span><span class="mv">${st(d.comm_clarity)}</span></div>
+      <div class="mrow"><span class="mk">Stakeholder Management</span><span class="mv">${st(d.stakeholder_mgmt)}</span></div>
+      <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.ownership_accountability)}</span></div>
+      <div class="mrow"><span class="mk">Problem-Solving &amp; Analytical Thinking</span><span class="mv">${st(d.problem_solving_analytical)}</span></div>
+      <div class="mrow"><span class="mk">Business Understanding</span><span class="mv">${st(d.business_understanding)}</span></div>
+      <div class="mrow"><span class="mk">Ownership &amp; Accountability (2)</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
+      ${d.gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.gen_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Appreciation</div>
-      <div class="mrow"><span class="mk">Understanding Needs</span><span class="mv">${st(d.understanding)}</span></div>
-      <div class="mrow"><span class="mk">Professionalism</span><span class="mv">${st(d.professionalism)}</span></div>
-      <div class="mrow"><span class="mk">Responsiveness</span><span class="mv">${st(d.responsiveness)}</span></div>
-      <div class="mrow"><span class="mk">Problem Solving</span><span class="mv">${st(d.problem_solving)}</span></div>
+      <div class="mrow"><span class="mk">Strong Analytical Skills</span><span class="mv">${st(d.strong_analytical_skills)}</span></div>
+      <div class="mrow"><span class="mk">Business Impact</span><span class="mv">${st(d.business_impact)}</span></div>
+      <div class="mrow"><span class="mk">Technical Expertise</span><span class="mv">${st(d.technical_expertise)}</span></div>
+      <div class="mrow"><span class="mk">Problem-Solving Mindset</span><span class="mv">${st(d.problem_solving_mindset)}</span></div>
+      <div class="mrow"><span class="mk">Learning &amp; Growth</span><span class="mv">${st(d.learning_growth)}</span></div>
       ${d.appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.appr_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Complaint</div>
-      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${st(d.delay_response)}</span></div>
-      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${st(d.miscommunication)}</span></div>
-      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${st(d.process_complexity)}</span></div>
-      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${st(d.staff_issue)}</span></div>
-      ${d.comp_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Complaint</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.comp_comment}</span></div>`:''}
+      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${d.delay_response!==null&&d.delay_response!==undefined?CLABEL[d.delay_response]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${d.miscommunication!==null&&d.miscommunication!==undefined?CLABEL[d.miscommunication]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${d.process_complexity!==null&&d.process_complexity!==undefined?CLABEL[d.process_complexity]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${d.staff_issue!==null&&d.staff_issue!==undefined?CLABEL[d.staff_issue]:'Not answered'}</span></div>
+      ${d.comp_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.comp_comment}</span></div>`:''}
     </div>`;
   document.getElementById('modal-bg').classList.add('show');
 }
@@ -939,17 +926,42 @@ function closeM(){document.getElementById('modal-bg').classList.remove('show');}
 // ── EXPORT ────────────────────────────────────────────────────────
 function exportCSV(){
   if(!filtered.length){alert('No data to export.');return;}
-  const H=['ID','Date','Vertical','Team','Region','Department','Analyst','NPS Score','Category','Overall Exp','Staff Behavior','Process Smooth','Comm Clarity','Understanding','Professionalism','Responsiveness','Problem Solving','Appr Comment','Delay Response','Miscommunication','Process Complexity','Staff Issue','Comp Comment','Anonymous','Submitter Name','PW ID'];
-  const rows=filtered.map(d=>[d.id,new Date(d.timestamp).toLocaleString('en-IN'),d.vertical,d.team,d.region||'',d.department||'',d.analyst,d.nps_score,d.nps_category,d.overall_exp,d.staff_behavior,d.process_smooth,d.comm_clarity,d.understanding,d.professionalism,d.responsiveness,d.problem_solving,(d.appr_comment||'').replace(/,/g,''),d.delay_response,d.miscommunication,d.process_complexity,d.staff_issue,(d.comp_comment||'').replace(/,/g,''),d.anonymous?'Yes':'No',d.submitter_name||'',d.submitter_pwid||'']);
+  const H=['ID','Timestamp','Review Type','Team','Region','Department','Analyst (Rated)',
+    'Team NPS','Team NPS Category','Analyst NPS','Analyst NPS Category',
+    'Stakeholder Management','Ownership & Accountability','Problem-Solving & Analytical Thinking',
+    'Business Understanding','Ownership & Accountability 2','General Comment',
+    'Strong Analytical Skills','Business Impact','Technical Expertise',
+    'Problem-Solving Mindset','Learning & Growth','Appreciation Comment',
+    'Delay Response','Miscommunication','Process Complexity','Staff Issue','Complaint Comment'];
+  const rows=filtered.map(d=>[
+    d.id, new Date(d.timestamp).toLocaleString('en-IN'),
+    d.review_type, d.team, d.region||'', d.department||'', d.analyst||'',
+    d.team_nps!==null&&d.team_nps!==undefined?d.team_nps:'',
+    d.team_nps_category||'',
+    d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'',
+    d.analyst_nps_category||'',
+    d.stakeholder_mgmt||0, d.ownership_accountability||0, d.problem_solving_analytical||0,
+    d.business_understanding||0, d.ownership_accountability2||0,
+    (d.gen_comment||'').replace(/,/g,';'),
+    d.strong_analytical_skills||0, d.business_impact||0, d.technical_expertise||0,
+    d.problem_solving_mindset||0, d.learning_growth||0,
+    (d.appr_comment||'').replace(/,/g,';'),
+    d.delay_response!==null&&d.delay_response!==undefined?d.delay_response:'',
+    d.miscommunication!==null&&d.miscommunication!==undefined?d.miscommunication:'',
+    d.process_complexity!==null&&d.process_complexity!==undefined?d.process_complexity:'',
+    d.staff_issue!==null&&d.staff_issue!==undefined?d.staff_issue:'',
+    (d.comp_comment||'').replace(/,/g,';')
+  ]);
   const csv=[H,...rows].map(r=>r.join(',')).join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='nps_responses_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='nps_responses_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
 // ── SEED ─────────────────────────────────────────────────────────
 function renderTeamNPS(){
   const d=filtered;
-  // Only entries that have team_nps
-  const td=d.filter(x=>x.team_nps!==undefined&&x.team_nps!==null&&x.team_nps!=='');
+  const td=d.filter(x=>x.review_type==='team'&&x.team_nps!==null&&x.team_nps!==undefined&&x.team_nps!=='');
+  const pd=d.filter(x=>x.review_type==='peer'&&x.analyst_nps!==null&&x.analyst_nps!==undefined&&x.analyst_nps!=='');
   const n=td.length;
   const tpro=td.filter(x=>x.team_nps_category==='Promoter').length;
   const tdet=td.filter(x=>x.team_nps_category==='Detractor').length;
@@ -964,7 +976,7 @@ function renderTeamNPS(){
 
   // Team NPS distribution
   dc('c-team-dist');
-  const tdist=Array(11).fill(0);td.forEach(x=>{if(x.team_nps!==undefined)tdist[Number(x.team_nps)]++;});
+  const tdist=Array(11).fill(0);td.forEach(x=>{tdist[Number(x.team_nps)]++;});
   CH['c-team-dist']=new Chart(document.getElementById('c-team-dist'),{type:'bar',
     data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{data:tdist,backgroundColor:tdist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'),borderRadius:6,borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{display:false}}}}});
@@ -976,65 +988,85 @@ function renderTeamNPS(){
     data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[tpro,tpas,tdet],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
 
-  // Analyst NPS vs Team NPS comparison
+  // Team NPS by region/dept bar chart
   dc('c-compare');
   const groups={};
-  d.forEach(x=>{const k=x.region||x.department||'Unknown';if(!groups[k])groups[k]={analyst:[],team:[]};if(x.analyst_nps!==undefined)groups[k].analyst.push(Number(x.analyst_nps));if(x.team_nps!==undefined)groups[k].team.push(Number(x.team_nps));});
+  td.forEach(x=>{const k=x.region||x.department||'Unknown';if(!groups[k])groups[k]=[];groups[k].push(Number(x.team_nps));});
   const glabels=Object.keys(groups).slice(0,8);
-  const analystAvg=glabels.map(k=>groups[k].analyst.length?Math.round(groups[k].analyst.reduce((a,b)=>a+b,0)/groups[k].analyst.length*10)/10:0);
-  const teamAvg=glabels.map(k=>groups[k].team.length?Math.round(groups[k].team.reduce((a,b)=>a+b,0)/groups[k].team.length*10)/10:0);
+  const teamAvg=glabels.map(k=>{const v=groups[k];return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:0;});
   CH['c-compare']=new Chart(document.getElementById('c-compare'),{type:'bar',
-    data:{labels:glabels,datasets:[{label:'Analyst NPS',data:analystAvg,backgroundColor:'rgba(201,168,76,0.65)',borderRadius:5,borderWidth:0},{label:'Team NPS',data:teamAvg,backgroundColor:'rgba(79,142,247,0.65)',borderRadius:5,borderWidth:0}]},
+    data:{labels:glabels,datasets:[{label:'Avg Team NPS',data:teamAvg,backgroundColor:'rgba(201,168,76,0.65)',borderRadius:5,borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:12,boxWidth:10}}},scales:{y:{min:0,max:10,ticks:{color:'#3d4460',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:9}},grid:{display:false}}}}});
 
-  // Peer vs External donut
+  // Team review vs Peer review split donut
   dc('c-review-type');
+  const teamCount=d.filter(x=>x.review_type==='team').length;
   const peerCount=d.filter(x=>x.review_type==='peer').length;
-  const extCount=d.filter(x=>x.review_type!=='peer').length;
   CH['c-review-type']=new Chart(document.getElementById('c-review-type'),{type:'doughnut',
-    data:{labels:['External Reviews','Peer Reviews'],datasets:[{data:[extCount,peerCount],backgroundColor:['rgba(201,168,76,0.7)','rgba(79,142,247,0.7)'],borderWidth:0,hoverOffset:6}]},
+    data:{labels:['Team Reviews','Peer Reviews'],datasets:[{data:[teamCount,peerCount],backgroundColor:['rgba(201,168,76,0.7)','rgba(79,142,247,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
 
   // Team NPS breakdown table
   const tb=document.getElementById('team-bk-body');tb.innerHTML='';
-  Object.entries(groups).forEach(([k,v])=>{
-    const src=d.filter(x=>(x.region||x.department||'Unknown')===k);
-    const anpsVals=src.map(x=>x.analyst_nps!==undefined?Number(x.analyst_nps):null).filter(x=>x!==null);
-    const tnpsVals=src.map(x=>x.team_nps!==undefined?Number(x.team_nps):null).filter(x=>x!==null);
-    const anps=anpsVals.length?Math.round(anpsVals.reduce((a,b)=>a+b,0)/anpsVals.length*10)/10:'—';
-    const tnps=tnpsVals.length?Math.round(tnpsVals.reduce((a,b)=>a+b,0)/tnpsVals.length*10)/10:'—';
-    const peerC=src.filter(x=>x.review_type==='peer').length;
-    const extC=src.filter(x=>x.review_type!=='peer').length;
-    tb.innerHTML+=`<tr><td><strong>${k}</strong></td><td>${src.length}</td><td style="color:var(--gold);font-weight:600">${anps}</td><td style="color:var(--blue);font-weight:600">${tnps}</td><td>${peerC}</td><td>${extC}</td></tr>`;
+  Object.entries(groups).forEach(([k,vals])=>{
+    const src=td.filter(x=>(x.region||x.department||'Unknown')===k);
+    const pro=src.filter(x=>x.team_nps_category==='Promoter').length;
+    const pas=src.filter(x=>x.team_nps_category==='Passive').length;
+    const det=src.filter(x=>x.team_nps_category==='Detractor').length;
+    const nps=src.length?Math.round((pro-det)/src.length*100):0;
+    const nc=nps>=30?'var(--green)':nps>=0?'var(--amber)':'var(--red)';
+    tb.innerHTML+=`<tr><td><strong>${k}</strong></td><td>${src.length}</td><td>${pro}</td><td>${pas}</td><td>${det}</td><td><strong style="color:${nc}">${nps>=0?'+':''}${nps}</strong></td></tr>`;
   });
-  if(!Object.keys(groups).length)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">No data available</td></tr>';
+  if(!Object.keys(groups).length)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">No team review data available</td></tr>';
 }
 
 function seedData(){
-  const verts=['Vidyapeeth','Pathshala'],regions=['East','Maharashtra','Gujarat','PB + JK','MP + CG','Rajasthan','NCR + UK','Bihar + JH','UP'];
-  const depts=['Ops','Acad','Marketing','Business'];
+  const regions=['East','Maharashtra','Gujarat','PB + JK','MP + CG','Rajasthan','NCR + UK','Bihar + JH','UP'];
+  const depts=['Ops','Acad','Marketing','Sales','Biz Finance and Compliance'];
   const cA=['Arjun Sahoo - PW7003','Gourab Roy - PW21631','Bhushan Mail - PW8223','Harshil Shah - PW16484','Mohit Namdev - PW3996','Pranjal Bhojak - PW2649','Sanya Dubey - PW17316','Shyam Kumar - PW29064','Sougata Mitra - PW12967'];
   const hA=['Tanya Bhagat - PW0658','Himanshu Sethi - PW0935','Deepanshu Verma - PW10357','Madhav Gotmare - PW3195','Sachin Kumar - PW2366','Ankit Kumar - PW11292'];
+  function cat(s){return s<=6?'Detractor':s<=8?'Passive':'Promoter';}
+  function rn(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
   const ex=JSON.parse(localStorage.getItem('nps_responses')||'[]');const ne=[];
   for(let i=0;i<40;i++){
-    const ic=Math.random()>.4,np=Math.floor(Math.random()*11);
-    ne.push({id:'NPS-'+(Date.now()-i*999999*Math.random()),timestamp:new Date(Date.now()-Math.random()*90*86400000).toISOString(),
-      vertical:verts[Math.floor(Math.random()*2)],team:ic?'City':'Head Office (Noida)',
-      region:ic?regions[Math.floor(Math.random()*regions.length)]:'',department:!ic?depts[Math.floor(Math.random()*depts.length)]:'',
-      analyst:ic?cA[Math.floor(Math.random()*cA.length)]:hA[Math.floor(Math.random()*hA.length)],
-      nps_score:np,nps_category:np<=6?'Detractor':np<=8?'Passive':'Promoter',
-      analyst_nps:np,analyst_nps_category:np<=6?'Detractor':np<=8?'Passive':'Promoter',
-      team_nps:Math.floor(Math.random()*11),team_nps_category:['Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Passive','Passive','Promoter','Promoter'][Math.floor(Math.random()*11)],
-      review_type:Math.random()>0.7?'peer':'external',
-      reviewer:Math.random()>0.7?'Ankit Kumar - PW11292':'',
-      overall_exp:Math.floor(Math.random()*3)+3,staff_behavior:Math.floor(Math.random()*3)+3,
-      process_smooth:Math.floor(Math.random()*4)+2,comm_clarity:Math.floor(Math.random()*3)+3,
-      understanding:Math.floor(Math.random()*3)+3,professionalism:Math.floor(Math.random()*2)+4,
-      responsiveness:Math.floor(Math.random()*4)+2,problem_solving:Math.floor(Math.random()*3)+3,
-      appr_comment:Math.random()>.6?'Great work!':'',delay_response:Math.floor(Math.random()*3)+2,
-      miscommunication:Math.floor(Math.random()*3)+2,process_complexity:Math.floor(Math.random()*3)+2,
-      staff_issue:Math.floor(Math.random()*2)+4,comp_comment:Math.random()>.7?'Response time could be improved.':'',
-      anonymous:Math.random()>.4,submitter_name:'',submitter_pwid:''});
+    const isPeer=Math.random()>0.5;
+    const ic=Math.random()>0.4;
+    const np=rn(0,10);
+    const entry={
+      id:'NPS-'+(Date.now()-i*999999*Math.random()).toFixed(0),
+      timestamp:new Date(Date.now()-Math.random()*90*86400000).toISOString(),
+      review_type:isPeer?'peer':'team',
+      team:ic?'City':'Head Office (Noida)',
+      region:ic?regions[rn(0,regions.length-1)]:'',
+      department:!ic?depts[rn(0,depts.length-1)]:'',
+      analyst:isPeer?(ic?cA[rn(0,cA.length-1)]:hA[rn(0,hA.length-1)]):'',
+      team_nps:isPeer?null:np,
+      team_nps_category:isPeer?null:cat(np),
+      analyst_nps:isPeer?np:null,
+      analyst_nps_category:isPeer?cat(np):null,
+      // General
+      stakeholder_mgmt:rn(1,5),
+      ownership_accountability:rn(1,5),
+      problem_solving_analytical:rn(1,5),
+      business_understanding:rn(1,5),
+      ownership_accountability2:rn(1,5),
+      gen_comment:Math.random()>.7?'Good overall performance.':'',
+      // Appreciation
+      strong_analytical_skills:rn(1,5),
+      business_impact:rn(1,5),
+      technical_expertise:rn(1,5),
+      problem_solving_mindset:rn(1,5),
+      learning_growth:rn(1,5),
+      appr_comment:Math.random()>.6?'Great analytical thinking!':'',
+      // Complaint (0-3)
+      delay_response:rn(0,3),
+      miscommunication:rn(0,3),
+      process_complexity:rn(0,3),
+      staff_issue:rn(0,3),
+      comp_comment:Math.random()>.7?'Response time could be improved.':'',
+      anonymous:true
+    };
+    ne.push(entry);
   }
   localStorage.setItem('nps_responses',JSON.stringify([...ex,...ne]));load();alert('40 sample responses loaded!');
 }
