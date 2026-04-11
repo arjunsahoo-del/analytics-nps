@@ -414,7 +414,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwIrIBhd_y-pI0zc1gz5XDi3J3SDW6oTM1vjZ89f6abpyQp0Uvyx1dA91OqX1Rv3ihM/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -511,8 +511,8 @@ async function syncSheet(){
       const d = {};
       headers.forEach((h,i) => d[h.trim()] = (row[i]||'').trim());
       function cat(s){ const n=Number(s); return n<=6?'Detractor':n<=8?'Passive':'Promoter'; }
-      const tnps  = Number(d['Team NPS'])||0;
-      const anps  = Number(d['Analyst NPS'])||0;
+      const tnps  = d['Team NPS']!==''&&d['Team NPS']!==undefined ? Number(d['Team NPS']) : null;
+      const anps  = d['Analyst NPS']!==''&&d['Analyst NPS']!==undefined ? Number(d['Analyst NPS']) : null;
       return {
         id:                         d['ID']||'',
         timestamp:                  d['Timestamp']||'',
@@ -522,15 +522,15 @@ async function syncSheet(){
         department:                 d['Department']||'',
         analyst:                    d['Analyst (Rated)']||'',
         team_nps:                   tnps,
-        team_nps_category:          d['Team NPS Category']||cat(tnps),
+        team_nps_category:          d['Team NPS Category']||(tnps!==null?cat(tnps):''),
         analyst_nps:                anps,
-        analyst_nps_category:       d['Analyst NPS Category']||cat(anps),
+        analyst_nps_category:       d['Analyst NPS Category']||(anps!==null?cat(anps):''),
         // General
         stakeholder_mgmt:           Number(d['Stakeholder Management'])||0,
         ownership_accountability:   Number(d['Ownership & Accountability'])||0,
         problem_solving_analytical: Number(d['Problem-Solving & Analytical Thinking'])||0,
         business_understanding:     Number(d['Business Understanding'])||0,
-        ownership_accountability2:  Number(d['Communication & Collaboration'])||Number(d['Ownership & Accountability 2'])||0,
+        ownership_accountability2:  Number(d['Communication & Collaboration'])||0,
         gen_comment:                d['General Comment']||'',
         // Appreciation
         strong_analytical_skills:   Number(d['Strong Analytical Skills'])||0,
@@ -642,9 +642,9 @@ function renderCharts(){
   CH['c-donut']=new Chart(document.getElementById('c-donut'),{type:'doughnut',
     data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[pro,pas,det],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
-  // General feedback averages (new field names)
-  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding'];
-  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding'];
+  // General feedback averages (all 5 fields)
+  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding','ownership_accountability2'];
+  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding','Comm & Collab'];
   mkBar('c-gen',gl,gk.map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(201,168,76,0.5)',true);
   // Team NPS by team
   const teams=['City','Head Office (Noida)'];
@@ -901,7 +901,7 @@ function openMDirect(idx){
       <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.ownership_accountability)}</span></div>
       <div class="mrow"><span class="mk">Problem-Solving &amp; Analytical Thinking</span><span class="mv">${st(d.problem_solving_analytical)}</span></div>
       <div class="mrow"><span class="mk">Business Understanding</span><span class="mv">${st(d.business_understanding)}</span></div>
-      <div class="mrow"><span class="mk">Ownership &amp; Accountability (2)</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
+      <div class="mrow"><span class="mk">Communication &amp; Collaboration</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
       ${d.gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.gen_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Appreciation</div>
@@ -929,7 +929,7 @@ function exportCSV(){
   const H=['ID','Timestamp','Review Type','Team','Region','Department','Analyst (Rated)',
     'Team NPS','Team NPS Category','Analyst NPS','Analyst NPS Category',
     'Stakeholder Management','Ownership & Accountability','Problem-Solving & Analytical Thinking',
-    'Business Understanding','Ownership & Accountability 2','General Comment',
+    'Business Understanding','Communication & Collaboration','General Comment',
     'Strong Analytical Skills','Business Impact','Technical Expertise',
     'Problem-Solving Mindset','Learning & Growth','Appreciation Comment',
     'Delay Response','Miscommunication','Process Complexity','Staff Issue','Complaint Comment'];
