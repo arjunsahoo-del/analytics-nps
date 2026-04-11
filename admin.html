@@ -414,7 +414,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -490,11 +490,19 @@ async function load(){
   filtered=[...all];renderAll();
 }
 
+function parseComplaint(v){
+  // Handle: empty string → null, numeric string "0"-"3" → number, "Yes"→1, "No"→0, NaN→null
+  if(v===''||v===null||v===undefined) return null;
+  if(v==='Yes'||v==='yes'||v==='TRUE'||v==='true') return 1;
+  if(v==='No'||v==='no'||v==='FALSE'||v==='false') return 0;
+  const n=Number(v);
+  return isNaN(n)?null:n;
+}
 async function syncSheet(silent){
   const btn=document.getElementById('sync-btn');
   if(!silent){btn.innerHTML='⟳ Syncing…';btn.disabled=true;}
   if(!SHEET_ID){
-    alert('Please set your SHEET_ID at the top of admin.html');
+    if(!silent)alert('Please set your SHEET_ID at the top of admin.html');
     if(!silent){btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;}
     return;
   }
@@ -505,7 +513,7 @@ async function syncSheet(silent){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const csv = await res.text();
     const rows = parseCSV(csv);
-    if(rows.length <= 1){ if(!silent)showToast('No responses in sheet yet','red'); if(!silent){btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;} return; }
+    if(rows.length <= 1){ if(!silent){showToast('No responses in sheet yet','red');btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;} return; }
     const headers = rows[0];
     const newEntries = rows.slice(1).map(row => {
       const d = {};
@@ -539,23 +547,23 @@ async function syncSheet(silent){
         problem_solving_mindset:    Number(d['Problem-Solving Mindset'])||0,
         learning_growth:            Number(d['Learning & Growth'])||0,
         appr_comment:               d['Appreciation Comment']||'',
-        // Complaint
-        delay_response:             d['Delay Response']!==''?Number(d['Delay Response']):null,
-        miscommunication:           d['Miscommunication']!==''?Number(d['Miscommunication']):null,
-        process_complexity:         d['Process Complexity']!==''?Number(d['Process Complexity']):null,
-        staff_issue:                d['Staff Issue']!==''?Number(d['Staff Issue']):null,
+        // Complaint — robust parse handles numbers, blank, or legacy "Yes"/"No" values
+        delay_response:             parseComplaint(d['Delay Response']),
+        miscommunication:           parseComplaint(d['Miscommunication']),
+        process_complexity:         parseComplaint(d['Process Complexity']),
+        staff_issue:                parseComplaint(d['Staff Issue']),
         comp_comment:               d['Complaint Comment']||'',
         anonymous:                  true
       };
     }).filter(r => r.id);
-    // Merge: sheet entries replace local ones by ID; keep any local-only entries not yet in sheet
+    // Merge: sheet entries are authoritative by ID; preserve any local-only entries
     const sheetIds = new Set(newEntries.map(r => r.id));
     const localOnly = JSON.parse(localStorage.getItem('nps_responses')||'[]').filter(r => r.id && !sheetIds.has(r.id));
     all = [...newEntries, ...localOnly];
     localStorage.setItem('nps_responses', JSON.stringify(all));
     all.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
     filtered=[...all]; renderAll();
-    if(!silent) showToast('Synced '+newEntries.length+' from sheet + '+localOnly.length+' local = '+all.length+' total responses','green');
+    if(!silent) showToast('Synced '+newEntries.length+' from sheet + '+localOnly.length+' local = '+all.length+' total','green');
   }catch(e){
     if(!silent) showToast('Sync failed: Make sure sheet is shared publicly (Anyone with link = Viewer)','red');
     console.error('Sync error:',e);
@@ -915,10 +923,10 @@ function openMDirect(idx){
       ${d.appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.appr_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Complaint</div>
-      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${d.delay_response!==null&&d.delay_response!==undefined?CLABEL[d.delay_response]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${d.miscommunication!==null&&d.miscommunication!==undefined?CLABEL[d.miscommunication]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${d.process_complexity!==null&&d.process_complexity!==undefined?CLABEL[d.process_complexity]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${d.staff_issue!==null&&d.staff_issue!==undefined?CLABEL[d.staff_issue]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${(d.delay_response!==null&&d.delay_response!==undefined&&d.delay_response>=0&&d.delay_response<=3)?CLABEL[d.delay_response]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${(d.miscommunication!==null&&d.miscommunication!==undefined&&d.miscommunication>=0&&d.miscommunication<=3)?CLABEL[d.miscommunication]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${(d.process_complexity!==null&&d.process_complexity!==undefined&&d.process_complexity>=0&&d.process_complexity<=3)?CLABEL[d.process_complexity]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${(d.staff_issue!==null&&d.staff_issue!==undefined&&d.staff_issue>=0&&d.staff_issue<=3)?CLABEL[d.staff_issue]:'Not answered'}</span></div>
       ${d.comp_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.comp_comment}</span></div>`:''}
     </div>`;
   document.getElementById('modal-bg').classList.add('show');
