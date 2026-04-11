@@ -152,7 +152,15 @@ textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bord
 textarea:focus{outline:none;border-color:rgba(201,168,76,.35);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
 textarea::placeholder{color:var(--text3);}
 
-/* PEER ID - removed, all responses anonymous */
+/* CHAR COUNTER */
+.char-counter{font-size:10px;color:var(--text3);text-align:right;margin-top:3px;transition:color .2s;}
+.char-counter.warn{color:var(--amber);}
+/* NPS SELECTED LABEL */
+.nps-selected-label{font-size:11px;font-weight:600;margin-top:8px;min-height:18px;text-align:center;transition:all .3s;}
+/* TOOLTIP on star hover */
+.rrow .stars{position:relative;}
+/* UNRATED hint */
+.stars-hint{font-size:10px;color:var(--text3);margin-left:6px;font-style:italic;}
 
 /* BUTTONS */
 .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem;}
@@ -300,12 +308,15 @@ textarea::placeholder{color:var(--text3);}
         <div class="nps-section-sub">How likely are you to recommend this analyst to a colleague? (0 = not at all, 10 = extremely)</div>
         <div class="nps-grid" id="nps-grid-analyst"></div>
         <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
+        <div class="nps-selected-label" id="nps-analyst-label"></div>
       </div>
+      <div style="height:1px;background:var(--border);margin:1.1rem 0;" id="nps-divider" style="display:none"></div>
       <div class="nps-section" id="nps-team-section">
         <div class="nps-section-label">👥 Team NPS</div>
         <div class="nps-section-sub">How likely are you to recommend the overall Analytics team to a colleague? (0 = not at all, 10 = extremely)</div>
         <div class="nps-grid" id="nps-grid-team"></div>
         <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
+        <div class="nps-selected-label" id="nps-team-label"></div>
       </div>
       <p id="ne" class="err">Please select an NPS score.</p>
     </div>
@@ -338,12 +349,13 @@ textarea::placeholder{color:var(--text3);}
           <div class="stars" data-key="bu"></div>
         </div>
         <div class="rrow">
-          <div><div class="rl-t">Ownership &amp; Accountability</div><div class="rl-s">Commitment to delivering results and owning outcomes</div></div>
+          <div><div class="rl-t">Communication &amp; Clarity</div><div class="rl-s">Clear, timely and effective communication with stakeholders</div></div>
           <div class="stars" data-key="cc"></div>
         </div>
         <div style="margin-top:1.1rem">
-          <label class="flabel">General Comments</label>
-          <textarea id="gen-txt" placeholder="Share your overall thoughts, observations or suggestions..."></textarea>
+          <label class="flabel" for="gen-txt">General Comments</label>
+          <textarea id="gen-txt" maxlength="500" placeholder="Share your overall thoughts, observations or suggestions..." oninput="updateCC('gen-txt','gen-cc')"></textarea>
+          <div class="char-counter" id="gen-cc">0 / 500</div>
         </div>
       </div>
 
@@ -370,8 +382,9 @@ textarea::placeholder{color:var(--text3);}
           <div class="stars" data-key="lg"></div>
         </div>
         <div style="margin-top:1.1rem">
-          <label class="flabel">Appreciation Comments</label>
-          <textarea id="ac-txt" placeholder="Share what you appreciated most about this team / analyst..."></textarea>
+          <label class="flabel" for="ac-txt">Appreciation Comments</label>
+          <textarea id="ac-txt" maxlength="500" placeholder="Share what you appreciated most about this team / analyst..." oninput="updateCC('ac-txt','ac-cc')"></textarea>
+          <div class="char-counter" id="ac-cc">0 / 500</div>
         </div>
       </div>
 
@@ -414,8 +427,9 @@ textarea::placeholder{color:var(--text3);}
           </div>
         </div>
         <div style="margin-top:1.25rem">
-          <label class="flabel">Describe Your Concern</label>
-          <textarea id="cp-txt" placeholder="Please describe the issue in detail so we can address it effectively..."></textarea>
+          <label class="flabel" for="cp-txt">Describe Your Concern</label>
+          <textarea id="cp-txt" maxlength="500" placeholder="Please describe the issue in detail so we can address it effectively..." oninput="updateCC('cp-txt','cp-cc')"></textarea>
+          <div class="char-counter" id="cp-cc">0 / 500</div>
         </div>
       </div>
     </div>
@@ -484,6 +498,8 @@ function setRT(t){
   // Show/hide NPS sections
   document.getElementById('nps-analyst-section').style.display=t==='peer'?'block':'none';
   document.getElementById('nps-team-section').style.display=t==='team'?'block':'none';
+  document.getElementById('nps-divider').style.display='none'; // only one section shown at a time
+  document.getElementById('nps-card-title').textContent=t==='peer'?'Analyst NPS Score':'Team NPS Score';
   // Reset NPS on toggle change
   analystNPS=null;teamNPS=null;
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
@@ -534,6 +550,7 @@ function setPage(f,t){
 // ── NPS Grids ─────────────────────────────────────────────────────
 function buildNPS(gridId,which){
   var grid=document.getElementById(gridId);
+  var labelId=which==='analyst'?'nps-analyst-label':'nps-team-label';
   for(var i=0;i<=10;i++){
     var b=document.createElement('button');
     b.className='nps-btn';b.textContent=i;
@@ -545,14 +562,30 @@ function buildNPS(gridId,which){
         thisGrid.querySelectorAll('.nps-btn').forEach(function(x){x.className='nps-btn';});
         var c=score<=6?'sd':score<=8?'sp':'sg';
         btn.className='nps-btn '+c;
-        // NO badge/popup shown to user
+        // Update selected label
+        var lbl=document.getElementById(labelId);
+        if(lbl){
+          var cat=score<=6?'Detractor':score<=8?'Passive':'Promoter';
+          var col=score<=6?'var(--red)':score<=8?'var(--amber)':'var(--green)';
+          lbl.innerHTML='<span style="color:'+col+'">Score '+score+' — '+cat+'</span>';
+        }
         document.getElementById('ne').classList.remove('show');
       };
     })(i,b);
     grid.appendChild(b);
   }
 }
-buildNPS('nps-grid-analyst','analyst');
+// ── Char counter ──────────────────────────────────────────────────
+function updateCC(taId,ccId){
+  var ta=document.getElementById(taId);
+  var cc=document.getElementById(ccId);
+  if(!ta||!cc)return;
+  var len=ta.value.length,max=parseInt(ta.getAttribute('maxlength')||'500');
+  cc.textContent=len+' / '+max;
+  cc.className='char-counter'+(len>max*0.8?' warn':'');
+}
+
+
 buildNPS('nps-grid-team','team');
 
 // ── Stars ─────────────────────────────────────────────────────────
@@ -661,11 +694,18 @@ function resetAll(){
   document.getElementById('cf').style.display='none';
   document.getElementById('hf').style.display='none';
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
-  document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
+  // Re-init NPS section visibility
+  document.getElementById('nps-analyst-section').style.display='none';
+  document.getElementById('nps-team-section').style.display='block';
+  document.getElementById('nps-card-title').textContent='Team NPS Score';
+  document.getElementById('nps-divider').style.display='none';
+  var al=document.getElementById('nps-analyst-label');if(al)al.innerHTML='';
+  var tl=document.getElementById('nps-team-label');if(tl)tl.innerHTML='';
   document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
   document.getElementById('gen-txt').value='';
   document.getElementById('ac-txt').value='';
   document.getElementById('cp-txt').value='';
+  ['gen-cc','ac-cc','cp-cc'].forEach(function(id){var el=document.getElementById(id);if(el){el.textContent='0 / 500';el.className='char-counter';}});
   doStab(0,document.querySelectorAll('.stab')[0]);
   setRT('team');
   setPage(3,1);
