@@ -24,290 +24,274 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);
   background-size:64px 64px;}
 .z1{position:relative;z-index:1;}
+
 /* HEADER */
-.header{position:sticky;top:0;z-index:200;background:rgba(8,12,24,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 2rem;height:66px;display:flex;align-items:center;justify-content:space-between;}
+.header{position:sticky;top:0;z-index:300;background:rgba(8,12,24,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;background:linear-gradient(135deg,#eef0f8 0%,var(--gold2) 60%,var(--gold3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .logo-tag{font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
 .admin-pill{font-size:12px;color:var(--text2);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:7px 16px;transition:all .25s;background:var(--glass);}
-.admin-pill:hover{color:var(--gold);border-color:rgba(201,168,76,.35);box-shadow:0 0 20px var(--gold-glow);}
-/* HERO */
-.hero{position:relative;z-index:1;padding:4rem 1.5rem 3rem;text-align:center;}
-.hero-chip{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.22);background:rgba(201,168,76,.07);padding:7px 18px;border-radius:20px;margin-bottom:1.5rem;animation:fadeUp .5s ease both;}
-.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5.5vw,54px);font-weight:600;line-height:1.1;margin-bottom:1rem;animation:fadeUp .5s .08s ease both;}
-.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-desc{font-size:15px;color:var(--text2);line-height:1.75;max-width:440px;margin:0 auto;animation:fadeUp .5s .16s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-/* REVIEW TOGGLE */
-.review-toggle-wrap{position:relative;z-index:1;}
-.review-toggle{max-width:680px;margin:0 auto;padding:1.25rem 1rem 0;display:flex;gap:10px;align-items:center;justify-content:center;}
-.rtbtn{flex:1;max-width:280px;padding:14px 20px;border-radius:14px;border:1px solid var(--border);background:var(--glass);color:var(--text2);font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px;}
+.admin-pill:hover{color:var(--gold);border-color:rgba(201,168,76,.35);}
+
+/* STICKY REVIEW TOGGLE - FROZEN */
+.sticky-toggle{
+  position:sticky;top:62px;z-index:200;
+  background:rgba(8,12,24,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:.75rem 1rem;
+}
+.toggle-inner{max-width:680px;margin:0 auto;display:flex;gap:8px;align-items:center;justify-content:center;}
+.rtbtn{
+  flex:1;max-width:300px;padding:11px 16px;border-radius:12px;
+  border:1px solid var(--border);background:var(--glass);
+  color:var(--text2);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;
+}
 .rtbtn:hover{border-color:var(--border2);color:var(--text);}
-.rtbtn.active-ext{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.4);color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.15);}
-.rtbtn.active-peer{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.4);color:var(--blue);box-shadow:0 0 20px rgba(79,142,247,.15);}
-.rtbtn-icon{font-size:22px;}
+.rtbtn.active-team{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.45);color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,.15);}
+.rtbtn.active-peer{background:rgba(79,142,247,.12);border-color:rgba(79,142,247,.45);color:var(--blue);box-shadow:0 0 18px rgba(79,142,247,.15);}
+.rtbtn-icon{font-size:20px;flex-shrink:0;}
 .rtbtn-label{font-size:13px;font-weight:600;display:block;}
-.rtbtn-sub{font-size:10px;opacity:.7;display:block;margin-top:2px;}
-.rt-sep{font-size:11px;color:var(--text3);font-weight:500;}
-/* PEER BANNER */
-.peer-banner{max-width:680px;margin:.75rem auto 0;padding:0 1rem;display:none;}
-.peer-banner.show{display:block;}
-.peer-banner-inner{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.25);border-radius:12px;padding:.9rem 1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;color:#7fb3ff;font-weight:500;}
+.rtbtn-sub{font-size:10px;opacity:.65;display:block;margin-top:1px;}
+.rt-sep{font-size:11px;color:var(--text3);font-weight:500;flex-shrink:0;}
+.review-mode-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-left:8px;
+  background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:var(--blue);
+  display:none;
+}
+.review-mode-badge.show{display:inline-flex;}
+
 /* PROGRESS */
-.prog-bar{position:relative;z-index:1;background:rgba(8,12,24,.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.prog-bar{position:sticky;top:calc(62px + 54px);z-index:199;background:rgba(8,12,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
 .prog-inner{max-width:680px;margin:0 auto;display:flex;padding:0 1rem;}
-.step-item{flex:1;display:flex;align-items:center;gap:9px;padding:15px 0;border-bottom:2px solid transparent;transition:all .3s;}
+.step-item{flex:1;display:flex;align-items:center;gap:9px;padding:13px 0;border-bottom:2px solid transparent;transition:all .3s;}
 .step-item.active{border-bottom-color:var(--gold);}
 .step-item.done{border-bottom-color:var(--green);}
-.step-num{width:24px;height:24px;border-radius:50%;background:var(--glass);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
-.step-item.active .step-num{background:var(--gold);border-color:var(--gold);color:#080c18;box-shadow:0 0 18px var(--gold-glow);}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--glass);border:1px solid var(--border);color:var(--text3);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.step-item.active .step-num{background:var(--gold);border-color:var(--gold);color:#080c18;}
 .step-item.done .step-num{background:var(--green);border-color:var(--green);color:#080c18;}
-.step-label{font-size:11.5px;font-weight:500;color:var(--text3);transition:color .3s;}
+.step-label{font-size:11px;font-weight:500;color:var(--text3);transition:color .3s;}
 .step-item.active .step-label,.step-item.done .step-label{color:var(--text);}
-.step-sep{padding:0 4px;color:var(--text3);font-size:12px;display:flex;align-items:center;}
+.step-sep{padding:0 3px;color:var(--text3);font-size:11px;display:flex;align-items:center;}
+
+/* HERO - compact since toggle is above */
+.hero{position:relative;z-index:1;padding:2.5rem 1.5rem 2rem;text-align:center;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:600;line-height:1.1;margin-bottom:.6rem;}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:14px;color:var(--text2);line-height:1.7;max-width:440px;margin:0 auto;}
+
 /* WRAP */
 .wrap{max-width:680px;margin:0 auto;padding:1.5rem 1rem 5rem;position:relative;z-index:1;}
 .page{display:none;}.page.active{display:block;}
+
 /* CARD */
-.card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem 2rem;margin-bottom:1.25rem;transition:border-color .3s;animation:fadeUp .45s ease both;}
+.card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem 2rem;margin-bottom:1.25rem;transition:border-color .3s;}
 .card:hover{border-color:var(--border2);}
-.card-title{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;}
+.card-title{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;display:flex;align-items:center;gap:10px;}
 .card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent);}
+.card-desc{font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1.25rem;padding:.75rem 1rem;background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.15);border-radius:8px;}
+
 /* FORM */
-.fg{margin-bottom:1.2rem;}
-.flabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.03em;}
+.fg{margin-bottom:1.1rem;}
+.flabel{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;}
 .req{color:var(--gold);}
 .sel-wrap{position:relative;}
 .sel-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:10px;}
-select,input[type="text"]{width:100%;padding:11px 40px 11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);transition:all .2s;-webkit-appearance:none;appearance:none;}
+select{width:100%;padding:11px 40px 11px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text);transition:all .2s;-webkit-appearance:none;appearance:none;}
 select option{background:#141c30;color:var(--text);}
 select:disabled{opacity:.35;cursor:not-allowed;}
-select:focus,input[type="text"]:focus{outline:none;border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.03);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
-input[type="text"]{padding-right:14px;}
-input[type="text"]::placeholder{color:var(--text3);}
-/* NPS DUAL */
-.nps-section{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
-.nps-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+select:focus{outline:none;border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.03);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
+
+/* NPS */
+.nps-section{margin-bottom:0;padding-bottom:0;border-bottom:none;}
 .nps-section-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
 .nps-section-sub{font-size:12px;color:var(--text3);margin-bottom:10px;}
-.nps-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:6px;}
-.nps-btn{aspect-ratio:1;border:1px solid var(--border);border-radius:10px;background:var(--glass);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;color:var(--text2);font-family:'Outfit',sans-serif;}
-.nps-btn:hover{transform:translateY(-3px);border-color:var(--border2);color:var(--text);box-shadow:0 8px 20px rgba(0,0,0,.35);}
-.nps-btn.sd{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);color:var(--red);}
-.nps-btn.sp{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);color:var(--amber);}
-.nps-btn.sg{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35);color:var(--green);}
-.nps-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text3);}
-.nps-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;margin-top:8px;}
-.bd{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.22);color:var(--red);}
-.bp{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.22);color:var(--amber);}
-.bg{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);color:var(--green);}
+.nps-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:5px;}
+.nps-btn{aspect-ratio:1;border:1px solid var(--border);border-radius:9px;background:var(--glass);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--text2);font-family:'Outfit',sans-serif;}
+.nps-btn:hover{transform:translateY(-2px);border-color:var(--border2);color:var(--text);}
+.nps-btn.sd{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.4);color:var(--red);}
+.nps-btn.sp{background:rgba(251,191,36,.15);border-color:rgba(251,191,36,.4);color:var(--amber);}
+.nps-btn.sg{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.4);color:var(--green);}
+.nps-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3);}
+
+/* RATING OPTIONS (emoji scale for complaint) */
+.rating-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px;}
+.ropt{
+  padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+  background:var(--glass);cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;gap:8px;
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--text2);
+}
+.ropt:hover{border-color:var(--border2);color:var(--text);}
+.ropt.selected-0{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.4);color:var(--green);}
+.ropt.selected-1{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--amber);}
+.ropt.selected-2{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.4);color:#f97316;}
+.ropt.selected-3{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.4);color:var(--red);}
+.ropt-icon{font-size:16px;flex-shrink:0;}
+.ropt-label{font-size:12px;font-weight:500;}
+
 /* STARS */
-.rrow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:1rem;transition:all .18s;}
+.rrow{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:1rem;}
 .rrow:last-child{border-bottom:none;padding-bottom:0;}
-.rrow:hover{background:rgba(255,255,255,.02);margin:0 -12px;padding:13px 12px;border-radius:10px;border-bottom-color:transparent;}
+.rrow:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:12px 10px;border-radius:10px;border-bottom-color:transparent;}
 .rl-t{font-size:13px;font-weight:500;color:var(--text);}
 .rl-s{font-size:11px;color:var(--text3);margin-top:2px;}
 .stars{display:flex;gap:4px;flex-shrink:0;}
-.star{font-size:21px;cursor:pointer;color:var(--text3);transition:all .14s;user-select:none;line-height:1;}
-.star:hover,.star.lit{color:var(--gold);filter:drop-shadow(0 0 5px rgba(201,168,76,.55));}
+.star{font-size:20px;cursor:pointer;color:var(--text3);transition:all .14s;user-select:none;line-height:1;}
+.star:hover,.star.lit{color:var(--gold);filter:drop-shadow(0 0 4px rgba(201,168,76,.5));}
 .star:hover{transform:scale(1.2);}
+
 /* STABS */
-.stabs{display:flex;gap:3px;background:rgba(255,255,255,.025);padding:4px;border-radius:12px;margin-bottom:1.5rem;border:1px solid var(--border);}
+.stabs{display:flex;gap:3px;background:rgba(255,255,255,.025);padding:4px;border-radius:12px;margin-bottom:1.4rem;border:1px solid var(--border);}
 .stab{flex:1;padding:9px 6px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-radius:9px;transition:all .2s;text-align:center;}
 .stab.active{background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.06));color:var(--gold);border:1px solid rgba(201,168,76,.18);}
 .sp{display:none;}.sp.active{display:block;}
-textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;resize:vertical;min-height:90px;color:var(--text);transition:all .2s;}
+
+textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;resize:vertical;min-height:88px;color:var(--text);transition:all .2s;}
 textarea:focus{outline:none;border-color:rgba(201,168,76,.35);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
 textarea::placeholder{color:var(--text3);}
-/* ANON */
-.anon-card{background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.14);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
-.anon-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
-.anon-label{font-size:14px;font-weight:600;}
-.anon-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-.tgroup{display:flex;gap:8px;}
-.tbtn{padding:7px 22px;border-radius:8px;border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--glass);color:var(--text2);transition:all .2s;}
-.tbtn.ay{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.3);color:var(--green);}
-.tbtn.an{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:var(--red);}
-.id-fields{margin-top:1rem;display:none;}
-.id-fields.show{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-/* PEER REVIEWER IN ANON */
+
+/* PEER ID */
 .peer-id-section{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;display:none;}
 .peer-id-section.show{display:block;}
 .peer-id-title{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
 .peer-id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
 /* BUTTONS */
 .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem;}
 .btn{padding:12px 28px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;border:none;display:inline-flex;align-items:center;gap:7px;}
 .btn-ol{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-ol:hover{border-color:var(--border2);color:var(--text);}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#a8792e);color:#080c18;font-weight:600;box-shadow:0 4px 24px rgba(201,168,76,.28);}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(201,168,76,.38);}
-.btn-blue{background:linear-gradient(135deg,#1e3f80,#2d5fcc);color:#fff;font-weight:600;border:1px solid rgba(79,142,247,.25);box-shadow:0 4px 24px rgba(79,142,247,.2);}
-.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(79,142,247,.32);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#a8792e);color:#080c18;font-weight:600;box-shadow:0 4px 20px rgba(201,168,76,.28);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,168,76,.38);}
+.btn-blue{background:linear-gradient(135deg,#1e3f80,#2d5fcc);color:#fff;font-weight:600;border:1px solid rgba(79,142,247,.25);box-shadow:0 4px 20px rgba(79,142,247,.2);}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,142,247,.32);}
 .err{color:var(--red);font-size:12px;margin-top:6px;display:none;}
 .err.show{display:block;}
+
 /* THANK YOU */
 .ty{text-align:center;padding:3.5rem 1.5rem;}
-.ty-ring{width:100px;height:100px;border-radius:50%;margin:0 auto 2rem;background:radial-gradient(circle,rgba(52,211,153,.18),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;font-size:40px;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;}
+.ty-ring{width:96px;height:96px;border-radius:50%;margin:0 auto 2rem;background:radial-gradient(circle,rgba(52,211,153,.18),rgba(52,211,153,.04));border:1px solid rgba(52,211,153,.25);display:flex;align-items:center;justify-content:center;font-size:38px;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;}
 @keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.ty-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;background:linear-gradient(135deg,var(--text),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.ty-title{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;background:linear-gradient(135deg,var(--text),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
 .ty-sub{font-size:14px;color:var(--text2);line-height:1.75;max-width:380px;margin:0 auto 1.75rem;}
 .ty-ref{background:var(--glass);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:12px;color:var(--text3);display:inline-block;margin-bottom:2rem;font-family:monospace;}
 .ty-ref strong{color:var(--gold);}
-.ty-badges{display:flex;gap:10px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;}
-.ty-badge{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;}
-.ty-badge.ext{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:var(--gold);}
-.ty-badge.peer{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);color:var(--blue);}
+
 @media(max-width:560px){
   .nps-grid{gap:3px;}.nps-btn{font-size:11px;border-radius:7px;}
-  .id-fields.show,.peer-id-grid{grid-template-columns:1fr;}
-  .review-toggle{flex-direction:column;}.rtbtn{max-width:100%;}
+  .peer-id-grid{grid-template-columns:1fr;}
   .card{padding:1.25rem;}.stab{font-size:11px;padding:8px 3px;}
+  .rating-opts{grid-template-columns:1fr 1fr;}
+  .toggle-inner{flex-direction:column;gap:6px;}.rtbtn{max-width:100%;}
 }
 </style>
 </head>
 <body>
 <div class="bg-ambient"></div><div class="bg-grid"></div>
+
+<!-- HEADER -->
 <header class="header">
   <div><div class="logo">Analytics NPS</div><div class="logo-tag">PW Education &middot; Feedback Portal</div></div>
-  <a href="admin.html" class="admin-pill">Admin Portal &rarr;</a>
+  <a href="admin.html" class="admin-pill">Admin &rarr;</a>
 </header>
-<div class="hero z1">
-  <div class="hero-chip"><span class="hero-dot"></span>Share Your Experience</div>
-  <h1>Your Voice <em>Shapes Our Team</em></h1>
-  <p class="hero-desc">Help us build a stronger Analytics department. Your honest feedback drives real change.</p>
-</div>
-<div class="review-toggle-wrap z1">
-  <div class="review-toggle">
-    <button class="rtbtn active-ext" id="rt-ext" onclick="setRT('external')">
-      <span class="rtbtn-icon">📋</span>
-      <span><span class="rtbtn-label">Stakeholder Review</span><span class="rtbtn-sub">Customer / external feedback</span></span>
+
+<!-- STICKY FROZEN REVIEW TOGGLE -->
+<div class="sticky-toggle">
+  <div class="toggle-inner">
+    <button class="rtbtn active-team" id="rt-team" onclick="setRT('team')">
+      <span class="rtbtn-icon">👥</span>
+      <span><span class="rtbtn-label">Team Review</span><span class="rtbtn-sub">Rate the overall team</span></span>
     </button>
     <span class="rt-sep">or</span>
     <button class="rtbtn" id="rt-peer" onclick="setRT('peer')">
       <span class="rtbtn-icon">🤝</span>
-      <span><span class="rtbtn-label">Peer Review</span><span class="rtbtn-sub">Analyst rating another analyst</span></span>
+      <span><span class="rtbtn-label">Peer Review</span><span class="rtbtn-sub">Rate a fellow analyst</span></span>
     </button>
+    <span class="review-mode-badge" id="mode-badge">Peer Mode</span>
   </div>
 </div>
-<div class="peer-banner z1" id="peer-banner">
-  <div class="peer-banner-inner">📌 <strong>Peer Review Mode</strong> &mdash; You are rating a fellow analyst. Select "No" for anonymous to identify yourself as the reviewer.</div>
-</div>
-<div class="prog-bar z1">
+
+<!-- PROGRESS BAR -->
+<div class="prog-bar">
   <div class="prog-inner">
-    <div class="step-item active" id="step1"><div class="step-num">1</div><div class="step-label">Your Details</div></div>
+    <div class="step-item active" id="step1"><div class="step-num">1</div><div class="step-label">Team Details</div></div>
     <div class="step-sep">›</div>
-    <div class="step-item" id="step2"><div class="step-num">2</div><div class="step-label">Rating &amp; Feedback</div></div>
+    <div class="step-item" id="step2"><div class="step-num">2</div><div class="step-label">NPS &amp; Feedback</div></div>
     <div class="step-sep">›</div>
     <div class="step-item" id="step3"><div class="step-num">3</div><div class="step-label">Done</div></div>
   </div>
 </div>
+
+<!-- HERO -->
+<div class="hero z1">
+  <h1>Your Voice <em>Shapes Our Team</em></h1>
+  <p class="hero-desc">Help us build a stronger Analytics department. All responses are anonymous.</p>
+</div>
+
 <div class="wrap">
+
   <!-- PAGE 1 -->
   <div class="page active" id="page1">
     <div class="card">
-      <div class="card-title">Basic Information</div>
-      <div class="fg"><label class="flabel">Vertical <span class="req">*</span></label>
-        <div class="sel-wrap"><select id="vertical" onchange="onVert()">
-          <option value="">-- Select Vertical --</option>
-          <option>Vidyapeeth</option><option>Pathshala</option>
-        </select></div></div>
-      <div class="fg"><label class="flabel">Team <span class="req">*</span></label>
+      <div class="card-title">Team Details</div>
+      <div class="card-desc" id="basic-desc">
+        <strong>Team Review:</strong> Provide details of the team you want to give feedback for.<br>
+        <strong>Peer Review:</strong> Provide details of the analyst you want to give feedback for.
+      </div>
+
+      <!-- Team field (both modes) -->
+      <div class="fg">
+        <label class="flabel">Team <span class="req">*</span></label>
         <div class="sel-wrap"><select id="team" onchange="onTeam()">
           <option value="">-- Select Team --</option>
           <option value="City">City</option>
           <option value="Head Office (Noida)">Head Office (Noida)</option>
-        </select></div></div>
+        </select></div>
+      </div>
+
+      <!-- City fields -->
       <div id="cf" style="display:none">
-        <div class="fg"><label class="flabel" id="analyst-label">Analyst Being Rated <span class="req">*</span></label>
+        <div class="fg">
+          <label class="flabel" id="region-label">Region <span class="req">*</span></label>
           <div class="sel-wrap"><select id="region" onchange="onRegion()">
             <option value="">-- Select Region --</option>
             <option>East</option><option>Maharashtra</option><option>Gujarat</option>
             <option>PB + JK</option><option>MP + CG</option><option>Rajasthan</option>
             <option>NCR + UK</option><option>Bihar + JH</option><option>UP</option><option>South</option>
-          </select></div></div>
-        <div class="fg"><div class="sel-wrap"><select id="ac" disabled><option value="">-- Select Region first --</option></select></div></div>
+          </select></div>
+        </div>
+        <!-- Analyst dropdown - peer only -->
+        <div class="fg" id="city-analyst-fg" style="display:none">
+          <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="ac" disabled><option value="">-- Select Region first --</option></select></div>
+        </div>
       </div>
+
+      <!-- HO fields -->
       <div id="hf" style="display:none">
-        <div class="fg"><label class="flabel" id="analyst-label-ho">Analyst Being Rated <span class="req">*</span></label>
+        <div class="fg">
+          <label class="flabel">Department <span class="req">*</span></label>
           <div class="sel-wrap"><select id="dept" onchange="onDept()">
             <option value="">-- Select Department --</option>
             <option>Ops</option><option>Acad</option><option>Biz Finance and Compliance</option>
             <option>Sales</option><option>Marketing</option><option>Analytics Lead</option>
-          </select></div></div>
-        <div class="fg"><div class="sel-wrap"><select id="ah" disabled><option value="">-- Select Department first --</option></select></div></div>
-      </div>
-      <p id="e1" class="err">Please fill all required fields to continue.</p>
-    </div>
-    <div class="nav-row"><div></div><button class="btn btn-gold" onclick="g2()">Continue &rarr;</button></div>
-  </div>
-  <!-- PAGE 2 -->
-  <div class="page" id="page2">
-    <div class="card">
-      <div class="card-title">NPS Scores</div>
-      <div class="nps-section">
-        <div class="nps-section-label" id="analyst-nps-label">👤 Analyst NPS</div>
-        <div class="nps-section-sub" id="analyst-nps-sub">How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)</div>
-        <div class="nps-grid" id="nps-grid-analyst"></div>
-        <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
-        <div id="nbw-analyst" style="min-height:30px;margin-top:6px;"></div>
-      </div>
-      <div class="nps-section">
-        <div class="nps-section-label">👥 Team NPS</div>
-        <div class="nps-section-sub">How likely are you to recommend the overall Analytics team? (0=not at all, 10=extremely)</div>
-        <div class="nps-grid" id="nps-grid-team"></div>
-        <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
-        <div id="nbw-team" style="min-height:30px;margin-top:6px;"></div>
-      </div>
-      <p id="ne" class="err">Please select both NPS scores.</p>
-    </div>
-    <div class="card">
-      <div class="card-title">Feedback</div>
-      <div class="stabs">
-        <button class="stab active" onclick="doStab(0,this)">📋 General</button>
-        <button class="stab" onclick="doStab(1,this)">🌟 Appreciation</button>
-        <button class="stab" onclick="doStab(2,this)">⚠️ Complaint</button>
-      </div>
-      <div class="sp active" id="sp0">
-        <div class="rrow"><div><div class="rl-t">Overall Experience</div><div class="rl-s">How was your overall interaction?</div></div><div class="stars" data-key="oe"></div></div>
-        <div class="rrow"><div><div class="rl-t">Staff Behavior</div><div class="rl-s">Friendliness &amp; professionalism</div></div><div class="stars" data-key="sb"></div></div>
-        <div class="rrow"><div><div class="rl-t">Process Smoothness</div><div class="rl-s">Admission / enquiry process ease</div></div><div class="stars" data-key="ps"></div></div>
-        <div class="rrow"><div><div class="rl-t">Communication Clarity</div><div class="rl-s">Information explained clearly or not</div></div><div class="stars" data-key="cc"></div></div>
-      </div>
-      <div class="sp" id="sp1">
-        <div class="rrow"><div><div class="rl-t">Understanding Your Needs</div><div class="rl-s">Did they listen &amp; suggest the right solution?</div></div><div class="stars" data-key="un"></div></div>
-        <div class="rrow"><div><div class="rl-t">Professionalism</div><div class="rl-s">Behavior, politeness, and attitude</div></div><div class="stars" data-key="pr"></div></div>
-        <div class="rrow"><div><div class="rl-t">Responsiveness</div><div class="rl-s">How quickly they handled your queries</div></div><div class="stars" data-key="re"></div></div>
-        <div class="rrow"><div><div class="rl-t">Problem-Solving Ability</div><div class="rl-s">Ability to resolve doubts / issues</div></div><div class="stars" data-key="psa"></div></div>
-        <div style="margin-top:1.1rem"><label class="flabel">Additional Comments</label><textarea id="ac-txt" placeholder="Share what you appreciated most..."></textarea></div>
-      </div>
-      <div class="sp" id="sp2">
-        <div class="rrow"><div><div class="rl-t">Delay in Response</div><div class="rl-s">Waiting time issues (1=severe, 5=no issue)</div></div><div class="stars" data-key="dr"></div></div>
-        <div class="rrow"><div><div class="rl-t">Miscommunication</div><div class="rl-s">Wrong / incomplete information shared</div></div><div class="stars" data-key="mc"></div></div>
-        <div class="rrow"><div><div class="rl-t">Process Complexity</div><div class="rl-s">Too many steps / confusion involved</div></div><div class="stars" data-key="pc"></div></div>
-        <div class="rrow"><div><div class="rl-t">Staff Behavior Issue</div><div class="rl-s">Any negative interaction (1=severe, 5=no issue)</div></div><div class="stars" data-key="si"></div></div>
-        <div style="margin-top:1.1rem"><label class="flabel">Describe the Issue</label><textarea id="cp-txt" placeholder="Please describe your complaint in detail..."></textarea></div>
-      </div>
-    </div>
-    <div class="anon-card">
-      <div class="anon-top">
-        <div><div class="anon-label">Submit Anonymously?</div><div class="anon-sub" id="anon-sub-text">Your feedback will be recorded without identifying you</div></div>
-        <div class="tgroup">
-          <button class="tbtn" id="by" onclick="setAnon(true)">Yes</button>
-          <button class="tbtn" id="bn" onclick="setAnon(false)">No</button>
+          </select></div>
+        </div>
+        <!-- Analyst dropdown - peer only -->
+        <div class="fg" id="ho-analyst-fg" style="display:none">
+          <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="ah" disabled><option value="">-- Select Department first --</option></select></div>
         </div>
       </div>
-      <!-- Stakeholder: Name + PWID shown when No -->
-      <div class="id-fields" id="idf">
-        <div class="fg" style="margin:0"><label class="flabel">Your Name <span class="req">*</span></label><input type="text" id="sn" placeholder="Full name"></div>
-        <div class="fg" style="margin:0"><label class="flabel">PW ID <span class="req">*</span></label><input type="text" id="sp2i" placeholder="e.g. PW12345"></div>
-      </div>
-      <!-- Peer: only reviewer team + name shown when No -->
+
+      <!-- Peer reviewer section (shown only in peer mode - always visible since all anonymous) -->
       <div class="peer-id-section" id="peer-id-section">
         <div class="peer-id-title">📌 Peer Reviewer Details</div>
         <div class="peer-id-grid">
-          <div class="fg" style="margin:0"><label class="flabel">Your Team (Reviewer) <span class="req">*</span></label>
+          <div class="fg" style="margin:0">
+            <label class="flabel">Your Team (Reviewer) <span class="req">*</span></label>
             <div class="sel-wrap"><select id="peer-region" onchange="onPeerRegion()">
               <option value="">-- Select Your Team --</option>
               <option value="city-East">City - East</option>
@@ -325,35 +309,174 @@ textarea::placeholder{color:var(--text3);}
               <option value="ho-Sales">HO - Sales</option>
               <option value="ho-Marketing">HO - Marketing</option>
               <option value="ho-Analytics Lead">HO - Analytics Lead</option>
-            </select></div></div>
-          <div class="fg" style="margin:0"><label class="flabel">Your Name (Reviewer) <span class="req">*</span></label>
-            <div class="sel-wrap"><select id="peer-reviewer" disabled><option value="">-- Select team first --</option></select></div></div>
+            </select></div>
+          </div>
+          <div class="fg" style="margin:0">
+            <label class="flabel">Your Name (Reviewer) <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="peer-reviewer" disabled><option value="">-- Select team first --</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <p id="e1" class="err">Please fill all required fields to continue.</p>
+    </div>
+    <div class="nav-row"><div></div><button class="btn btn-gold" onclick="g2()">Continue &rarr;</button></div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page2">
+
+    <!-- NPS SCORE -->
+    <div class="card">
+      <div class="card-title" id="nps-card-title">NPS Score</div>
+      <div class="nps-section" id="nps-analyst-section">
+        <div class="nps-section-label">🤝 Analyst NPS</div>
+        <div class="nps-section-sub">How likely are you to recommend this analyst to a colleague? (0 = not at all, 10 = extremely)</div>
+        <div class="nps-grid" id="nps-grid-analyst"></div>
+        <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
+      </div>
+      <div class="nps-section" id="nps-team-section">
+        <div class="nps-section-label">👥 Team NPS</div>
+        <div class="nps-section-sub">How likely are you to recommend the overall Analytics team to a colleague? (0 = not at all, 10 = extremely)</div>
+        <div class="nps-grid" id="nps-grid-team"></div>
+        <div class="nps-labels"><span>Not likely at all</span><span>Extremely likely</span></div>
+      </div>
+      <p id="ne" class="err">Please select an NPS score.</p>
+    </div>
+
+    <!-- FEEDBACK TABS -->
+    <div class="card">
+      <div class="card-title">Feedback</div>
+      <div class="stabs">
+        <button class="stab active" onclick="doStab(0,this)">📋 General</button>
+        <button class="stab" onclick="doStab(1,this)">🌟 Appreciation</button>
+        <button class="stab" onclick="doStab(2,this)">⚠️ Complaint</button>
+      </div>
+
+      <!-- GENERAL -->
+      <div class="sp active" id="sp0">
+        <div class="rrow">
+          <div><div class="rl-t">Stakeholder Management</div><div class="rl-s">Managing relationships and expectations</div></div>
+          <div class="stars" data-key="sm"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Ownership &amp; Accountability</div><div class="rl-s">Taking responsibility for outcomes</div></div>
+          <div class="stars" data-key="oa"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Problem-Solving &amp; Analytical Thinking</div><div class="rl-s">Ability to analyse and solve challenges</div></div>
+          <div class="stars" data-key="psat"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Business Understanding</div><div class="rl-s">Grasp of business context and goals</div></div>
+          <div class="stars" data-key="bu"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Ownership &amp; Accountability</div><div class="rl-s">Commitment to delivering results and owning outcomes</div></div>
+          <div class="stars" data-key="cc"></div>
+        </div>
+        <div style="margin-top:1.1rem">
+          <label class="flabel">General Comments</label>
+          <textarea id="gen-txt" placeholder="Share your overall thoughts, observations or suggestions..."></textarea>
+        </div>
+      </div>
+
+      <!-- APPRECIATION -->
+      <div class="sp" id="sp1">
+        <div class="rrow">
+          <div><div class="rl-t">Strong Analytical Skills</div><div class="rl-s">Quality of data analysis and insights</div></div>
+          <div class="stars" data-key="sas"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Business Impact</div><div class="rl-s">Measurable contribution to business outcomes</div></div>
+          <div class="stars" data-key="bi"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Technical Expertise</div><div class="rl-s">Depth of technical knowledge and skills</div></div>
+          <div class="stars" data-key="te"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Problem-Solving Mindset</div><div class="rl-s">Approach to tackling complex problems</div></div>
+          <div class="stars" data-key="psm"></div>
+        </div>
+        <div class="rrow">
+          <div><div class="rl-t">Learning &amp; Growth</div><div class="rl-s">Commitment to continuous improvement</div></div>
+          <div class="stars" data-key="lg"></div>
+        </div>
+        <div style="margin-top:1.1rem">
+          <label class="flabel">Appreciation Comments</label>
+          <textarea id="ac-txt" placeholder="Share what you appreciated most about this team / analyst..."></textarea>
+        </div>
+      </div>
+
+      <!-- COMPLAINT -->
+      <div class="sp" id="sp2">
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:8px"><div class="rl-t">Delay in Response</div><div class="rl-s">How would you rate the response time?</div></div>
+          <div class="rating-opts" data-ckey="dr">
+            <div class="ropt" onclick="setComplaint('dr',0,this)"><span class="ropt-icon">🟢</span><span class="ropt-label">No Issue</span></div>
+            <div class="ropt" onclick="setComplaint('dr',1,this)"><span class="ropt-icon">🟡</span><span class="ropt-label">Minor Improvement Needed</span></div>
+            <div class="ropt" onclick="setComplaint('dr',2,this)"><span class="ropt-icon">🟠</span><span class="ropt-label">Moderate Concern</span></div>
+            <div class="ropt" onclick="setComplaint('dr',3,this)"><span class="ropt-icon">🔴</span><span class="ropt-label">Major Concern</span></div>
+          </div>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:8px"><div class="rl-t">Miscommunication</div><div class="rl-s">How often was information unclear or incorrect?</div></div>
+          <div class="rating-opts" data-ckey="mc">
+            <div class="ropt" onclick="setComplaint('mc',0,this)"><span class="ropt-icon">🟢</span><span class="ropt-label">No Issue</span></div>
+            <div class="ropt" onclick="setComplaint('mc',1,this)"><span class="ropt-icon">🟡</span><span class="ropt-label">Minor Improvement Needed</span></div>
+            <div class="ropt" onclick="setComplaint('mc',2,this)"><span class="ropt-icon">🟠</span><span class="ropt-label">Moderate Concern</span></div>
+            <div class="ropt" onclick="setComplaint('mc',3,this)"><span class="ropt-icon">🔴</span><span class="ropt-label">Major Concern</span></div>
+          </div>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:8px"><div class="rl-t">Process Complexity</div><div class="rl-s">How confusing or complicated were the processes?</div></div>
+          <div class="rating-opts" data-ckey="pc">
+            <div class="ropt" onclick="setComplaint('pc',0,this)"><span class="ropt-icon">🟢</span><span class="ropt-label">No Issue</span></div>
+            <div class="ropt" onclick="setComplaint('pc',1,this)"><span class="ropt-icon">🟡</span><span class="ropt-label">Minor Improvement Needed</span></div>
+            <div class="ropt" onclick="setComplaint('pc',2,this)"><span class="ropt-icon">🟠</span><span class="ropt-label">Moderate Concern</span></div>
+            <div class="ropt" onclick="setComplaint('pc',3,this)"><span class="ropt-icon">🔴</span><span class="ropt-label">Major Concern</span></div>
+          </div>
+        </div>
+        <div class="rrow" style="flex-direction:column;align-items:flex-start;border-bottom:none;padding-bottom:0;">
+          <div style="margin-bottom:8px"><div class="rl-t">Staff Behaviour Issue</div><div class="rl-s">How would you rate any negative interactions?</div></div>
+          <div class="rating-opts" data-ckey="si">
+            <div class="ropt" onclick="setComplaint('si',0,this)"><span class="ropt-icon">🟢</span><span class="ropt-label">No Issue</span></div>
+            <div class="ropt" onclick="setComplaint('si',1,this)"><span class="ropt-icon">🟡</span><span class="ropt-label">Minor Improvement Needed</span></div>
+            <div class="ropt" onclick="setComplaint('si',2,this)"><span class="ropt-icon">🟠</span><span class="ropt-label">Moderate Concern</span></div>
+            <div class="ropt" onclick="setComplaint('si',3,this)"><span class="ropt-icon">🔴</span><span class="ropt-label">Major Concern</span></div>
+          </div>
+        </div>
+        <div style="margin-top:1.25rem">
+          <label class="flabel">Describe Your Concern</label>
+          <textarea id="cp-txt" placeholder="Please describe the issue in detail so we can address it effectively..."></textarea>
         </div>
       </div>
     </div>
-    <p id="e2" class="err">Please select both NPS scores before submitting.</p>
+
+    <p id="e2" class="err">Please select an NPS score before submitting.</p>
     <div class="nav-row">
       <button class="btn btn-ol" onclick="g1()">&larr; Back</button>
       <button class="btn btn-blue" onclick="submitF()">Submit Feedback</button>
     </div>
   </div>
+
   <!-- PAGE 3 -->
   <div class="page" id="page3">
     <div class="card ty">
       <div class="ty-ring">✓</div>
       <div class="ty-title">Thank You!</div>
-      <p class="ty-sub">Your feedback has been recorded and will help shape a better Analytics team experience.</p>
-      <div class="ty-badges">
-        <span class="ty-badge" id="ty-type-badge"></span>
-        <span class="ty-badge" id="ty-nps-badge" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);color:var(--green);"></span>
-      </div>
+      <p class="ty-sub">Your feedback has been recorded anonymously and will help shape a better Analytics team experience for everyone.</p>
       <div class="ty-ref" id="tref"></div>
       <button class="btn btn-gold" style="margin:0 auto" onclick="resetAll()">Submit Another Response</button>
     </div>
   </div>
-</div>
+
+</div><!-- end wrap -->
+
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbwj1woUI1ch5Oc9VJY7JRkJOnoFmAjlXTnkmTbcbA1LGlTvzJ08oyIMOvVpTPARhfTR/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
+
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
   'Maharashtra':['Bhushan Mail - PW8223','Ambikesh Srivastava - PW23824','Prateek Gaur - PW28736'],
@@ -374,47 +497,43 @@ const HA={
   'Marketing':['Sachin Kumar - PW2366','Arvind Yadav - PW9155','Harshit Arora - PW18652','Puneet Sirohi - PW20318'],
   'Analytics Lead':['Ankit Kumar - PW11292']
 };
-const R={};
-let analystNPS=null,teamNPS=null,isAnon=null,reviewType='external';
 
+// State
+const R={};    // star ratings
+const CR={};   // complaint ratings (emoji scale)
+let analystNPS=null, teamNPS=null, reviewType='team';
+
+// ── Review Type Toggle ────────────────────────────────────────────
 function setRT(t){
   reviewType=t;
-  document.getElementById('rt-ext').className='rtbtn'+(t==='external'?' active-ext':'');
+  document.getElementById('rt-team').className='rtbtn'+(t==='team'?' active-team':'');
   document.getElementById('rt-peer').className='rtbtn'+(t==='peer'?' active-peer':'');
-  document.getElementById('peer-banner').className='peer-banner z1'+(t==='peer'?' show':'');
-  updatePeerSection();
-  const lbl=t==='peer'?'Analyst Being Rated (Peer) <span class="req">*</span>':'Analyst Being Rated <span class="req">*</span>';
-  if(document.getElementById('analyst-label'))document.getElementById('analyst-label').innerHTML=lbl;
-  if(document.getElementById('analyst-label-ho'))document.getElementById('analyst-label-ho').innerHTML=lbl;
-  document.getElementById('analyst-nps-label').textContent=t==='peer'?'🤝 Peer Analyst NPS':'👤 Analyst NPS';
-  document.getElementById('analyst-nps-sub').textContent=t==='peer'?'How likely are you to recommend this peer analyst to a colleague? (0=not at all, 10=extremely)':'How likely are you to recommend this analyst to a colleague? (0=not at all, 10=extremely)';
-  // Update anon subtitle
-  const sub=document.getElementById('anon-sub-text');
-  if(sub) sub.textContent=t==='peer'?'Select No to identify yourself as the reviewer':'Your feedback will be recorded without identifying you';
-  // Re-apply anon logic for new review type
-  if(isAnon!==null) setAnon(isAnon);
-  else {
-    // Reset anon state
-    document.getElementById('idf').className='id-fields';
-    document.getElementById('peer-id-section').className='peer-id-section';
-  }
+  // Mode badge
+  const badge=document.getElementById('mode-badge');
+  badge.className='review-mode-badge'+(t==='peer'?' show':'');
+  badge.textContent='Peer Mode Active';
+  // Show/hide analyst dropdowns
+  document.getElementById('city-analyst-fg').style.display=t==='peer'?'block':'none';
+  document.getElementById('ho-analyst-fg').style.display=t==='peer'?'block':'none';
+  // Show/hide peer reviewer section
+  document.getElementById('peer-id-section').className='peer-id-section'+(t==='peer'?' show':'');
+  // Show/hide NPS sections
+  document.getElementById('nps-analyst-section').style.display=t==='peer'?'block':'none';
+  document.getElementById('nps-team-section').style.display=t==='team'?'block':'none';
+  // Reset NPS on toggle change
+  analystNPS=null;teamNPS=null;
+  document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
 }
-function updatePeerSection(){
-  const show=reviewType==='peer'&&isAnon===false;
-  document.getElementById('peer-id-section').className='peer-id-section'+(show?' show':'');
-}
-function onVert(){
-  const v=document.getElementById('vertical').value;
-  const t=document.getElementById('team');
-  t.value='';t.style.opacity=v?'1':'0.4';t.style.pointerEvents=v?'auto':'none';
-  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
-}
+
+// ── Page 1 ────────────────────────────────────────────────────────
 function onTeam(){
   const t=document.getElementById('team').value;
   document.getElementById('cf').style.display=t==='City'?'block':'none';
   document.getElementById('hf').style.display=t==='Head Office (Noida)'?'block':'none';
-  document.getElementById('region').value='';document.getElementById('dept').value='';
-  rsel('ac','-- Select Region first --');rsel('ah','-- Select Department first --');
+  document.getElementById('region').value='';
+  document.getElementById('dept').value='';
+  rsel('ac','-- Select Region first --');
+  rsel('ah','-- Select Department first --');
 }
 function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?(CA[r]||[]):[]);}
 function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[]);}
@@ -425,147 +544,187 @@ function onPeerRegion(){
   const sel=document.getElementById('peer-reviewer');
   sel.innerHTML='<option value="">-- Select Your Name --</option>';
   if(!val){sel.disabled=true;return;}
-  const parts=val.split('-');const type=parts[0];const key=parts.slice(1).join('-');
+  const dash=val.indexOf('-');
+  const type=val.slice(0,dash);
+  const key=val.slice(dash+1);
   const list=type==='city'?(CA[key]||[]):(HA[key]||[]);
   list.forEach(function(a){sel.innerHTML+='<option value="'+a+'">'+a+'</option>';});
   sel.disabled=list.length===0;
 }
+
 function g2(){
   const team=document.getElementById('team').value,ic=team==='City';
-  let ok=document.getElementById('vertical').value&&team;
-  if(ic)ok=ok&&document.getElementById('region').value&&document.getElementById('ac').value;
-  else if(team)ok=ok&&document.getElementById('dept').value&&document.getElementById('ah').value;
-  if(reviewType==='peer'&&isAnon===false){
+  let ok=team;
+  if(ic) ok=ok&&document.getElementById('region').value;
+  else if(team) ok=ok&&document.getElementById('dept').value;
+  // In peer mode, analyst is required
+  if(reviewType==='peer'){
+    if(ic) ok=ok&&document.getElementById('ac').value;
+    else ok=ok&&document.getElementById('ah').value;
     ok=ok&&document.getElementById('peer-region').value&&document.getElementById('peer-reviewer').value;
   }
   if(!ok){document.getElementById('e1').classList.add('show');return;}
-  document.getElementById('e1').classList.remove('show');setPage(1,2);
+  document.getElementById('e1').classList.remove('show');
+  setPage(1,2);
 }
 function g1(){setPage(2,1);}
 function setPage(f,t){
   document.getElementById('page'+f).classList.remove('active');
   document.getElementById('page'+t).classList.add('active');
-  const s=['','',''];
-  if(t===1)s[0]='active';if(t===2){s[0]='done';s[1]='active';}if(t===3){s[0]=s[1]='done';s[2]='active';}
+  var s=['','',''];
+  if(t===1)s[0]='active';
+  if(t===2){s[0]='done';s[1]='active';}
+  if(t===3){s[0]='done';s[1]='done';s[2]='active';}
   [1,2,3].forEach(function(n,i){document.getElementById('step'+n).className='step-item '+(s[i]||'');});
   window.scrollTo(0,0);
 }
-function buildNPS(gridId,badgeId,which){
-  const grid=document.getElementById(gridId);
-  for(let i=0;i<=10;i++){
-    const b=document.createElement('button');b.className='nps-btn';b.textContent=i;
+
+// ── NPS Grids ─────────────────────────────────────────────────────
+function buildNPS(gridId,which){
+  var grid=document.getElementById(gridId);
+  for(var i=0;i<=10;i++){
+    var b=document.createElement('button');
+    b.className='nps-btn';b.textContent=i;
     (function(score,btn){
       btn.onclick=function(){
-        if(which==='analyst')analystNPS=score;else teamNPS=score;
-        grid.querySelectorAll('.nps-btn').forEach(function(x){x.className='nps-btn';});
-        const c=score<=6?'sd':score<=8?'sp':'sg';btn.className='nps-btn '+c;
-        const l=c==='sd'?'Detractor':c==='sp'?'Passive':'Promoter';
-        const bc=c==='sd'?'bd':c==='sp'?'bp':'bg';
-        document.getElementById(badgeId).innerHTML='<span class="nps-badge '+bc+'">Score '+score+' - '+l+'</span>';
+        if(which==='analyst')analystNPS=score;
+        else teamNPS=score;
+        var thisGrid=btn.parentElement;
+        thisGrid.querySelectorAll('.nps-btn').forEach(function(x){x.className='nps-btn';});
+        var c=score<=6?'sd':score<=8?'sp':'sg';
+        btn.className='nps-btn '+c;
+        // NO badge/popup shown to user
         document.getElementById('ne').classList.remove('show');
       };
     })(i,b);
     grid.appendChild(b);
   }
 }
-buildNPS('nps-grid-analyst','nbw-analyst','analyst');
-buildNPS('nps-grid-team','nbw-team','team');
+buildNPS('nps-grid-analyst','analyst');
+buildNPS('nps-grid-team','team');
+
+// ── Stars ─────────────────────────────────────────────────────────
 function bs(c){
-  const k=c.dataset.key;R[k]=0;
-  for(let i=1;i<=5;i++){
-    const s=document.createElement('span');s.className='star';s.textContent='★';
-    s.onclick=function(){R[k]=i;pt(c,k);};
-    s.onmouseenter=function(){c.querySelectorAll('.star').forEach(function(x,j){x.classList.toggle('lit',j<i);});};
-    s.onmouseleave=function(){pt(c,k);};
+  var k=c.dataset.key;R[k]=0;
+  for(var i=1;i<=5;i++){
+    var s=document.createElement('span');s.className='star';s.textContent='★';
+    (function(val,star){
+      star.onclick=function(){R[k]=val;pt(c,k);};
+      star.onmouseenter=function(){c.querySelectorAll('.star').forEach(function(x,j){x.classList.toggle('lit',j<val);});};
+      star.onmouseleave=function(){pt(c,k);};
+    })(i,s);
     c.appendChild(s);
   }
 }
 function pt(c,k){c.querySelectorAll('.star').forEach(function(s,j){s.classList.toggle('lit',j<(R[k]||0));});}
 document.querySelectorAll('.stars').forEach(bs);
+
+// ── Complaint emoji scale ─────────────────────────────────────────
+function setComplaint(key,val,el){
+  CR[key]=val;
+  // deselect all in same group
+  el.closest('.rating-opts').querySelectorAll('.ropt').forEach(function(r){
+    r.className='ropt';
+  });
+  el.className='ropt selected-'+val;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────
 function doStab(i,b){
   document.querySelectorAll('.stab').forEach(function(x){x.classList.remove('active');});
   document.querySelectorAll('.sp').forEach(function(p){p.classList.remove('active');});
-  b.classList.add('active');document.getElementById('sp'+i).classList.add('active');
+  b.classList.add('active');
+  document.getElementById('sp'+i).classList.add('active');
 }
-function setAnon(v){
-  isAnon=v;
-  document.getElementById('by').className='tbtn'+(v?' ay':'');
-  document.getElementById('bn').className='tbtn'+(!v?' an':'');
-  if(reviewType==='peer'){
-    // Peer mode: NEVER show Name/PWID, only show reviewer section when No
-    document.getElementById('idf').className='id-fields'; // always hidden
-    updatePeerSection();
-  } else {
-    // Stakeholder mode: show Name/PWID when No, hide peer section
-    document.getElementById('idf').className='id-fields'+(!v?' show':'');
-    document.getElementById('peer-id-section').className='peer-id-section'; // always hidden
-  }
-}
+
+// ── Submit ────────────────────────────────────────────────────────
 async function submitF(){
-  if(analystNPS===null||teamNPS===null){document.getElementById('ne').classList.add('show');return;}
-  const btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
-  const team=document.getElementById('team').value,ic=team==='City';
-  const analyst=ic?document.getElementById('ac').value:document.getElementById('ah').value;
-  const reviewer=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-reviewer').value:'';
-  const reviewerTeam=(reviewType==='peer'&&isAnon===false)?document.getElementById('peer-region').value:'';
-  const e={
+  var npsOk=reviewType==='peer'?analystNPS!==null:teamNPS!==null;
+  if(!npsOk){document.getElementById('ne').classList.add('show');return;}
+  var btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
+  var team=document.getElementById('team').value,ic=team==='City';
+  var analyst=reviewType==='peer'?(ic?document.getElementById('ac').value:document.getElementById('ah').value):'';
+  var reviewer=reviewType==='peer'?document.getElementById('peer-reviewer').value:'';
+  var reviewerTeam=reviewType==='peer'?document.getElementById('peer-region').value:'';
+  var region=ic?document.getElementById('region').value:'';
+  var dept=!ic?document.getElementById('dept').value:'';
+
+  var e={
     id:'NPS-'+Date.now(),
     timestamp:new Date().toISOString(),
     review_type:reviewType,
-    vertical:document.getElementById('vertical').value,
     team:team,
-    region:ic?document.getElementById('region').value:'',
-    department:!ic?document.getElementById('dept').value:'',
+    region:region,
+    department:dept,
     analyst:analyst,
     reviewer:reviewer,
     reviewer_team:reviewerTeam,
-    analyst_nps:analystNPS,
-    analyst_nps_category:analystNPS<=6?'Detractor':analystNPS<=8?'Passive':'Promoter',
-    team_nps:teamNPS,
-    team_nps_category:teamNPS<=6?'Detractor':teamNPS<=8?'Passive':'Promoter',
-    overall_exp:R['oe']||0,staff_behavior:R['sb']||0,process_smooth:R['ps']||0,comm_clarity:R['cc']||0,
-    understanding:R['un']||0,professionalism:R['pr']||0,responsiveness:R['re']||0,problem_solving:R['psa']||0,
+    analyst_nps:reviewType==='peer'?analystNPS:null,
+    analyst_nps_category:reviewType==='peer'?(analystNPS<=6?'Detractor':analystNPS<=8?'Passive':'Promoter'):null,
+    team_nps:reviewType==='team'?teamNPS:null,
+    team_nps_category:reviewType==='team'?(teamNPS<=6?'Detractor':teamNPS<=8?'Passive':'Promoter'):null,
+    // General
+    stakeholder_mgmt:R['sm']||0,
+    ownership_accountability:R['oa']||0,
+    problem_solving_analytical:R['psat']||0,
+    business_understanding:R['bu']||0,
+    communication_clarity:R['cc']||0,
+    gen_comment:document.getElementById('gen-txt').value,
+    // Appreciation
+    strong_analytical_skills:R['sas']||0,
+    business_impact:R['bi']||0,
+    technical_expertise:R['te']||0,
+    problem_solving_mindset:R['psm']||0,
+    learning_growth:R['lg']||0,
     appr_comment:document.getElementById('ac-txt').value,
-    delay_response:R['dr']||0,miscommunication:R['mc']||0,process_complexity:R['pc']||0,staff_issue:R['si']||0,
+    // Complaint (0=No Issue,1=Minor,2=Moderate,3=Major)
+    delay_response:CR['dr']!==undefined?CR['dr']:null,
+    miscommunication:CR['mc']!==undefined?CR['mc']:null,
+    process_complexity:CR['pc']!==undefined?CR['pc']:null,
+    staff_issue:CR['si']!==undefined?CR['si']:null,
     comp_comment:document.getElementById('cp-txt').value,
-    anonymous:reviewType==='peer'?false:(isAnon!==false),
-    submitter_name:reviewType==='peer'?'':(isAnon===false?document.getElementById('sn').value:'Anonymous'),
-    submitter_pwid:reviewType==='peer'?'':(isAnon===false?document.getElementById('sp2i').value:'--')
+    anonymous:true
   };
-  const all=JSON.parse(localStorage.getItem('nps_responses')||'[]');
+
+  var all=JSON.parse(localStorage.getItem('nps_responses')||'[]');
   all.push(e);localStorage.setItem('nps_responses',JSON.stringify(all));
+
   if(SHEET_URL){
     try{
-      const params=new URLSearchParams();
+      var params=new URLSearchParams();
       params.append('data',JSON.stringify(e));
       await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});
     }catch(err){console.warn('Sheet sync failed:',err);}
   }
   btn.innerHTML='Submit Feedback';btn.disabled=false;
-  document.getElementById('ty-type-badge').textContent=reviewType==='peer'?'🤝 Peer Review':'📋 Stakeholder Review';
-  document.getElementById('ty-type-badge').className='ty-badge '+(reviewType==='peer'?'peer':'ext');
-  document.getElementById('ty-nps-badge').textContent='Analyst: '+analystNPS+' | Team: '+teamNPS;
   document.getElementById('tref').innerHTML='Response ID: <strong>'+e.id+'</strong>';
   setPage(2,3);
 }
+
+// ── Reset ─────────────────────────────────────────────────────────
 function resetAll(){
-  analystNPS=null;teamNPS=null;isAnon=null;Object.keys(R).forEach(function(k){R[k]=0;});
-  ['vertical','team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id){
-    const el=document.getElementById(id);if(!el)return;
+  analystNPS=null;teamNPS=null;
+  Object.keys(R).forEach(function(k){R[k]=0;});
+  Object.keys(CR).forEach(function(k){delete CR[k];});
+  ['team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
     el.value='';el.disabled=['ac','ah','peer-reviewer'].includes(id);
   });
-  document.getElementById('cf').style.display='none';document.getElementById('hf').style.display='none';
+  document.getElementById('cf').style.display='none';
+  document.getElementById('hf').style.display='none';
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
-  document.getElementById('nbw-analyst').innerHTML='';document.getElementById('nbw-team').innerHTML='';
   document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
-  document.getElementById('ac-txt').value='';document.getElementById('cp-txt').value='';
-  document.getElementById('by').className='tbtn';document.getElementById('bn').className='tbtn';
-  document.getElementById('idf').className='id-fields';
-  document.getElementById('peer-id-section').className='peer-id-section';
-  document.getElementById('sn').value='';document.getElementById('sp2i').value='';
+  document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
+  document.getElementById('gen-txt').value='';
+  document.getElementById('ac-txt').value='';
+  document.getElementById('cp-txt').value='';
   doStab(0,document.querySelectorAll('.stab')[0]);
-  setRT('external');setPage(3,1);
+  setRT('team');
+  setPage(3,1);
 }
+
+// Init - set team mode
+setRT('team');
 </script>
 </body>
 </html>
