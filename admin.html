@@ -227,7 +227,6 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
   <div class="hbtns">
-    <button class="hbtn hbtn-seed" onclick="seedData()">✦ Sample Data</button>
     <button id="sync-btn" class="hbtn hbtn-sync" onclick="syncSheet()">⟳ Sync Admin Portal</button>
     <button class="hbtn hbtn-export" onclick="exportCSV()">⬇ Export CSV</button>
     <div class="user-pill">
@@ -414,7 +413,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -490,20 +489,12 @@ async function load(){
   filtered=[...all];renderAll();
 }
 
-function parseComplaint(v){
-  // Handle: empty string → null, numeric string "0"-"3" → number, "Yes"→1, "No"→0, NaN→null
-  if(v===''||v===null||v===undefined) return null;
-  if(v==='Yes'||v==='yes'||v==='TRUE'||v==='true') return 1;
-  if(v==='No'||v==='no'||v==='FALSE'||v==='false') return 0;
-  const n=Number(v);
-  return isNaN(n)?null:n;
-}
-async function syncSheet(silent){
+async function syncSheet(){
   const btn=document.getElementById('sync-btn');
-  if(!silent){btn.innerHTML='⟳ Syncing…';btn.disabled=true;}
+  btn.innerHTML='⟳ Syncing…';btn.disabled=true;
   if(!SHEET_ID){
-    if(!silent)alert('Please set your SHEET_ID at the top of admin.html');
-    if(!silent){btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;}
+    alert('Please set your SHEET_ID at the top of admin.html');
+    btn.innerHTML='⟳ Sync Sheet';btn.disabled=false;
     return;
   }
   try{
@@ -513,7 +504,7 @@ async function syncSheet(silent){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const csv = await res.text();
     const rows = parseCSV(csv);
-    if(rows.length <= 1){ if(!silent){showToast('No responses in sheet yet','red');btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;} return; }
+    if(rows.length <= 1){ if(!silent)showToast('No responses in sheet yet','red'); if(!silent){btn.innerHTML='⟳ Sync Admin Portal';btn.disabled=false;} return; }
     const headers = rows[0];
     const newEntries = rows.slice(1).map(row => {
       const d = {};
@@ -524,7 +515,7 @@ async function syncSheet(silent){
       return {
         id:                         d['ID']||'',
         timestamp:                  d['Timestamp']||'',
-        review_type:                (d['Review Type']||'').trim()||'team',
+        review_type:                d['Review Type']||'team',
         team:                       d['Team']||'',
         region:                     d['Region']||'',
         department:                 d['Department']||'',
@@ -547,23 +538,21 @@ async function syncSheet(silent){
         problem_solving_mindset:    Number(d['Problem-Solving Mindset'])||0,
         learning_growth:            Number(d['Learning & Growth'])||0,
         appr_comment:               d['Appreciation Comment']||'',
-        // Complaint — robust parse handles numbers, blank, or legacy "Yes"/"No" values
-        delay_response:             parseComplaint(d['Delay Response']),
-        miscommunication:           parseComplaint(d['Miscommunication']),
-        process_complexity:         parseComplaint(d['Process Complexity']),
-        staff_issue:                parseComplaint(d['Staff Issue']),
+        // Complaint
+        delay_response:             d['Delay Response']!==''?Number(d['Delay Response']):null,
+        miscommunication:           d['Miscommunication']!==''?Number(d['Miscommunication']):null,
+        process_complexity:         d['Process Complexity']!==''?Number(d['Process Complexity']):null,
+        staff_issue:                d['Staff Issue']!==''?Number(d['Staff Issue']):null,
         comp_comment:               d['Complaint Comment']||'',
         anonymous:                  true
       };
     }).filter(r => r.id);
-    // Merge: sheet entries are authoritative by ID; preserve any local-only entries
-    const sheetIds = new Set(newEntries.map(r => r.id));
-    const localOnly = JSON.parse(localStorage.getItem('nps_responses')||'[]').filter(r => r.id && !sheetIds.has(r.id));
-    all = [...newEntries, ...localOnly];
+    // Always use sheet as source of truth - full replace
+    all = newEntries;
     localStorage.setItem('nps_responses', JSON.stringify(all));
     all.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
     filtered=[...all]; renderAll();
-    if(!silent) showToast('Synced '+newEntries.length+' from sheet + '+localOnly.length+' local = '+all.length+' total','green');
+    if(!silent) showToast('Synced '+newEntries.length+' response(s) from Google Sheets','green');
   }catch(e){
     if(!silent) showToast('Sync failed: Make sure sheet is shared publicly (Anyone with link = Viewer)','red');
     console.error('Sync error:',e);
@@ -680,7 +669,7 @@ function renderTable(){
   document.getElementById('tbl-empty').style.display=n===0?'block':'none';
   sl.forEach((d,i)=>{
     const dt=new Date(d.timestamp).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});
-    const idx=all.indexOf(d);
+    const idx=(cur-1)*PS+i;
     const rtBadge=d.review_type==='peer'
       ?'<span style="font-size:9px;background:rgba(79,142,247,0.15);border:1px solid rgba(79,142,247,0.3);color:#7fb3ff;padding:2px 7px;border-radius:10px;font-weight:600">Peer</span>'
       :'<span style="font-size:9px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:2px 7px;border-radius:10px;font-weight:600">Team</span>';
@@ -882,7 +871,7 @@ function showSec(name,btn){
 // ── MODAL ─────────────────────────────────────────────────────────
 function openM(idx){openMDirect(idx);}
 function openMDirect(idx){
-  const d=all[idx];if(!d)return;
+  const d=filtered[idx]||all[idx];if(!d)return;
   const st=n=>n>0?'<span class="mstar">'+'★'.repeat(n)+'</span><span style="color:var(--text3);font-size:12px">'+'☆'.repeat(5-n)+'</span>':'<span style="color:var(--text3)">Not rated</span>';
   const isPeer=d.review_type==='peer';
   const CLABEL=['🟢 No Issue','🟡 Minor Improvement Needed','🟠 Moderate Concern','🔴 Major Concern'];
@@ -923,10 +912,10 @@ function openMDirect(idx){
       ${d.appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.appr_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Complaint</div>
-      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${(d.delay_response!==null&&d.delay_response!==undefined&&d.delay_response>=0&&d.delay_response<=3)?CLABEL[d.delay_response]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${(d.miscommunication!==null&&d.miscommunication!==undefined&&d.miscommunication>=0&&d.miscommunication<=3)?CLABEL[d.miscommunication]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${(d.process_complexity!==null&&d.process_complexity!==undefined&&d.process_complexity>=0&&d.process_complexity<=3)?CLABEL[d.process_complexity]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${(d.staff_issue!==null&&d.staff_issue!==undefined&&d.staff_issue>=0&&d.staff_issue<=3)?CLABEL[d.staff_issue]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${d.delay_response!==null&&d.delay_response!==undefined?CLABEL[d.delay_response]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${d.miscommunication!==null&&d.miscommunication!==undefined?CLABEL[d.miscommunication]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${d.process_complexity!==null&&d.process_complexity!==undefined?CLABEL[d.process_complexity]:'Not answered'}</span></div>
+      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${d.staff_issue!==null&&d.staff_issue!==undefined?CLABEL[d.staff_issue]:'Not answered'}</span></div>
       ${d.comp_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.comp_comment}</span></div>`:''}
     </div>`;
   document.getElementById('modal-bg').classList.add('show');
@@ -1030,56 +1019,7 @@ function renderTeamNPS(){
   if(!Object.keys(groups).length)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">No team review data available</td></tr>';
 }
 
-function seedData(){
-  const regions=['East','Maharashtra','Gujarat','PB + JK','MP + CG','Rajasthan','NCR + UK','Bihar + JH','UP'];
-  const depts=['Ops','Acad','Marketing','Sales','Biz Finance and Compliance'];
-  const cA=['Arjun Sahoo - PW7003','Gourab Roy - PW21631','Bhushan Mail - PW8223','Harshil Shah - PW16484','Mohit Namdev - PW3996','Pranjal Bhojak - PW2649','Sanya Dubey - PW17316','Shyam Kumar - PW29064','Sougata Mitra - PW12967'];
-  const hA=['Tanya Bhagat - PW0658','Himanshu Sethi - PW0935','Deepanshu Verma - PW10357','Madhav Gotmare - PW3195','Sachin Kumar - PW2366','Ankit Kumar - PW11292'];
-  function cat(s){return s<=6?'Detractor':s<=8?'Passive':'Promoter';}
-  function rn(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-  const ex=JSON.parse(localStorage.getItem('nps_responses')||'[]');const ne=[];
-  for(let i=0;i<40;i++){
-    const isPeer=Math.random()>0.5;
-    const ic=Math.random()>0.4;
-    const np=rn(0,10);
-    const entry={
-      id:'NPS-'+(Date.now()-i*999999*Math.random()).toFixed(0),
-      timestamp:new Date(Date.now()-Math.random()*90*86400000).toISOString(),
-      review_type:isPeer?'peer':'team',
-      team:ic?'City':'Head Office (Noida)',
-      region:ic?regions[rn(0,regions.length-1)]:'',
-      department:!ic?depts[rn(0,depts.length-1)]:'',
-      analyst:isPeer?(ic?cA[rn(0,cA.length-1)]:hA[rn(0,hA.length-1)]):'',
-      team_nps:isPeer?null:np,
-      team_nps_category:isPeer?null:cat(np),
-      analyst_nps:isPeer?np:null,
-      analyst_nps_category:isPeer?cat(np):null,
-      // General
-      stakeholder_mgmt:rn(1,5),
-      ownership_accountability:rn(1,5),
-      problem_solving_analytical:rn(1,5),
-      business_understanding:rn(1,5),
-      ownership_accountability2:rn(1,5),
-      gen_comment:Math.random()>.7?'Good overall performance.':'',
-      // Appreciation
-      strong_analytical_skills:rn(1,5),
-      business_impact:rn(1,5),
-      technical_expertise:rn(1,5),
-      problem_solving_mindset:rn(1,5),
-      learning_growth:rn(1,5),
-      appr_comment:Math.random()>.6?'Great analytical thinking!':'',
-      // Complaint (0-3)
-      delay_response:rn(0,3),
-      miscommunication:rn(0,3),
-      process_complexity:rn(0,3),
-      staff_issue:rn(0,3),
-      comp_comment:Math.random()>.7?'Response time could be improved.':'',
-      anonymous:true
-    };
-    ne.push(entry);
-  }
-  localStorage.setItem('nps_responses',JSON.stringify([...ex,...ne]));load();alert('40 sample responses loaded!');
-}
+// seedData() removed — sample data option has been disabled
 
 // ── AUTO SYNC every 5 minutes ────────────────────────────────────
 function autoSync(){
