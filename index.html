@@ -152,11 +152,7 @@ textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--bord
 textarea:focus{outline:none;border-color:rgba(201,168,76,.35);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
 textarea::placeholder{color:var(--text3);}
 
-/* PEER ID */
-.peer-id-section{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;display:none;}
-.peer-id-section.show{display:block;}
-.peer-id-title{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
-.peer-id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* PEER ID - removed, all responses anonymous */
 
 /* BUTTONS */
 .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:1.5rem;}
@@ -286,37 +282,7 @@ textarea::placeholder{color:var(--text3);}
         </div>
       </div>
 
-      <!-- Peer reviewer section (shown only in peer mode - always visible since all anonymous) -->
-      <div class="peer-id-section" id="peer-id-section">
-        <div class="peer-id-title">📌 Peer Reviewer Details</div>
-        <div class="peer-id-grid">
-          <div class="fg" style="margin:0">
-            <label class="flabel">Your Team (Reviewer) <span class="req">*</span></label>
-            <div class="sel-wrap"><select id="peer-region" onchange="onPeerRegion()">
-              <option value="">-- Select Your Team --</option>
-              <option value="city-East">City - East</option>
-              <option value="city-Maharashtra">City - Maharashtra</option>
-              <option value="city-Gujarat">City - Gujarat</option>
-              <option value="city-PB + JK">City - PB + JK</option>
-              <option value="city-MP + CG">City - MP + CG</option>
-              <option value="city-Rajasthan">City - Rajasthan</option>
-              <option value="city-NCR + UK">City - NCR + UK</option>
-              <option value="city-Bihar + JH">City - Bihar + JH</option>
-              <option value="city-UP">City - UP</option>
-              <option value="ho-Ops">HO - Ops</option>
-              <option value="ho-Acad">HO - Acad</option>
-              <option value="ho-Biz Finance and Compliance">HO - Biz Finance</option>
-              <option value="ho-Sales">HO - Sales</option>
-              <option value="ho-Marketing">HO - Marketing</option>
-              <option value="ho-Analytics Lead">HO - Analytics Lead</option>
-            </select></div>
-          </div>
-          <div class="fg" style="margin:0">
-            <label class="flabel">Your Name (Reviewer) <span class="req">*</span></label>
-            <div class="sel-wrap"><select id="peer-reviewer" disabled><option value="">-- Select team first --</option></select></div>
-          </div>
-        </div>
-      </div>
+      <!-- Peer reviewer section removed - all responses are anonymous -->
 
       <p id="e1" class="err">Please fill all required fields to continue.</p>
     </div>
@@ -515,8 +481,6 @@ function setRT(t){
   // Show/hide analyst dropdowns
   document.getElementById('city-analyst-fg').style.display=t==='peer'?'block':'none';
   document.getElementById('ho-analyst-fg').style.display=t==='peer'?'block':'none';
-  // Show/hide peer reviewer section
-  document.getElementById('peer-id-section').className='peer-id-section'+(t==='peer'?' show':'');
   // Show/hide NPS sections
   document.getElementById('nps-analyst-section').style.display=t==='peer'?'block':'none';
   document.getElementById('nps-team-section').style.display=t==='team'?'block':'none';
@@ -539,18 +503,7 @@ function onRegion(){const r=document.getElementById('region').value;fsel('ac',r?
 function onDept(){const d=document.getElementById('dept').value;fsel('ah',d?(HA[d]||[]):[]);}
 function rsel(id,ph){const s=document.getElementById(id);if(!s)return;s.innerHTML='<option value="">'+ph+'</option>';s.disabled=true;}
 function fsel(id,it){const s=document.getElementById(id);s.innerHTML='<option value="">-- Select Analyst --</option>';it.forEach(function(a){s.innerHTML+='<option value="'+a+'">'+a+'</option>';});s.disabled=it.length===0;}
-function onPeerRegion(){
-  const val=document.getElementById('peer-region').value;
-  const sel=document.getElementById('peer-reviewer');
-  sel.innerHTML='<option value="">-- Select Your Name --</option>';
-  if(!val){sel.disabled=true;return;}
-  const dash=val.indexOf('-');
-  const type=val.slice(0,dash);
-  const key=val.slice(dash+1);
-  const list=type==='city'?(CA[key]||[]):(HA[key]||[]);
-  list.forEach(function(a){sel.innerHTML+='<option value="'+a+'">'+a+'</option>';});
-  sel.disabled=list.length===0;
-}
+function onPeerRegion(){/* removed - peer reviewer section removed */}
 
 function g2(){
   const team=document.getElementById('team').value,ic=team==='City';
@@ -561,7 +514,6 @@ function g2(){
   if(reviewType==='peer'){
     if(ic) ok=ok&&document.getElementById('ac').value;
     else ok=ok&&document.getElementById('ah').value;
-    ok=ok&&document.getElementById('peer-region').value&&document.getElementById('peer-reviewer').value;
   }
   if(!ok){document.getElementById('e1').classList.add('show');return;}
   document.getElementById('e1').classList.remove('show');
@@ -644,8 +596,6 @@ async function submitF(){
   var btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
   var team=document.getElementById('team').value,ic=team==='City';
   var analyst=reviewType==='peer'?(ic?document.getElementById('ac').value:document.getElementById('ah').value):'';
-  var reviewer=reviewType==='peer'?document.getElementById('peer-reviewer').value:'';
-  var reviewerTeam=reviewType==='peer'?document.getElementById('peer-region').value:'';
   var region=ic?document.getElementById('region').value:'';
   var dept=!ic?document.getElementById('dept').value:'';
 
@@ -657,20 +607,18 @@ async function submitF(){
     region:region,
     department:dept,
     analyst:analyst,
-    reviewer:reviewer,
-    reviewer_team:reviewerTeam,
     analyst_nps:reviewType==='peer'?analystNPS:null,
     analyst_nps_category:reviewType==='peer'?(analystNPS<=6?'Detractor':analystNPS<=8?'Passive':'Promoter'):null,
     team_nps:reviewType==='team'?teamNPS:null,
     team_nps_category:reviewType==='team'?(teamNPS<=6?'Detractor':teamNPS<=8?'Passive':'Promoter'):null,
-    // General
+    // General feedback (star ratings 1-5)
     stakeholder_mgmt:R['sm']||0,
     ownership_accountability:R['oa']||0,
     problem_solving_analytical:R['psat']||0,
     business_understanding:R['bu']||0,
-    communication_clarity:R['cc']||0,
+    ownership_accountability2:R['cc']||0,
     gen_comment:document.getElementById('gen-txt').value,
-    // Appreciation
+    // Appreciation (star ratings 1-5)
     strong_analytical_skills:R['sas']||0,
     business_impact:R['bi']||0,
     technical_expertise:R['te']||0,
@@ -706,9 +654,9 @@ function resetAll(){
   analystNPS=null;teamNPS=null;
   Object.keys(R).forEach(function(k){R[k]=0;});
   Object.keys(CR).forEach(function(k){delete CR[k];});
-  ['team','region','dept','ac','ah','peer-region','peer-reviewer'].forEach(function(id){
+  ['team','region','dept','ac','ah'].forEach(function(id){
     var el=document.getElementById(id);if(!el)return;
-    el.value='';el.disabled=['ac','ah','peer-reviewer'].includes(id);
+    el.value='';el.disabled=['ac','ah'].includes(id);
   });
   document.getElementById('cf').style.display='none';
   document.getElementById('hf').style.display='none';
