@@ -273,7 +273,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
         <div class="glass-card"><div class="gc-title">Category split</div><div class="cwrap"><canvas id="c-donut"></canvas></div></div>
       </div>
       <div class="chart-row2">
-        <div class="glass-card"><div class="gc-title">General feedback averages (all 5 dimensions)</div><div class="cwrap"><canvas id="c-gen"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">General feedback averages</div><div class="cwrap"><canvas id="c-gen"></canvas></div></div>
         <div class="glass-card"><div class="gc-title">NPS by vertical</div><div class="cwrap"><canvas id="c-vert"></canvas></div></div>
       </div>
     </div>
@@ -345,7 +345,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
           <div class="gc-title">All responses for this analyst</div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Region/Dept</th><th>NPS</th><th>Category</th><th>Analytical Skills</th><th>Anon</th><th></th></tr></thead>
+              <thead><tr><th>Date</th><th>Region/Dept</th><th>NPS</th><th>Category</th><th>Overall Exp</th><th>Anon</th><th></th></tr></thead>
               <tbody id="ar-tbl-body"></tbody>
             </table>
           </div>
@@ -382,7 +382,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     <div class="sec" id="sec-analytics">
       <div class="chart-row2" style="margin-bottom:1.25rem">
         <div class="glass-card"><div class="gc-title">Appreciation scores avg</div><div class="cwrap"><canvas id="c-appr"></canvas></div></div>
-        <div class="glass-card"><div class="gc-title">Complaint scores avg (0=No Issue · 3=Major)</div><div class="cwrap"><canvas id="c-comp"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Complaint scores avg (higher = less severe)</div><div class="cwrap"><canvas id="c-comp"></canvas></div></div>
       </div>
       <div class="glass-card">
         <div class="gc-title">NPS breakdown by group</div>
@@ -530,7 +530,7 @@ async function syncSheet(){
         ownership_accountability:   Number(d['Ownership & Accountability'])||0,
         problem_solving_analytical: Number(d['Problem-Solving & Analytical Thinking'])||0,
         business_understanding:     Number(d['Business Understanding'])||0,
-        ownership_accountability2:  Number(d['Ownership & Accountability 2'])||0,
+        ownership_accountability2:  Number(d['Communication & Collaboration'])||Number(d['Ownership & Accountability 2'])||0,
         gen_comment:                d['General Comment']||'',
         // Appreciation
         strong_analytical_skills:   Number(d['Strong Analytical Skills'])||0,
@@ -642,9 +642,9 @@ function renderCharts(){
   CH['c-donut']=new Chart(document.getElementById('c-donut'),{type:'doughnut',
     data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[pro,pas,det],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
-  // General feedback averages — all 5 fields
-  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding','ownership_accountability2'];
-  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Biz Understanding','Comm & Clarity'];
+  // General feedback averages (new field names)
+  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding'];
+  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding'];
   mkBar('c-gen',gl,gk.map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(201,168,76,0.5)',true);
   // Team NPS by team
   const teams=['City','Head Office (Noida)'];
@@ -806,31 +806,9 @@ function backToAnalystList(){
 
 function exportAnalystCSV(){
   if(!currentAnalyst)return;
-  const data=all.filter(d=>d.analyst===currentAnalyst&&d.review_type==='peer');
-  const H=['ID','Timestamp','Team','Region','Department','Analyst (Rated)',
-    'Analyst NPS','Analyst NPS Category',
-    'Stakeholder Management','Ownership & Accountability','Problem-Solving & Analytical Thinking',
-    'Business Understanding','Communication & Clarity','General Comment',
-    'Strong Analytical Skills','Business Impact','Technical Expertise',
-    'Problem-Solving Mindset','Learning & Growth','Appreciation Comment',
-    'Delay Response','Miscommunication','Process Complexity','Staff Issue','Complaint Comment'];
-  const rows=data.map(d=>[
-    d.id, new Date(d.timestamp).toLocaleString('en-IN'),
-    d.team, d.region||'', d.department||'', d.analyst||'',
-    d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'',
-    d.analyst_nps_category||'',
-    d.stakeholder_mgmt||0, d.ownership_accountability||0, d.problem_solving_analytical||0,
-    d.business_understanding||0, d.ownership_accountability2||0,
-    (d.gen_comment||'').replace(/,/g,';'),
-    d.strong_analytical_skills||0, d.business_impact||0, d.technical_expertise||0,
-    d.problem_solving_mindset||0, d.learning_growth||0,
-    (d.appr_comment||'').replace(/,/g,';'),
-    d.delay_response!==null&&d.delay_response!==undefined?d.delay_response:'',
-    d.miscommunication!==null&&d.miscommunication!==undefined?d.miscommunication:'',
-    d.process_complexity!==null&&d.process_complexity!==undefined?d.process_complexity:'',
-    d.staff_issue!==null&&d.staff_issue!==undefined?d.staff_issue:'',
-    (d.comp_comment||'').replace(/,/g,';')
-  ]);
+  const data=all.filter(d=>d.analyst===currentAnalyst);
+  const H=['ID','Date','Vertical','Team','Region','Department','Analyst','NPS Score','Category','Overall Exp','Staff Behavior','Process Smooth','Comm Clarity','Understanding','Professionalism','Responsiveness','Problem Solving','Appr Comment','Delay Response','Miscommunication','Process Complexity','Staff Issue','Comp Comment','Anonymous','Submitter Name','PW ID'];
+  const rows=data.map(d=>[d.id,new Date(d.timestamp).toLocaleString('en-IN'),d.vertical,d.team,d.region||'',d.department||'',d.analyst,d.nps_score,d.nps_category,d.overall_exp,d.staff_behavior,d.process_smooth,d.comm_clarity,d.understanding,d.professionalism,d.responsiveness,d.problem_solving,(d.appr_comment||'').replace(/,/g,''),d.delay_response,d.miscommunication,d.process_complexity,d.staff_issue,(d.comp_comment||'').replace(/,/g,''),d.anonymous?'Yes':'No',d.submitter_name||'',d.submitter_pwid||'']);
   const csv=[H,...rows].map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download='analyst_'+currentAnalyst.replace(/[^a-z0-9]/gi,'_')+'_'+new Date().toISOString().slice(0,10)+'.csv';
@@ -923,7 +901,7 @@ function openMDirect(idx){
       <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.ownership_accountability)}</span></div>
       <div class="mrow"><span class="mk">Problem-Solving &amp; Analytical Thinking</span><span class="mv">${st(d.problem_solving_analytical)}</span></div>
       <div class="mrow"><span class="mk">Business Understanding</span><span class="mv">${st(d.business_understanding)}</span></div>
-      <div class="mrow"><span class="mk">Communication &amp; Clarity</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
+      <div class="mrow"><span class="mk">Ownership &amp; Accountability (2)</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
       ${d.gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.gen_comment}</span></div>`:''}
     </div>
     <div class="msec"><div class="msec-title">Appreciation</div>
