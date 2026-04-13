@@ -231,58 +231,96 @@ textarea::placeholder{color:var(--text3);}
   <!-- PAGE 1 -->
   <div class="page active" id="page1">
     <div class="card">
-      <div class="card-title">Team Details</div>
-      <div class="card-desc" id="basic-desc">
-        <strong>Team Review:</strong> Provide details of the team you want to give feedback for.<br>
-        <strong>Peer Review:</strong> Provide details of the analyst you want to give feedback for.
+      <div class="card-title" id="p1-card-title">Review Details</div>
+
+      <!-- ── TEAM REVIEW: Premium PW Analytics banner ── -->
+      <div id="team-banner">
+        <div style="
+          display:flex;align-items:center;gap:1.25rem;
+          padding:1.5rem 1.75rem;
+          background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(201,168,76,0.03) 100%);
+          border:1px solid rgba(201,168,76,0.22);
+          border-radius:14px;
+          margin-bottom:.5rem;
+          position:relative;overflow:hidden;
+        ">
+          <!-- Glow blob -->
+          <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.18),transparent 70%);pointer-events:none;"></div>
+          <!-- Icon -->
+          <div style="
+            width:58px;height:58px;border-radius:14px;flex-shrink:0;
+            background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.06));
+            border:1px solid rgba(201,168,76,0.3);
+            display:flex;align-items:center;justify-content:center;font-size:26px;
+          ">📊</div>
+          <!-- Text -->
+          <div style="flex:1;min-width:0;">
+            <div style="
+              font-family:'Cormorant Garamond',serif;
+              font-size:22px;font-weight:700;line-height:1.15;
+              background:linear-gradient(120deg,#eef0f8 0%,var(--gold2) 55%,var(--gold3) 100%);
+              -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+            ">PW Analytics Team</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:.05em;">Overall Department · NPS Feedback</div>
+            <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
+              <span style="font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold);">Analytics</span>
+              <span style="font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);color:var(--green);">PW Education</span>
+              <span style="font-size:9px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);color:var(--blue);">Anonymous</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);line-height:1.65;margin-top:.75rem;padding:.7rem 1rem;background:rgba(79,142,247,0.05);border:1px solid rgba(79,142,247,0.12);border-radius:8px;">
+          You are rating the <strong style="color:var(--text)">overall PW Analytics department</strong>. Your feedback will help improve team performance, processes, and culture. All responses are completely anonymous.
+        </p>
       </div>
 
-      <!-- Team field (both modes) -->
-      <div class="fg">
-        <label class="flabel">Team <span class="req">*</span></label>
-        <div class="sel-wrap"><select id="team" onchange="onTeam()">
-          <option value="">-- Select Team --</option>
-          <option value="City">City</option>
-          <option value="Head Office (Noida)">Head Office (Noida)</option>
-        </select></div>
-      </div>
+      <!-- ── PEER REVIEW: Team → Region/Dept → Analyst selectors ── -->
+      <div id="peer-selectors" style="display:none;">
+        <div class="card-desc">Select the team and analyst you want to give peer feedback for.</div>
 
-      <!-- City fields -->
-      <div id="cf" style="display:none">
+        <!-- Team -->
         <div class="fg">
-          <label class="flabel" id="region-label">Region <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="region" onchange="onRegion()">
-            <option value="">-- Select Region --</option>
-            <option>East</option><option>Maharashtra</option><option>Gujarat</option>
-            <option>PB + JK</option><option>MP + CG</option><option>Rajasthan</option>
-            <option>NCR + UK</option><option>Bihar + JH</option><option>UP</option><option>South</option>
+          <label class="flabel">Team <span class="req">*</span></label>
+          <div class="sel-wrap"><select id="team" onchange="onTeam()">
+            <option value="">-- Select Team --</option>
+            <option value="City">City</option>
+            <option value="Head Office (Noida)">Head Office (Noida)</option>
           </select></div>
         </div>
-        <!-- Analyst dropdown - peer only -->
-        <div class="fg" id="city-analyst-fg" style="display:none">
-          <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="ac" disabled><option value="">-- Select Region first --</option></select></div>
+
+        <!-- City sub-fields -->
+        <div id="cf" style="display:none">
+          <div class="fg">
+            <label class="flabel">Region <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="region" onchange="onRegion()">
+              <option value="">-- Select Region --</option>
+              <option>East</option><option>Maharashtra</option><option>Gujarat</option>
+              <option>PB + JK</option><option>MP + CG</option><option>Rajasthan</option>
+              <option>NCR + UK</option><option>Bihar + JH</option><option>UP</option><option>South</option>
+            </select></div>
+          </div>
+          <div class="fg" id="city-analyst-fg">
+            <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="ac" disabled><option value="">-- Select Region first --</option></select></div>
+          </div>
+        </div>
+
+        <!-- HO sub-fields -->
+        <div id="hf" style="display:none">
+          <div class="fg">
+            <label class="flabel">Department <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="dept" onchange="onDept()">
+              <option value="">-- Select Department --</option>
+              <option>Ops</option><option>Acad</option><option>Biz Finance and Compliance</option>
+              <option>Sales</option><option>Marketing</option><option>Analytics Lead</option>
+            </select></div>
+          </div>
+          <div class="fg" id="ho-analyst-fg">
+            <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
+            <div class="sel-wrap"><select id="ah" disabled><option value="">-- Select Department first --</option></select></div>
+          </div>
         </div>
       </div>
-
-      <!-- HO fields -->
-      <div id="hf" style="display:none">
-        <div class="fg">
-          <label class="flabel">Department <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="dept" onchange="onDept()">
-            <option value="">-- Select Department --</option>
-            <option>Ops</option><option>Acad</option><option>Biz Finance and Compliance</option>
-            <option>Sales</option><option>Marketing</option><option>Analytics Lead</option>
-          </select></div>
-        </div>
-        <!-- Analyst dropdown - peer only -->
-        <div class="fg" id="ho-analyst-fg" style="display:none">
-          <label class="flabel">Analyst Being Rated <span class="req">*</span></label>
-          <div class="sel-wrap"><select id="ah" disabled><option value="">-- Select Department first --</option></select></div>
-        </div>
-      </div>
-
-      <!-- Peer reviewer section removed - all responses are anonymous -->
 
       <p id="e1" class="err">Please fill all required fields to continue.</p>
     </div>
@@ -441,7 +479,7 @@ textarea::placeholder{color:var(--text3);}
 </div><!-- end wrap -->
 
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
@@ -471,55 +509,42 @@ let analystNPS=null, teamNPS=null, reviewType='team';
 
 // ── Review Type Toggle ────────────────────────────────────────────
 function setRT(t){
-  // ── Full reset when user switches sections (not on initial load) ──
   if(t !== reviewType){
-    // Reset star ratings
     Object.keys(R).forEach(function(k){R[k]=0;});
-    // Reset complaint emoji selections
     Object.keys(CR).forEach(function(k){delete CR[k];});
-    // Reset all dropdowns
     ['team','region','dept','ac','ah'].forEach(function(id){
       var el=document.getElementById(id); if(!el)return;
       el.value='';
       el.disabled=(id==='ac'||id==='ah');
     });
-    // Hide city/HO sub-forms
-    document.getElementById('cf').style.display='none';
-    document.getElementById('hf').style.display='none';
-    // Clear text areas
+    var cf=document.getElementById('cf'),hf=document.getElementById('hf');
+    if(cf)cf.style.display='none';
+    if(hf)hf.style.display='none';
     document.getElementById('gen-txt').value='';
     document.getElementById('ac-txt').value='';
     document.getElementById('cp-txt').value='';
-    // Reset complaint emoji buttons
     document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
-    // Reset star renders
     document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
-    // Reset feedback tabs back to first tab (General)
     doStab(0,document.querySelectorAll('.stab')[0]);
-    // Clear validation error
     document.getElementById('e1').classList.remove('show');
     document.getElementById('ne').classList.remove('show');
-    // Navigate back to page 1 if on page 2
     var p2=document.getElementById('page2');
     if(p2&&p2.classList.contains('active')) setPage(2,1);
   }
   reviewType=t;
   document.getElementById('rt-team').className='rtbtn'+(t==='team'?' active-team':'');
   document.getElementById('rt-peer').className='rtbtn'+(t==='peer'?' active-peer':'');
-  // Mode badge
-  const badge=document.getElementById('mode-badge');
+  var badge=document.getElementById('mode-badge');
   badge.className='review-mode-badge'+(t==='peer'?' show':'');
   badge.textContent='Peer Mode Active';
-  // Show/hide analyst dropdowns
-  document.getElementById('city-analyst-fg').style.display=t==='peer'?'block':'none';
-  document.getElementById('ho-analyst-fg').style.display=t==='peer'?'block':'none';
-  // Show/hide NPS sections
+  // Page 1: show team banner OR peer selectors
+  document.getElementById('team-banner').style.display=t==='team'?'block':'none';
+  document.getElementById('peer-selectors').style.display=t==='peer'?'block':'none';
+  // NPS sections
   document.getElementById('nps-analyst-section').style.display=t==='peer'?'block':'none';
   document.getElementById('nps-team-section').style.display=t==='team'?'block':'none';
-  // Reset NPS
   analystNPS=null; teamNPS=null;
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
-  // Scroll to top so user sees the fresh form from beginning
   window.scrollTo(0,0);
 }
 
@@ -540,15 +565,19 @@ function fsel(id,it){const s=document.getElementById(id);s.innerHTML='<option va
 function onPeerRegion(){/* removed - peer reviewer section removed */}
 
 function g2(){
-  const team=document.getElementById('team').value,ic=team==='City';
-  let ok=team;
-  if(ic) ok=ok&&document.getElementById('region').value;
-  else if(team) ok=ok&&document.getElementById('dept').value;
-  // In peer mode, analyst is required
-  if(reviewType==='peer'){
-    if(ic) ok=ok&&document.getElementById('ac').value;
-    else ok=ok&&document.getElementById('ah').value;
+  if(reviewType==='team'){
+    // Team review always goes straight through — target is always PW Analytics Team
+    document.getElementById('e1').classList.remove('show');
+    setPage(1,2);
+    return;
   }
+  // Peer review: validate team → region/dept → analyst
+  var team=document.getElementById('team').value,ic=team==='City';
+  var ok=!!team;
+  if(ic) ok=ok&&!!document.getElementById('region').value;
+  else if(team) ok=ok&&!!document.getElementById('dept').value;
+  if(ic) ok=ok&&!!document.getElementById('ac').value;
+  else ok=ok&&!!document.getElementById('ah').value;
   if(!ok){document.getElementById('e1').classList.add('show');return;}
   document.getElementById('e1').classList.remove('show');
   setPage(1,2);
@@ -628,10 +657,12 @@ async function submitF(){
   var npsOk=reviewType==='peer'?analystNPS!==null:teamNPS!==null;
   if(!npsOk){document.getElementById('ne').classList.add('show');return;}
   var btn=document.querySelector('.btn-blue');btn.innerHTML='Submitting...';btn.disabled=true;
-  var team=document.getElementById('team').value,ic=team==='City';
-  var analyst=reviewType==='peer'?(ic?document.getElementById('ac').value:document.getElementById('ah').value):'';
-  var region=ic?document.getElementById('region').value:'';
-  var dept=!ic?document.getElementById('dept').value:'';
+  var isPeerMode=reviewType==='peer';
+  var team=isPeerMode?(document.getElementById('team').value||''):'PW Analytics Team';
+  var ic=isPeerMode&&team==='City';
+  var analyst=isPeerMode?(ic?document.getElementById('ac').value:document.getElementById('ah').value):'';
+  var region=isPeerMode&&ic?document.getElementById('region').value:'';
+  var dept=isPeerMode&&!ic?document.getElementById('dept').value:'';
 
   var e={
     id:'NPS-'+Date.now(),
@@ -693,8 +724,9 @@ function resetAll(){
     var el=document.getElementById(id);if(!el)return;
     el.value='';el.disabled=['ac','ah'].includes(id);
   });
-  document.getElementById('cf').style.display='none';
-  document.getElementById('hf').style.display='none';
+  var cf=document.getElementById('cf'),hf=document.getElementById('hf');
+  if(cf)cf.style.display='none';
+  if(hf)hf.style.display='none';
   document.querySelectorAll('.nps-btn').forEach(function(b){b.className='nps-btn';});
   document.querySelectorAll('.stars').forEach(function(c){pt(c,c.dataset.key);});
   document.querySelectorAll('.ropt').forEach(function(r){r.className='ropt';});
@@ -702,6 +734,7 @@ function resetAll(){
   document.getElementById('ac-txt').value='';
   document.getElementById('cp-txt').value='';
   doStab(0,document.querySelectorAll('.stab')[0]);
+  reviewType=''; // force setRT to do full reset
   setRT('team');
   setPage(3,1);
 }
