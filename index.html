@@ -424,7 +424,7 @@ textarea::placeholder{color:var(--text3);}
 </div><!-- /wrap -->
 
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 const CA={
   'East':['Arjun Sahoo - PW7003','Arkajyoti Roy - PW8333','Gourab Roy - PW21631'],
@@ -724,12 +724,12 @@ async function submitF(){
   var stored=JSON.parse(localStorage.getItem('nps_responses')||'[]');
   stored.push(e);localStorage.setItem('nps_responses',JSON.stringify(stored));
 
-  // Send to Google Sheet
+  // Send to Google Sheet via GET (most reliable with Google Apps Script)
   if(SHEET_URL){
     try{
-      var params=new URLSearchParams();
-      params.append('data',JSON.stringify(e));
-      await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()});
+      var jsonData = JSON.stringify(e);
+      var url = SHEET_URL + '?data=' + encodeURIComponent(jsonData);
+      await fetch(url, {method:'GET', mode:'no-cors'});
     }catch(err){console.warn('Sheet sync failed:',err);}
   }
 
