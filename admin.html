@@ -412,7 +412,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -509,41 +509,60 @@ async function syncSheet(){
       const d = {};
       headers.forEach((h,i) => d[h.trim()] = (row[i]||'').trim());
       function cat(s){ const n=Number(s); return n<=6?'Detractor':n<=8?'Passive':'Promoter'; }
-      const tnps  = d['Team NPS']!==''&&d['Team NPS']!==undefined ? Number(d['Team NPS']) : null;
-      const anps  = d['Analyst NPS']!==''&&d['Analyst NPS']!==undefined ? Number(d['Analyst NPS']) : null;
+      function nv(k){ return d[k]!==''&&d[k]!==undefined ? Number(d[k]) : null; }
+      const tnps = nv('Team NPS'); const anps = nv('Analyst NPS');
       return {
-        id:                         d['ID']||'',
-        timestamp:                  d['Timestamp']||'',
-        review_type:                d['Review Type']||'team',
-        team:                       d['Team']||'',
-        region:                     d['Region']||'',
-        department:                 d['Department']||'',
-        analyst:                    d['Analyst (Rated)']||'',
-        team_nps:                   tnps,
-        team_nps_category:          d['Team NPS Category']||(tnps!==null?cat(tnps):''),
-        analyst_nps:                anps,
-        analyst_nps_category:       d['Analyst NPS Category']||(anps!==null?cat(anps):''),
-        // General
-        stakeholder_mgmt:           Number(d['Stakeholder Management'])||0,
-        ownership_accountability:   Number(d['Ownership & Accountability'])||0,
-        problem_solving_analytical: Number(d['Problem-Solving & Analytical Thinking'])||0,
-        business_understanding:     Number(d['Business Understanding'])||0,
-        ownership_accountability2:  Number(d['Communication & Collaboration'])||0,
-        gen_comment:                d['General Comment']||'',
-        // Appreciation
-        strong_analytical_skills:   Number(d['Strong Analytical Skills'])||0,
-        business_impact:            Number(d['Business Impact'])||0,
-        technical_expertise:        Number(d['Technical Expertise'])||0,
-        problem_solving_mindset:    Number(d['Problem-Solving Mindset'])||0,
-        learning_growth:            Number(d['Learning & Growth'])||0,
-        appr_comment:               d['Appreciation Comment']||'',
-        // Complaint
-        delay_response:             d['Delay Response']!==''?Number(d['Delay Response']):null,
-        miscommunication:           d['Miscommunication']!==''?Number(d['Miscommunication']):null,
-        process_complexity:         d['Process Complexity']!==''?Number(d['Process Complexity']):null,
-        staff_issue:                d['Staff Issue']!==''?Number(d['Staff Issue']):null,
-        comp_comment:               d['Complaint Comment']||'',
-        anonymous:                  true
+        id: d['ID']||'', timestamp: d['Timestamp']||'',
+        review_type: d['Review Type']||'team',
+        team: d['Team']||'', region: d['Region']||'',
+        department: d['Department']||'', analyst: d['Analyst (Rated)']||'',
+        team_nps: tnps, team_nps_category: d['Team NPS Category']||(tnps!==null?cat(tnps):''),
+        analyst_nps: anps, analyst_nps_category: d['Analyst NPS Category']||(anps!==null?cat(anps):''),
+        // Team General
+        t_comm_clarity:Number(d['T: Communication Clarity'])||0,
+        t_response_time:Number(d['T: Response Time'])||0,
+        t_data_understanding:Number(d['T: Data Understanding'])||0,
+        t_availability:Number(d['T: Availability & Collaboration'])||0,
+        t_process_efficiency:Number(d['T: Process Efficiency'])||0,
+        t_documentation:Number(d['T: Documentation Quality'])||0,
+        t_req_understanding:Number(d['T: Requirement Understanding'])||0,
+        t_proactiveness:Number(d['T: Proactiveness'])||0,
+        t_gen_comment:d['T: General Comment']||'',
+        // Team Appreciation
+        t_quick_turnaround:Number(d['T: Quick Turnaround'])||0,
+        t_accurate_data:Number(d['T: Accurate Data Delivery'])||0,
+        t_problem_solving:Number(d['T: Strong Problem-Solving'])||0,
+        t_clear_comm:Number(d['T: Clear Communication'])||0,
+        t_ownership:Number(d['T: Ownership & Accountability'])||0,
+        t_beyond_expectations:Number(d['T: Beyond Expectations'])||0,
+        t_urgent_support:Number(d['T: Urgent Support'])||0,
+        t_innovative:Number(d['T: Innovative Analysis'])||0,
+        t_appr_comment:d['T: Appreciation Comment']||'',
+        // Team Complaint
+        tc_delay_data:nv('T: Delay in Data Sharing'), tc_incorrect_data:nv('T: Incorrect/Inconsistent Data'),
+        tc_lack_comm:nv('T: Lack of Communication'), tc_poor_req:nv('T: Poor Req Understanding'),
+        tc_unavailable:nv('T: Unavailability'), tc_followups:nv('T: Repeated Follow-ups'),
+        tc_no_ownership:nv('T: Lack of Ownership'), tc_missed_deadline:nv('T: Missed Deadlines'),
+        tc_incomplete:nv('T: Incomplete Delivery'), tc_complaint_comment:d['T: Complaint Comment']||'',
+        // Peer General
+        p_stakeholder_mgmt:Number(d['P: Stakeholder Management'])||0,
+        p_ownership:Number(d['P: Ownership & Accountability'])||0,
+        p_problem_solving:Number(d['P: Problem-Solving & Analytical'])||0,
+        p_biz_understanding:Number(d['P: Business Understanding'])||0,
+        p_comm_collab:Number(d['P: Communication & Collaboration'])||0,
+        p_gen_comment:d['P: General Comment']||'',
+        // Peer Appreciation
+        p_analytical_skills:Number(d['P: Strong Analytical Skills'])||0,
+        p_biz_impact:Number(d['P: Business Impact'])||0,
+        p_technical:Number(d['P: Technical Expertise'])||0,
+        p_psm:Number(d['P: Problem-Solving Mindset'])||0,
+        p_learning:Number(d['P: Learning & Growth'])||0,
+        p_appr_comment:d['P: Appreciation Comment']||'',
+        // Peer Complaint
+        pc_delay:nv('P: Delay in Response'), pc_miscommunication:nv('P: Miscommunication'),
+        pc_process:nv('P: Process Complexity'), pc_staff:nv('P: Staff Issue'),
+        pc_complaint_comment:d['P: Complaint Comment']||'',
+        anonymous:true
       };
     }).filter(r => r.id);
     // Always use sheet as source of truth - full replace
@@ -640,10 +659,13 @@ function renderCharts(){
   CH['c-donut']=new Chart(document.getElementById('c-donut'),{type:'doughnut',
     data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[pro,pas,det],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
-  // General feedback averages (all 5 fields)
-  const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding','ownership_accountability2'];
-  const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding','Comm & Collab'];
-  mkBar('c-gen',gl,gk.map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(201,168,76,0.5)',true);
+  // General feedback averages — team fields for team reviews, peer fields for peer reviews
+  const td2=d.filter(x=>x.review_type==='team');
+  const pd2=d.filter(x=>x.review_type==='peer');
+  const tgk=['t_comm_clarity','t_response_time','t_data_understanding','t_availability','t_process_efficiency','t_documentation','t_req_understanding','t_proactiveness'];
+  const tgl=['Comm Clarity','Response Time','Data Understanding','Availability','Process Eff.','Documentation','Req. Understanding','Proactiveness'];
+  const tgv=tgk.map(k=>{const v=td2.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;});
+  mkBar('c-gen',tgl,tgv,'rgba(201,168,76,0.5)',true);
   // NPS by review type (Team vs Peer)
   const types=['Team Review','Peer Review'];
   mkBar('c-vert',types,types.map((t,i)=>{
@@ -657,12 +679,22 @@ function renderCharts(){
 
 function renderApprComp(){
   const d=filtered;
-  mkBar('c-appr',['Strong Analytical','Business Impact','Technical Expertise','Problem-Solving','Learning & Growth'],
-    ['strong_analytical_skills','business_impact','technical_expertise','problem_solving_mindset','learning_growth'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(52,211,153,0.5)',true);
-  // Complaint: 0=No Issue, 1=Minor, 2=Moderate, 3=Major — lower is better
-  const CLABELS=['No Issue','Minor','Moderate','Major'];
-  mkBar('c-comp',['Delay Response','Miscommunication','Process Complexity','Staff Issue'],
-    ['delay_response','miscommunication','process_complexity','staff_issue'].map(k=>{const v=d.map(x=>x[k]).filter(x=>x!==null&&x!==undefined&&x!=='');return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(248,113,113,0.5)',true);
+  const td=d.filter(x=>x.review_type==='team');
+  const pd=d.filter(x=>x.review_type==='peer');
+  // Appreciation: team fields avg + peer fields avg combined into one chart
+  const apprLabels=['Quick Turnaround','Accurate Data','Problem-Solving','Clear Comm','Ownership','Beyond Expectations','Urgent Support','Innovative','Analytical Skills','Biz Impact','Technical','Learning'];
+  const apprKeys_t=['t_quick_turnaround','t_accurate_data','t_problem_solving','t_clear_comm','t_ownership','t_beyond_expectations','t_urgent_support','t_innovative'];
+  const apprKeys_p=['p_analytical_skills','p_biz_impact','p_technical','p_learning'];
+  const apprVals=[
+    ...apprKeys_t.map(k=>{const v=td.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),
+    ...apprKeys_p.map(k=>{const v=pd.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;})
+  ];
+  mkBar('c-appr',apprLabels,apprVals,'rgba(52,211,153,0.5)',true);
+  // Complaint: team complaint fields
+  const tcKeys=['tc_delay_data','tc_incorrect_data','tc_lack_comm','tc_poor_req','tc_unavailable','tc_followups','tc_no_ownership','tc_missed_deadline','tc_incomplete'];
+  const tcLabels=['Delay Data','Incorrect Data','Lack Comm','Poor Req','Unavailable','Follow-ups','No Ownership','Missed DL','Incomplete'];
+  const tcVals=tcKeys.map(k=>{const v=td.map(x=>x[k]).filter(x=>x!==null&&x!==undefined&&x!=='');return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;});
+  mkBar('c-comp',tcLabels,tcVals,'rgba(248,113,113,0.5)',true);
 }
 
 // ── TABLE ─────────────────────────────────────────────────────────
@@ -719,7 +751,7 @@ function getAnalystStats(data){
     const pro=r.filter(x=>x.analyst_nps_category==='Promoter').length;
     const det=r.filter(x=>x.analyst_nps_category==='Detractor').length;
     const nps=n?Math.round((pro-det)/n*100):0;
-    const avgVals=r.map(x=>x.strong_analytical_skills||0).filter(x=>x>0);
+    const avgVals=r.map(x=>x.p_analytical_skills||0).filter(x=>x>0);
     return {...a,count:n,nps,promoters:pro,detractors:det,
       avgExp:avgVals.length?(avgVals.reduce((a,b)=>a+b,0)/avgVals.length).toFixed(1):0};
   }).sort((a,b)=>b.nps-a.nps);
@@ -739,7 +771,7 @@ function renderAnalystGrid(){
     const card=document.createElement('div');card.className='analyst-card';
     card.innerHTML=`<div class="ac-name">${name}</div><div class="ac-pwid">${pwid}</div>
       <div class="ac-nps" style="color:${npsColor}">${a.nps>=0?'+':''}${a.nps}</div>
-      <div class="ac-count">${a.count} response${a.count!==1?'s':''} · ★ ${a.avgExp}</div>`;
+      <div class="ac-count">${a.count} peer response${a.count!==1?'s':''} · ★ ${a.avgExp}</div>`;
     card.onclick=()=>openAnalystReport(a.analyst);
     grid.appendChild(card);
   });
@@ -754,7 +786,7 @@ function openAnalystReport(analyst){
   const pro=data.filter(x=>x.analyst_nps_category==='Promoter').length;
   const det=data.filter(x=>x.analyst_nps_category==='Detractor').length;
   const nps=n?Math.round((pro-det)/n*100):0;
-  const avgVals=data.map(x=>x.strong_analytical_skills||0).filter(x=>x>0);
+  const avgVals=data.map(x=>x.p_analytical_skills||0).filter(x=>x>0);
   const avgExp=avgVals.length?(avgVals.reduce((a,b)=>a+b,0)/avgVals.length).toFixed(1):0;
 
   document.getElementById('ar-name').textContent=name;
@@ -775,7 +807,7 @@ function openAnalystReport(analyst){
 
   // Appreciation radar (new fields)
   dc('ar-c-radar');
-  const rk=['strong_analytical_skills','business_impact','technical_expertise','problem_solving_mindset','learning_growth'];
+  const rk=['p_analytical_skills','p_biz_impact','p_technical','p_psm','p_learning'];
   const rl=['Analytical Skills','Business Impact','Technical','Problem-Solving','Learning & Growth'];
   const ra=rk.map(k=>{const v=data.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;});
   CH['ar-c-radar']=new Chart(document.getElementById('ar-c-radar'),{type:'radar',
@@ -905,29 +937,65 @@ function openMDirect(idx){
       ${isPeer?`<div class="mrow"><span class="mk">🤝 Analyst NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--blue)">${d.analyst_nps!==null&&d.analyst_nps!==undefined?d.analyst_nps:'—'}</span></div>
       <div class="mrow"><span class="mk">Analyst Category</span><span class="mv">${d.analyst_nps_category?`<span class="badge b-${(d.analyst_nps_category||'').toLowerCase().slice(0,3)||'pas'}">${d.analyst_nps_category}</span>`:'—'}</span></div>`:''}
     </div>
-    <div class="msec"><div class="msec-title">General Feedback</div>
-      <div class="mrow"><span class="mk">Stakeholder Management</span><span class="mv">${st(d.stakeholder_mgmt)}</span></div>
-      <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.ownership_accountability)}</span></div>
-      <div class="mrow"><span class="mk">Problem-Solving &amp; Analytical Thinking</span><span class="mv">${st(d.problem_solving_analytical)}</span></div>
-      <div class="mrow"><span class="mk">Business Understanding</span><span class="mv">${st(d.business_understanding)}</span></div>
-      <div class="mrow"><span class="mk">Communication &amp; Collaboration</span><span class="mv">${st(d.ownership_accountability2)}</span></div>
-      ${d.gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.gen_comment}</span></div>`:''}
+    ${!isPeer?`
+    <div class="msec"><div class="msec-title">General Feedback (Team)</div>
+      <div class="mrow"><span class="mk">Communication Clarity</span><span class="mv">${st(d.t_comm_clarity)}</span></div>
+      <div class="mrow"><span class="mk">Response Time</span><span class="mv">${st(d.t_response_time)}</span></div>
+      <div class="mrow"><span class="mk">Data Understanding</span><span class="mv">${st(d.t_data_understanding)}</span></div>
+      <div class="mrow"><span class="mk">Availability &amp; Collaboration</span><span class="mv">${st(d.t_availability)}</span></div>
+      <div class="mrow"><span class="mk">Process Efficiency</span><span class="mv">${st(d.t_process_efficiency)}</span></div>
+      <div class="mrow"><span class="mk">Documentation Quality</span><span class="mv">${st(d.t_documentation)}</span></div>
+      <div class="mrow"><span class="mk">Requirement Understanding</span><span class="mv">${st(d.t_req_understanding)}</span></div>
+      <div class="mrow"><span class="mk">Proactiveness</span><span class="mv">${st(d.t_proactiveness)}</span></div>
+      ${d.t_gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.t_gen_comment}</span></div>`:''}
     </div>
-    <div class="msec"><div class="msec-title">Appreciation</div>
-      <div class="mrow"><span class="mk">Strong Analytical Skills</span><span class="mv">${st(d.strong_analytical_skills)}</span></div>
-      <div class="mrow"><span class="mk">Business Impact</span><span class="mv">${st(d.business_impact)}</span></div>
-      <div class="mrow"><span class="mk">Technical Expertise</span><span class="mv">${st(d.technical_expertise)}</span></div>
-      <div class="mrow"><span class="mk">Problem-Solving Mindset</span><span class="mv">${st(d.problem_solving_mindset)}</span></div>
-      <div class="mrow"><span class="mk">Learning &amp; Growth</span><span class="mv">${st(d.learning_growth)}</span></div>
-      ${d.appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.appr_comment}</span></div>`:''}
+    <div class="msec"><div class="msec-title">Appreciation (Team)</div>
+      <div class="mrow"><span class="mk">Quick Turnaround</span><span class="mv">${st(d.t_quick_turnaround)}</span></div>
+      <div class="mrow"><span class="mk">Accurate Data Delivery</span><span class="mv">${st(d.t_accurate_data)}</span></div>
+      <div class="mrow"><span class="mk">Strong Problem-Solving</span><span class="mv">${st(d.t_problem_solving)}</span></div>
+      <div class="mrow"><span class="mk">Clear Communication</span><span class="mv">${st(d.t_clear_comm)}</span></div>
+      <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.t_ownership)}</span></div>
+      <div class="mrow"><span class="mk">Beyond Expectations</span><span class="mv">${st(d.t_beyond_expectations)}</span></div>
+      <div class="mrow"><span class="mk">Urgent Support</span><span class="mv">${st(d.t_urgent_support)}</span></div>
+      <div class="mrow"><span class="mk">Innovative Analysis</span><span class="mv">${st(d.t_innovative)}</span></div>
+      ${d.t_appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.t_appr_comment}</span></div>`:''}
     </div>
-    <div class="msec"><div class="msec-title">Complaint</div>
-      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${d.delay_response!==null&&d.delay_response!==undefined?CLABEL[d.delay_response]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${d.miscommunication!==null&&d.miscommunication!==undefined?CLABEL[d.miscommunication]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${d.process_complexity!==null&&d.process_complexity!==undefined?CLABEL[d.process_complexity]:'Not answered'}</span></div>
-      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${d.staff_issue!==null&&d.staff_issue!==undefined?CLABEL[d.staff_issue]:'Not answered'}</span></div>
-      ${d.comp_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.comp_comment}</span></div>`:''}
-    </div>`;
+    <div class="msec"><div class="msec-title">Complaint (Team)</div>
+      <div class="mrow"><span class="mk">Delay in Data Sharing</span><span class="mv">${d.tc_delay_data!==null&&d.tc_delay_data!==undefined?CLABEL[d.tc_delay_data]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Incorrect/Inconsistent Data</span><span class="mv">${d.tc_incorrect_data!==null&&d.tc_incorrect_data!==undefined?CLABEL[d.tc_incorrect_data]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Lack of Communication</span><span class="mv">${d.tc_lack_comm!==null&&d.tc_lack_comm!==undefined?CLABEL[d.tc_lack_comm]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Poor Req. Understanding</span><span class="mv">${d.tc_poor_req!==null&&d.tc_poor_req!==undefined?CLABEL[d.tc_poor_req]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Unavailability</span><span class="mv">${d.tc_unavailable!==null&&d.tc_unavailable!==undefined?CLABEL[d.tc_unavailable]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Repeated Follow-ups</span><span class="mv">${d.tc_followups!==null&&d.tc_followups!==undefined?CLABEL[d.tc_followups]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Lack of Ownership</span><span class="mv">${d.tc_no_ownership!==null&&d.tc_no_ownership!==undefined?CLABEL[d.tc_no_ownership]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Missed Deadlines</span><span class="mv">${d.tc_missed_deadline!==null&&d.tc_missed_deadline!==undefined?CLABEL[d.tc_missed_deadline]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Incomplete Delivery</span><span class="mv">${d.tc_incomplete!==null&&d.tc_incomplete!==undefined?CLABEL[d.tc_incomplete]:'—'}</span></div>
+      ${d.tc_complaint_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.tc_complaint_comment}</span></div>`:''}
+    </div>`:''}
+    ${isPeer?`
+    <div class="msec"><div class="msec-title">General Feedback (Peer)</div>
+      <div class="mrow"><span class="mk">Stakeholder Management</span><span class="mv">${st(d.p_stakeholder_mgmt)}</span></div>
+      <div class="mrow"><span class="mk">Ownership &amp; Accountability</span><span class="mv">${st(d.p_ownership)}</span></div>
+      <div class="mrow"><span class="mk">Problem-Solving &amp; Analytical</span><span class="mv">${st(d.p_problem_solving)}</span></div>
+      <div class="mrow"><span class="mk">Business Understanding</span><span class="mv">${st(d.p_biz_understanding)}</span></div>
+      <div class="mrow"><span class="mk">Communication &amp; Collaboration</span><span class="mv">${st(d.p_comm_collab)}</span></div>
+      ${d.p_gen_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.p_gen_comment}</span></div>`:''}
+    </div>
+    <div class="msec"><div class="msec-title">Appreciation (Peer)</div>
+      <div class="mrow"><span class="mk">Strong Analytical Skills</span><span class="mv">${st(d.p_analytical_skills)}</span></div>
+      <div class="mrow"><span class="mk">Business Impact</span><span class="mv">${st(d.p_biz_impact)}</span></div>
+      <div class="mrow"><span class="mk">Technical Expertise</span><span class="mv">${st(d.p_technical)}</span></div>
+      <div class="mrow"><span class="mk">Problem-Solving Mindset</span><span class="mv">${st(d.p_psm)}</span></div>
+      <div class="mrow"><span class="mk">Learning &amp; Growth</span><span class="mv">${st(d.p_learning)}</span></div>
+      ${d.p_appr_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Comment</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.p_appr_comment}</span></div>`:''}
+    </div>
+    <div class="msec"><div class="msec-title">Complaint (Peer)</div>
+      <div class="mrow"><span class="mk">Delay in Response</span><span class="mv">${d.pc_delay!==null&&d.pc_delay!==undefined?CLABEL[d.pc_delay]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Miscommunication</span><span class="mv">${d.pc_miscommunication!==null&&d.pc_miscommunication!==undefined?CLABEL[d.pc_miscommunication]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Process Complexity</span><span class="mv">${d.pc_process!==null&&d.pc_process!==undefined?CLABEL[d.pc_process]:'—'}</span></div>
+      <div class="mrow"><span class="mk">Staff Issue</span><span class="mv">${d.pc_staff!==null&&d.pc_staff!==undefined?CLABEL[d.pc_staff]:'—'}</span></div>
+      ${d.pc_complaint_comment?`<div class="mrow" style="align-items:flex-start"><span class="mk">Description</span><span class="mv" style="max-width:60%;white-space:normal;text-align:right;color:var(--text2)">${d.pc_complaint_comment}</span></div>`:''}
+    </div>`:''}`;
   document.getElementById('modal-bg').classList.add('show');
 }
 function closeM(){document.getElementById('modal-bg').classList.remove('show');}
