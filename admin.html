@@ -247,14 +247,14 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
     <button class="sb-link" onclick="showSec('teamnps',this)"><span class="sb-icon">👥</span> Team NPS</button>
     <button class="sb-link" onclick="showSec('analytics',this)"><span class="sb-icon">◉</span> Analytics</button>
     <hr class="sb-div">
-    <div class="sb-title">Quick Filters</div>
-    <button class="sb-link" onclick="qf('team','City')"><span class="sb-icon">🌆</span> City Team</button>
-    <button class="sb-link" onclick="qf('team','Head Office (Noida)')"><span class="sb-icon">🏢</span> Head Office</button>
-    <hr class="sb-div">
     <div class="sb-title">By Category</div>
     <button class="sb-link" onclick="qf('cat','Promoter')"><span class="sb-icon" style="color:var(--green)">●</span> Promoters</button>
     <button class="sb-link" onclick="qf('cat','Passive')"><span class="sb-icon" style="color:var(--amber)">●</span> Passives</button>
     <button class="sb-link" onclick="qf('cat','Detractor')"><span class="sb-icon" style="color:var(--red)">●</span> Detractors</button>
+    <hr class="sb-div">
+    <div class="sb-title">By Type</div>
+    <button class="sb-link" onclick="qf('rt','team')"><span class="sb-icon">👥</span> Team Reviews</button>
+    <button class="sb-link" onclick="qf('rt','peer')"><span class="sb-icon">🤝</span> Peer Reviews</button>
   </aside>
 
   <main class="main">
@@ -273,7 +273,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
       </div>
       <div class="chart-row2">
         <div class="glass-card"><div class="gc-title">General feedback averages</div><div class="cwrap"><canvas id="c-gen"></canvas></div></div>
-        <div class="glass-card"><div class="gc-title">NPS by vertical</div><div class="cwrap"><canvas id="c-vert"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">NPS by review type</div><div class="cwrap"><canvas id="c-vert"></canvas></div></div>
       </div>
     </div>
 
@@ -282,7 +282,6 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
       <div class="filter-bar">
         <span class="f-label">Filter</span>
         <select class="fsel" id="f-rt" onchange="applyF()"><option value="">All Types</option><option value="team">Team Review</option><option value="peer">Peer Review</option></select>
-        <select class="fsel" id="f-t" onchange="applyF()"><option value="">All Teams</option><option>City</option><option>Head Office (Noida)</option></select>
         <select class="fsel" id="f-r" onchange="applyF()">
           <option value="">All Regions</option>
           <option>East</option><option>Maharashtra</option><option>Gujarat</option>
@@ -302,7 +301,7 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
       <div class="glass-card">
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Date</th><th>Type</th><th>Team</th><th>Region/Dept</th><th>Analyst</th><th>Team NPS</th><th>Analyst NPS</th><th></th></tr></thead>
+            <thead><tr><th>Date</th><th>Type</th><th>Region / Dept</th><th>Analyst</th><th>Team NPS</th><th>Analyst NPS</th><th></th></tr></thead>
             <tbody id="tbl-body"></tbody>
           </table>
         </div>
@@ -354,26 +353,26 @@ td{padding:9px 12px;color:var(--text);vertical-align:middle;white-space:nowrap;}
 
     <!-- TEAM NPS -->
     <div class="sec" id="sec-teamnps">
-      <div class="metrics" style="margin-bottom:1.25rem;">
-        <div class="mc m1"><div class="mc-label">Team NPS Score</div><div class="mc-val" id="team-m-nps" style="color:var(--gold)">—</div><div class="mc-sub">Team Promoters − Detractors %</div></div>
-        <div class="mc m2"><div class="mc-label">Total Responses</div><div class="mc-val" id="team-m-total">0</div><div class="mc-sub">With team NPS</div></div>
-        <div class="mc m3"><div class="mc-label">Team Promoters</div><div class="mc-val" id="team-m-pro" style="color:var(--green)">0</div><div class="mc-sub" id="team-m-pro-p"></div></div>
-        <div class="mc m4"><div class="mc-label">Team Detractors</div><div class="mc-val" id="team-m-det" style="color:var(--red)">0</div><div class="mc-sub" id="team-m-det-p"></div></div>
-      </div>
-      <div class="chart-row2" style="margin-bottom:1.25rem;">
-        <div class="glass-card"><div class="gc-title">Team NPS distribution</div><div class="cwrap"><canvas id="c-team-dist"></canvas></div></div>
-        <div class="glass-card"><div class="gc-title">Team category split</div><div class="cwrap"><canvas id="c-team-donut"></canvas></div></div>
-      </div>
-      <div class="chart-row2" style="margin-bottom:1.25rem;">
-        <div class="glass-card"><div class="gc-title">Team NPS by region / department</div><div class="cwrap"><canvas id="c-compare"></canvas></div></div>
-        <div class="glass-card"><div class="gc-title">Team review vs Peer review split</div><div class="cwrap"><canvas id="c-review-type"></canvas></div></div>
-      </div>
-      <div class="glass-card">
-        <div class="gc-title">Team NPS by region / department</div>
-        <div class="tbl-wrap">
-          <table><thead><tr><th>Group</th><th>Responses</th><th>Promoters</th><th>Passives</th><th>Detractors</th><th>Team NPS</th></tr></thead>
-          <tbody id="team-bk-body"></tbody></table>
+      <div style="margin-bottom:1rem;padding:.85rem 1.25rem;background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(201,168,76,0.02));border:1px solid rgba(201,168,76,0.18);border-radius:12px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:22px;">📊</span>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;background:linear-gradient(120deg,#eef0f8,var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">PW Analytics Team — Overall NPS</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">Aggregated NPS from all team review submissions</div>
         </div>
+      </div>
+      <div class="metrics" style="margin-bottom:1.25rem;">
+        <div class="mc m1"><div class="mc-label">Team NPS Score</div><div class="mc-val" id="team-m-nps" style="color:var(--gold)">—</div><div class="mc-sub">Promoters − Detractors %</div></div>
+        <div class="mc m2"><div class="mc-label">Total Responses</div><div class="mc-val" id="team-m-total">0</div><div class="mc-sub">Team review submissions</div></div>
+        <div class="mc m3"><div class="mc-label">Promoters</div><div class="mc-val" id="team-m-pro" style="color:var(--green)">0</div><div class="mc-sub" id="team-m-pro-p"></div></div>
+        <div class="mc m4"><div class="mc-label">Detractors</div><div class="mc-val" id="team-m-det" style="color:var(--red)">0</div><div class="mc-sub" id="team-m-det-p"></div></div>
+      </div>
+      <div class="chart-row2" style="margin-bottom:1.25rem;">
+        <div class="glass-card"><div class="gc-title">Team NPS score distribution (0–10)</div><div class="cwrap"><canvas id="c-team-dist"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">Promoter / Passive / Detractor split</div><div class="cwrap"><canvas id="c-team-donut"></canvas></div></div>
+      </div>
+      <div class="chart-row2" style="margin-bottom:1.25rem;">
+        <div class="glass-card"><div class="gc-title">Team review vs Peer review split</div><div class="cwrap"><canvas id="c-review-type"></canvas></div></div>
+        <div class="glass-card"><div class="gc-title">NPS trend (monthly avg)</div><div class="cwrap"><canvas id="c-team-trend"></canvas></div></div>
       </div>
     </div>
 
@@ -413,7 +412,7 @@ const ALLOWED_EMAILS = [
   // 'newperson@pw.live',
 ];
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx5SApqWmz527wzSv5rn4EiSz5v_rLX0sFaBsgUGXAAAWY16yKUBMrg1JrbSDFzEg27/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyILUcXtpVHbn6chFDrqFvIeYxe3XxqRRMouQAyPkV1SX56ZPoEMzMQU9oiFQh0yO1M/exec';
 
 // ── PASTE YOUR GOOGLE SHEET ID HERE ─────────────────────────────
 // Open your Google Sheet → look at the URL:
@@ -645,9 +644,15 @@ function renderCharts(){
   const gk=['stakeholder_mgmt','ownership_accountability','problem_solving_analytical','business_understanding','ownership_accountability2'];
   const gl=['Stakeholder Mgmt','Ownership','Problem-Solving','Business Understanding','Comm & Collab'];
   mkBar('c-gen',gl,gk.map(k=>{const v=d.map(x=>x[k]).filter(x=>x>0);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):0;}),'rgba(201,168,76,0.5)',true);
-  // Team NPS by team
-  const teams=['City','Head Office (Noida)'];
-  mkBar('c-vert',teams,teams.map(t=>{const td=d.filter(x=>x.team===t);if(!td.length)return 0;const tp=td.filter(x=>getCat(x)==='Promoter').length,tdt=td.filter(x=>getCat(x)==='Detractor').length;return Math.round((tp-tdt)/td.length*100);}),['rgba(79,142,247,0.6)','rgba(201,168,76,0.6)']);
+  // NPS by review type (Team vs Peer)
+  const types=['Team Review','Peer Review'];
+  mkBar('c-vert',types,types.map((t,i)=>{
+    const key=i===0?'team':'peer';
+    const td=d.filter(x=>x.review_type===key);
+    if(!td.length)return 0;
+    const tp=td.filter(x=>getCat(x)==='Promoter').length,tdt=td.filter(x=>getCat(x)==='Detractor').length;
+    return Math.round((tp-tdt)/td.length*100);
+  }),['rgba(201,168,76,0.6)','rgba(79,142,247,0.6)']);
 }
 
 function renderApprComp(){
@@ -683,9 +688,8 @@ function renderTable(){
     tbody.innerHTML+=`<tr>
       <td style="color:var(--text2)">${dt}</td>
       <td>${rtBadge}</td>
-      <td>${d.team||'—'}</td>
-      <td>${d.region||d.department||'—'}</td>
-      <td>${(d.analyst||'').split('-')[0].trim()||'—'}</td>
+      <td>${d.region||d.department||'<span style="color:var(--text3)">—</span>'}</td>
+      <td>${(d.analyst||'').split('-')[0].trim()||'<span style="color:var(--text3)">—</span>'}</td>
       <td><strong style="font-size:14px;color:var(--gold)">${teamNpsVal}</strong></td>
       <td><strong style="font-size:14px;color:var(--blue)">${analystNpsVal}</strong></td>
       <td><button class="view-btn" onclick="openM(${idx})">View →</button></td>
@@ -816,9 +820,15 @@ function exportAnalystCSV(){
 
 // ── BREAKDOWN ─────────────────────────────────────────────────────
 function renderBreakdown(){
-  const groups={};
   const getCat=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
-  filtered.forEach(d=>{const k=(d.region||d.department||'Unknown')+' ('+d.team+')';if(!groups[k])groups[k]=[];groups[k].push(d);});
+  const groups={};
+  filtered.forEach(d=>{
+    const k=d.review_type==='team'
+      ?'PW Analytics Team (Team Review)'
+      :(d.region||d.department||'Unknown')+' (Peer)';
+    if(!groups[k])groups[k]=[];
+    groups[k].push(d);
+  });
   const tb=document.getElementById('bk-body');tb.innerHTML='';
   Object.entries(groups).forEach(([k,v])=>{
     const p=v.filter(x=>getCat(x)==='Promoter').length;
@@ -836,11 +846,9 @@ function renderBreakdown(){
 
 // ── FILTERS ───────────────────────────────────────────────────────
 function applyF(){
-  const ft=document.getElementById('f-t').value;
   const fr=document.getElementById('f-r').value,fd=document.getElementById('f-d').value,fc=document.getElementById('f-c').value,frt=document.getElementById('f-rt').value;
   const getCat=x=>x.review_type==='peer'?(x.analyst_nps_category||''):(x.team_nps_category||'');
   filtered=all.filter(d=>{
-    if(ft&&d.team!==ft)return false;
     if(fr&&d.region!==fr)return false;
     if(fd&&d.department!==fd)return false;
     if(fc&&getCat(d)!==fc)return false;
@@ -849,10 +857,10 @@ function applyF(){
   });
   cur=1;renderAll();
 }
-function clearF(){['f-t','f-r','f-d','f-c','f-rt'].forEach(id=>document.getElementById(id).value='');filtered=[...all];cur=1;renderAll();}
+function clearF(){['f-r','f-d','f-c','f-rt'].forEach(id=>document.getElementById(id).value='');filtered=[...all];cur=1;renderAll();}
 function qf(type,val){
   clearF();
-  if(type==='team')document.getElementById('f-t').value=val;
+  if(type==='rt')document.getElementById('f-rt').value=val;
   else if(type==='cat')document.getElementById('f-c').value=val;
   applyF();showSec('responses',document.querySelectorAll('.sb-link')[1]);
 }
@@ -881,13 +889,15 @@ function openMDirect(idx){
       <div class="mrow"><span class="mk">Date &amp; Time</span><span class="mv">${new Date(d.timestamp).toLocaleString('en-IN')}</span></div>
       <div class="mrow"><span class="mk">Submitted as</span><span class="mv"><em style="color:var(--text3)">Anonymous</em></span></div>
     </div>
-    <div class="msec"><div class="msec-title">Team Details</div>
-      <div class="mrow"><span class="mk">Team</span><span class="mv">${d.team||'—'}</span></div>
-      <div class="mrow"><span class="mk">Region / Department</span><span class="mv">${d.region||d.department||'—'}</span></div>
-      ${d.analyst?`<div class="mrow"><span class="mk">Analyst (Rated)</span><span class="mv">${d.analyst}</span></div>`:''}
-    </div>
-    <div class="msec"><div class="msec-title">Review Type</div>
-      <div class="mrow"><span class="mk">Type</span><span class="mv">${isPeer?'🤝 Peer Review':'👥 Team Review'}</span></div>
+    <div class="msec"><div class="msec-title">Review Target</div>
+      ${isPeer
+        ?`<div class="mrow"><span class="mk">Type</span><span class="mv">🤝 Peer Review</span></div>
+          <div class="mrow"><span class="mk">Team</span><span class="mv">${d.team||'—'}</span></div>
+          <div class="mrow"><span class="mk">Region / Department</span><span class="mv">${d.region||d.department||'—'}</span></div>
+          ${d.analyst?`<div class="mrow"><span class="mk">Analyst (Rated)</span><span class="mv">${d.analyst}</span></div>`:''}`
+        :`<div class="mrow"><span class="mk">Type</span><span class="mv">👥 Team Review</span></div>
+          <div class="mrow"><span class="mk">Target</span><span class="mv" style="font-weight:600;color:var(--gold)">PW Analytics Team</span></div>`
+      }
     </div>
     <div class="msec"><div class="msec-title">NPS Scores</div>
       ${!isPeer?`<div class="mrow"><span class="mk">👥 Team NPS</span><span class="mv" style="font-size:22px;font-weight:700;color:var(--gold)">${d.team_nps!==null&&d.team_nps!==undefined?d.team_nps:'—'}</span></div>
@@ -956,67 +966,67 @@ function exportCSV(){
   a.download='nps_responses_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
-// ── SEED ─────────────────────────────────────────────────────────
 function renderTeamNPS(){
   const d=filtered;
   const td=d.filter(x=>x.review_type==='team'&&x.team_nps!==null&&x.team_nps!==undefined&&x.team_nps!=='');
-  const pd=d.filter(x=>x.review_type==='peer'&&x.analyst_nps!==null&&x.analyst_nps!==undefined&&x.analyst_nps!=='');
   const n=td.length;
   const tpro=td.filter(x=>x.team_nps_category==='Promoter').length;
+  const tpas=td.filter(x=>x.team_nps_category==='Passive').length;
   const tdet=td.filter(x=>x.team_nps_category==='Detractor').length;
   const tnps=n?Math.round((tpro-tdet)/n*100):0;
   document.getElementById('team-m-nps').textContent=(tnps>=0?'+':'')+tnps;
   document.getElementById('team-m-nps').style.color=tnps>=30?'var(--green)':tnps>=0?'var(--amber)':'var(--red)';
   document.getElementById('team-m-total').textContent=n;
   document.getElementById('team-m-pro').textContent=tpro;
-  document.getElementById('team-m-pro-p').textContent=n?Math.round(tpro/n*100)+'% of responses':'';
+  document.getElementById('team-m-pro-p').textContent=n?Math.round(tpro/n*100)+'% promoter rate':'';
   document.getElementById('team-m-det').textContent=tdet;
-  document.getElementById('team-m-det-p').textContent=n?Math.round(tdet/n*100)+'% of responses':'';
+  document.getElementById('team-m-det-p').textContent=n?Math.round(tdet/n*100)+'% detractor rate':'';
 
-  // Team NPS distribution
+  // Score distribution
   dc('c-team-dist');
   const tdist=Array(11).fill(0);td.forEach(x=>{tdist[Number(x.team_nps)]++;});
   CH['c-team-dist']=new Chart(document.getElementById('c-team-dist'),{type:'bar',
-    data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{data:tdist,backgroundColor:tdist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'),borderRadius:6,borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{display:false}}}}});
+    data:{labels:['0','1','2','3','4','5','6','7','8','9','10'],datasets:[{data:tdist,
+      backgroundColor:tdist.map((_,i)=>i<=6?'rgba(248,113,113,0.6)':i<=8?'rgba(251,191,36,0.6)':'rgba(52,211,153,0.6)'),borderRadius:6,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true,ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{color:'rgba(255,255,255,0.04)'}},
+              x:{ticks:{color:'#3d4460',font:{size:10,family:'Outfit'}},grid:{display:false}}}}});
 
-  // Team category donut
+  // Category donut
   dc('c-team-donut');
-  const tpas=td.filter(x=>x.team_nps_category==='Passive').length;
   CH['c-team-donut']=new Chart(document.getElementById('c-team-donut'),{type:'doughnut',
-    data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[tpro,tpas,tdet],backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
+    data:{labels:['Promoters','Passives','Detractors'],datasets:[{data:[tpro,tpas,tdet],
+      backgroundColor:['rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
 
-  // Team NPS by region/dept bar chart
-  dc('c-compare');
-  const groups={};
-  td.forEach(x=>{const k=x.region||x.department||'Unknown';if(!groups[k])groups[k]=[];groups[k].push(Number(x.team_nps));});
-  const glabels=Object.keys(groups).slice(0,8);
-  const teamAvg=glabels.map(k=>{const v=groups[k];return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:0;});
-  CH['c-compare']=new Chart(document.getElementById('c-compare'),{type:'bar',
-    data:{labels:glabels,datasets:[{label:'Avg Team NPS',data:teamAvg,backgroundColor:'rgba(201,168,76,0.65)',borderRadius:5,borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:12,boxWidth:10}}},scales:{y:{min:0,max:10,ticks:{color:'#3d4460',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},x:{ticks:{color:'#3d4460',font:{size:9}},grid:{display:false}}}}});
-
-  // Team review vs Peer review split donut
+  // Team vs Peer split donut
   dc('c-review-type');
   const teamCount=d.filter(x=>x.review_type==='team').length;
   const peerCount=d.filter(x=>x.review_type==='peer').length;
   CH['c-review-type']=new Chart(document.getElementById('c-review-type'),{type:'doughnut',
-    data:{labels:['Team Reviews','Peer Reviews'],datasets:[{data:[teamCount,peerCount],backgroundColor:['rgba(201,168,76,0.7)','rgba(79,142,247,0.7)'],borderWidth:0,hoverOffset:6}]},
+    data:{labels:['Team Reviews','Peer Reviews'],datasets:[{data:[teamCount,peerCount],
+      backgroundColor:['rgba(201,168,76,0.7)','rgba(79,142,247,0.7)'],borderWidth:0,hoverOffset:6}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#7a8099',font:{size:11,family:'Outfit'},padding:14,boxWidth:10}}}}});
 
-  // Team NPS breakdown table
-  const tb=document.getElementById('team-bk-body');tb.innerHTML='';
-  Object.entries(groups).forEach(([k,vals])=>{
-    const src=td.filter(x=>(x.region||x.department||'Unknown')===k);
-    const pro=src.filter(x=>x.team_nps_category==='Promoter').length;
-    const pas=src.filter(x=>x.team_nps_category==='Passive').length;
-    const det=src.filter(x=>x.team_nps_category==='Detractor').length;
-    const nps=src.length?Math.round((pro-det)/src.length*100):0;
-    const nc=nps>=30?'var(--green)':nps>=0?'var(--amber)':'var(--red)';
-    tb.innerHTML+=`<tr><td><strong>${k}</strong></td><td>${src.length}</td><td>${pro}</td><td>${pas}</td><td>${det}</td><td><strong style="color:${nc}">${nps>=0?'+':''}${nps}</strong></td></tr>`;
+  // Monthly NPS trend
+  dc('c-team-trend');
+  const monthMap={};
+  td.forEach(x=>{
+    const mo=new Date(x.timestamp).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+    if(!monthMap[mo])monthMap[mo]={pro:0,det:0,n:0};
+    monthMap[mo].n++;
+    if(x.team_nps_category==='Promoter')monthMap[mo].pro++;
+    if(x.team_nps_category==='Detractor')monthMap[mo].det++;
   });
-  if(!Object.keys(groups).length)tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">No team review data available</td></tr>';
+  const months=Object.keys(monthMap).slice(-6);
+  const trendNPS=months.map(m=>{const v=monthMap[m];return v.n?Math.round((v.pro-v.det)/v.n*100):0;});
+  CH['c-team-trend']=new Chart(document.getElementById('c-team-trend'),{type:'line',
+    data:{labels:months.length?months:['No data'],datasets:[{label:'Team NPS',data:trendNPS,
+      borderColor:'rgba(201,168,76,0.8)',backgroundColor:'rgba(201,168,76,0.08)',
+      borderWidth:2,pointBackgroundColor:'rgba(201,168,76,0.9)',pointRadius:4,tension:0.35,fill:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{ticks:{color:'#3d4460',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+              x:{ticks:{color:'#3d4460',font:{size:10}},grid:{display:false}}}}});
 }
 
 // seedData() removed — sample data option has been disabled
